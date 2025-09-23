@@ -15,18 +15,11 @@ const BORDER = '#EAEAEA';
 const DARK_TEXT = '#0a0a0a';
 const PLACEHOLDER = '#9AA0A6';
 
-function isValidEthAddress(candidate: string): boolean {
-  if (!candidate) return false;
-  const value = candidate.trim();
-  // Basic 0x-prefixed 20-byte hex string check (case-insensitive)
-  return /^0x[a-fA-F0-9]{40}$/.test(value);
-}
-
 export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddressProps) {
   const [address, setAddress] = useState('');
   const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0 });
 
-  const isValid = useMemo(() => isValidEthAddress(address), [address]);
+  const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
 
 
   const handleContinue = async () => {

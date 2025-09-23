@@ -87,7 +87,7 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
           </View>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -182,8 +182,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: BORDER,
   },
   rowLeft: {
     flexDirection: 'row',
