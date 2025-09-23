@@ -19,8 +19,7 @@ export type PortfolioProps = {
 
 function truncateAddress(addr: string) {
   const v = addr.trim();
-  if (v.length <= 12) return v;
-  return `${v.slice(0, 6)}...${v.slice(-6)}`;
+  return `${v.slice(0, 5)}...${v.slice(-5)}`;
 }
 
 export default function Portfolio({ address, balances, onBack }: PortfolioProps) {
@@ -34,7 +33,7 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
   }, [orderedKeys, selected]);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={onBack} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel="Go back">
           <Feather name="chevron-left" size={28} color={DARK_TEXT} />
