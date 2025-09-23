@@ -47,12 +47,13 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
         <Text style={styles.addressText}>{truncateAddress(address)}</Text>
       </View>
 
-      <ScrollView
-        style={styles.filters}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filtersContent}
-      >
+      <View style={styles.filtersContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filtersContent}
+          style={styles.filtersScrollView}
+        >
         <FilterPill
           label="All"
           isSelected={selected === 'all'}
@@ -65,23 +66,22 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
             isSelected={selected === key}
             onPress={() => setSelected(key)}
             renderIcon={() => (
-              <View >
+              <View>
                 <Image source={chainConfig[key].chainIcon} style={styles.filterIcon} />
               </View>
             )}
           />
         ))}
-      </ScrollView>
+        </ScrollView>
+      </View>
 
-      <ScrollView style={styles.list} contentContainerStyle={{ paddingVertical: 8 }}>
+      <ScrollView style={styles.list}>
         {visibleKeys.map((key) => (
           <View key={key} style={styles.row}>
             <View style={styles.rowLeft}>
               <Image 
                 source={chainConfig[key].nativeTokenIcon} 
-                style={[
-                  styles.tokenIcon,
-                ]} 
+                style={styles.tokenIcon} 
               />
               <Text style={styles.chainName}>{chainConfig[key].name} ({chainConfig[key].symbol})</Text>
             </View>
@@ -140,20 +140,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-  filters: {
-    marginTop: 12,
-    height: 48,
+  filtersContainer: {
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  filtersScrollView: {
+    maxHeight: 48,
   },
   filtersContent: {
-    paddingHorizontal: 20,
     gap: 8,
     alignItems: 'center',
-    height: 48,
+    minHeight: 48,
+    paddingHorizontal: 20,
     justifyContent: 'center',
     flexGrow: 1,
   },
   list: {
-    marginTop: 16,
+    flex: 1,
     paddingHorizontal: 20,
   },
   row: {
