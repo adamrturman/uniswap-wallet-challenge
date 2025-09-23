@@ -2,10 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { ethers } from 'ethers';
+import { chainConfig, ChainKey } from './chainConfig';
 
 export type EnterWatchAddressProps = {
   onBack?: () => void;
-  onContinue?: (address: string) => void;
+  onContinue?: (address: string, balances: Record<ChainKey, number>) => void;
 };
 
 const PINK_ENABLED = '#FC72FF';
@@ -20,31 +21,6 @@ function isValidEthAddress(candidate: string): boolean {
   // Basic 0x-prefixed 20-byte hex string check (case-insensitive)
   return /^0x[a-fA-F0-9]{40}$/.test(value);
 }
-
-// Chains config for native token balance lookups
-type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum';
-const chainConfig: Record<ChainKey, { name: string; rpcUrl: string; symbol: string }> = {
-  ethereum: {
-    name: 'Ethereum',
-    rpcUrl: 'https://eth.drpc.org',
-    symbol: 'ETH',
-  },
-  polygon: {
-    name: 'Polygon',
-    rpcUrl: 'https://polygon.drpc.org',
-    symbol: 'MATIC',
-  },
-  optimism: {
-    name: 'Optimism',
-    rpcUrl: 'https://optimism.drpc.org',
-    symbol: 'ETH',
-  },
-  arbitrum: {
-    name: 'Arbitrum',
-    rpcUrl: 'https://arbitrum.drpc.org',
-    symbol: 'ETH',
-  },
-};
 
 export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddressProps) {
   const [address, setAddress] = useState('');
@@ -82,11 +58,11 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
         const { symbol } = chainConfig[key];
         console.log(`${chainConfig[key].name} native balance (${symbol}):`, nextBalances[key]);
       });
+
+      onContinue?.(trimmedAddress, nextBalances);
     } catch (error) {
       console.log('Failed to fetch native balances:', error);
     }
-
-    onContinue?.(trimmedAddress);
   };
 
   return (
@@ -124,11 +100,6 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
         </View>
 
         <View style={styles.footer}>
-          <View style={{ marginBottom: 12 }}>
-            {(Object.keys(chainConfig) as ChainKey[]).map((key) => (
-              <Text key={key} style={styles.balanceText}>{chainConfig[key].name} ({chainConfig[key].symbol}): {balances[key]}</Text>
-            ))}
-          </View>
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={handleContinue}
@@ -209,10 +180,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 17,
     fontWeight: '600',
-  },
-  balanceText: {
-    color: DARK_TEXT,
-    fontSize: 14,
-    marginBottom: 4,
   },
 }); 
