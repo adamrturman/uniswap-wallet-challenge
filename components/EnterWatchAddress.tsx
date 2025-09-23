@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { ethers } from 'ethers';
 
 export type EnterWatchAddressProps = {
   onBack?: () => void;
@@ -25,9 +26,22 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
 
   const isValid = useMemo(() => isValidEthAddress(address), [address]);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!isValid) return;
-    onContinue?.(address.trim());
+
+    const trimmedAddress = address.trim();
+    setAddress(trimmedAddress);
+
+    try {
+      const provider = ethers.getDefaultProvider('https://eth.drpc.org');
+      const balanceWei = await provider.getBalance(trimmedAddress);
+      const balanceEther = ethers.utils.formatEther(balanceWei);
+      console.log('Native balance (ETH):', balanceEther);
+    } catch (error) {
+      console.log('Failed to fetch native balance:', error);
+    }
+
+    onContinue?.(trimmedAddress);
   };
 
   return (
