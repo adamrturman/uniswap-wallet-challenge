@@ -54,8 +54,7 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
           contentContainerStyle={styles.filtersContent}
           style={styles.filtersScrollView}
         >
-        <FilterPill
-          label="All"
+        <AllButton
           isSelected={selected === 'all'}
           onPress={() => setSelected('all')}
         />
@@ -90,6 +89,26 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
         ))}
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function AllButton({ isSelected, onPress }: { isSelected: boolean; onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={[styles.pill, isSelected && styles.pillSelected]}>
+      <View style={styles.allButtonContent}>
+        <View style={styles.chainGrid}>
+          <View style={styles.gridRow}>
+            <Image source={chainConfig.ethereum.chainIcon} style={styles.gridIcon} />
+            <Image source={chainConfig.optimism.chainIcon} style={styles.gridIcon} />
+          </View>
+          <View style={styles.gridRow}>
+            <Image source={chainConfig.arbitrum.chainIcon} style={styles.gridIcon} />
+            <Image source={chainConfig.polygon.chainIcon} style={styles.gridIcon} />
+          </View>
+        </View>
+        <Text style={[styles.pillText, isSelected && styles.pillTextSelected]}>All</Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -213,6 +232,26 @@ const styles = StyleSheet.create({
   tokenIcon: {
     width: 40,
     height: 40,
+    resizeMode: 'contain',
+  },
+  allButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  chainGrid: {
+    width: 24,
+    height: 24,
+    justifyContent: 'space-between',
+  },
+  gridRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1,
+  },
+  gridIcon: {
+    width: 10,
+    height: 10,
     resizeMode: 'contain',
   }
 });
