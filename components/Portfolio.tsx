@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { chainConfig, ChainKey, chainOrder } from './chainConfig';
 
@@ -8,6 +8,8 @@ const BORDER = '#EAEAEA';
 const PILL_BG = '#F4F4F4';
 const PILL_SELECTED_BG = '#FC72FF';
 const PILL_SELECTED_TEXT = '#ffffff';
+const ICON_BG = '#F4F4F4';
+const ETH_BG = '#5B8DEF';
 
 export type PortfolioProps = {
   address: string;
@@ -62,6 +64,11 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
             label={chainConfig[key].name}
             isSelected={selected === key}
             onPress={() => setSelected(key)}
+            renderIcon={() => (
+              <View >
+                <Image source={chainConfig[key].chainIcon} style={styles.filterIcon} />
+              </View>
+            )}
           />
         ))}
       </ScrollView>
@@ -69,7 +76,15 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
       <ScrollView style={styles.list} contentContainerStyle={{ paddingVertical: 8 }}>
         {visibleKeys.map((key) => (
           <View key={key} style={styles.row}>
-            <Text style={styles.chainName}>{chainConfig[key].name} ({chainConfig[key].symbol})</Text>
+            <View style={styles.rowLeft}>
+              <Image 
+                source={chainConfig[key].nativeTokenIcon} 
+                style={[
+                  styles.tokenIcon,
+                ]} 
+              />
+              <Text style={styles.chainName}>{chainConfig[key].name} ({chainConfig[key].symbol})</Text>
+            </View>
             <Text style={styles.chainBalance}>{balances[key]}</Text>
           </View>
         ))}
@@ -78,10 +93,13 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
   );
 }
 
-function FilterPill({ label, isSelected, onPress }: { label: string; isSelected: boolean; onPress: () => void }) {
+function FilterPill({ label, isSelected, onPress, renderIcon }: { label: string; isSelected: boolean; onPress: () => void; renderIcon?: () => React.ReactNode }) {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={[styles.pill, isSelected && styles.pillSelected]}>
-      <Text style={[styles.pillText, isSelected && styles.pillTextSelected]}>{label}</Text>
+      <View style={styles.pillContent}>
+        {renderIcon && renderIcon()}
+        <Text style={[styles.pillText, isSelected && styles.pillTextSelected]}>{label}</Text>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -146,6 +164,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: BORDER,
   },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   chainName: {
     color: DARK_TEXT,
     fontSize: 16,
@@ -163,6 +186,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  pillContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
   pillSelected: {
     backgroundColor: PILL_SELECTED_BG,
   },
@@ -174,4 +202,14 @@ const styles = StyleSheet.create({
   pillTextSelected: {
     color: PILL_SELECTED_TEXT,
   },
-}); 
+  filterIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
+  tokenIcon: {
+    width: 40,
+    height: 40,
+    resizeMode: 'contain',
+  }
+});

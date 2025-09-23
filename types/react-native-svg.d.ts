@@ -22,4 +22,9 @@ declare module 'react-native-svg' {
   export const Path: React.ComponentType<PathProps>;
 
   export default Svg;
+}
+
+declare module "*.png" {
+	const value: any;
+	export default value;
 } 
