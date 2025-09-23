@@ -21,10 +21,37 @@ function isValidEthAddress(candidate: string): boolean {
   return /^0x[a-fA-F0-9]{40}$/.test(value);
 }
 
+// Chains config for native token balance lookups
+type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum';
+const chainConfig: Record<ChainKey, { name: string; rpcUrl: string; symbol: string }> = {
+  ethereum: {
+    name: 'Ethereum',
+    rpcUrl: 'https://eth.drpc.org',
+    symbol: 'ETH',
+  },
+  polygon: {
+    name: 'Polygon',
+    rpcUrl: 'https://polygon.drpc.org',
+    symbol: 'MATIC',
+  },
+  optimism: {
+    name: 'Optimism',
+    rpcUrl: 'https://optimism.drpc.org',
+    symbol: 'ETH',
+  },
+  arbitrum: {
+    name: 'Arbitrum',
+    rpcUrl: 'https://arbitrum.drpc.org',
+    symbol: 'ETH',
+  },
+};
+
 export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddressProps) {
   const [address, setAddress] = useState('');
+  const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0 });
 
   const isValid = useMemo(() => isValidEthAddress(address), [address]);
+
 
   const handleContinue = async () => {
     if (!isValid) return;
@@ -33,12 +60,30 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
     setAddress(trimmedAddress);
 
     try {
-      const provider = ethers.getDefaultProvider('https://eth.drpc.org');
-      const balanceWei = await provider.getBalance(trimmedAddress);
-      const balanceEther = ethers.utils.formatEther(balanceWei);
-      console.log('Native balance (ETH):', balanceEther);
+      // Fetch native balances across configured chains in parallel
+      const entries = (Object.keys(chainConfig) as ChainKey[]).map(async (key) => {
+        const { rpcUrl } = chainConfig[key];
+        const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+        const balanceWei = await provider.getBalance(trimmedAddress);
+        const balanceEther = ethers.utils.formatEther(balanceWei);
+        return [key, Number(balanceEther)] as const;
+      });
+
+      const results = await Promise.all(entries);
+      const nextBalances = results.reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, { ...balances } as Record<ChainKey, number>);
+
+      setBalances(nextBalances);
+
+      // Log for debugging
+      (Object.keys(nextBalances) as ChainKey[]).forEach((key) => {
+        const { symbol } = chainConfig[key];
+        console.log(`${chainConfig[key].name} native balance (${symbol}):`, nextBalances[key]);
+      });
     } catch (error) {
-      console.log('Failed to fetch native balance:', error);
+      console.log('Failed to fetch native balances:', error);
     }
 
     onContinue?.(trimmedAddress);
@@ -79,6 +124,11 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
         </View>
 
         <View style={styles.footer}>
+          <View style={{ marginBottom: 12 }}>
+            {(Object.keys(chainConfig) as ChainKey[]).map((key) => (
+              <Text key={key} style={styles.balanceText}>{chainConfig[key].name} ({chainConfig[key].symbol}): {balances[key]}</Text>
+            ))}
+          </View>
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={handleContinue}
@@ -159,5 +209,10 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 17,
     fontWeight: '600',
+  },
+  balanceText: {
+    color: DARK_TEXT,
+    fontSize: 14,
+    marginBottom: 4,
   },
 }); 
