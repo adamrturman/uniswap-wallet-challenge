@@ -2,14 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { chainConfig, ChainKey, chainOrder } from './chainConfig';
+import { useTheme } from '../theme';
 
-const DARK_TEXT = '#0a0a0a';
-const BORDER = '#EAEAEA';
-const PILL_BG = '#F4F4F4';
-const PILL_SELECTED_BG = '#FC72FF';
-const PILL_SELECTED_TEXT = '#ffffff';
-const ICON_BG = '#F4F4F4';
-const ETH_BG = '#5B8DEF';
 
 export type PortfolioProps = {
   address: string;
@@ -23,6 +17,7 @@ function truncateAddress(addr: string) {
 }
 
 export default function Portfolio({ address, balances, onBack }: PortfolioProps) {
+  const { colors } = useTheme();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
 
   const orderedKeys = useMemo(() => chainOrder, []);
@@ -33,17 +28,17 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
   }, [orderedKeys, selected]);
 
   return (
-    <View style={styles.safeArea}>
+    <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={onBack} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel="Go back">
-          <Feather name="chevron-left" size={28} color={DARK_TEXT} />
+          <Feather name="chevron-left" size={28} color={colors.text} />
         </TouchableOpacity>
         <View style={{ width: 28 }} />
       </View>
 
       <View style={styles.addressCard}>
-        <View style={styles.avatar}><Text style={styles.avatarText}>👛</Text></View>
-        <Text style={styles.addressText}>{truncateAddress(address)}</Text>
+        <View style={[styles.avatar, { backgroundColor: colors.backgroundSecondary }]}><Text style={styles.avatarText}>👛</Text></View>
+        <Text style={[styles.addressText, { color: colors.text }]}>{truncateAddress(address)}</Text>
       </View>
 
       <View style={styles.filtersContainer}>
@@ -81,9 +76,9 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
                 source={chainConfig[key].nativeTokenIcon} 
                 style={styles.tokenIcon} 
               />
-              <Text style={styles.chainName}>{chainConfig[key].name} ({chainConfig[key].symbol})</Text>
+              <Text style={[styles.chainName, { color: colors.text }]}>{chainConfig[key].name} ({chainConfig[key].symbol})</Text>
             </View>
-            <Text style={styles.chainBalance}>{balances[key]}</Text>
+            <Text style={[styles.chainBalance, { color: colors.text }]}>{balances[key]}</Text>
           </View>
         ))}
       </ScrollView>
@@ -92,8 +87,17 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
 }
 
 function AllButton({ isSelected, onPress }: { isSelected: boolean; onPress: () => void }) {
+  const { colors } = useTheme();
+  
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={[styles.pill, isSelected && styles.pillSelected]}>
+    <TouchableOpacity 
+      onPress={onPress} 
+      activeOpacity={0.85} 
+      style={[
+        styles.pill, 
+        { backgroundColor: isSelected ? colors.pillSelectedBackground : colors.pillBackground }
+      ]}
+    >
       <View style={styles.allButtonContent}>
         <View style={styles.chainGrid}>
           <View style={styles.gridRow}>
@@ -105,18 +109,33 @@ function AllButton({ isSelected, onPress }: { isSelected: boolean; onPress: () =
             <Image source={chainConfig.polygon.chainIcon} style={styles.gridIcon} />
           </View>
         </View>
-        <Text style={[styles.pillText, isSelected && styles.pillTextSelected]}>All</Text>
+        <Text style={[
+          styles.pillText, 
+          { color: isSelected ? colors.pillSelectedText : colors.text }
+        ]}>All</Text>
       </View>
     </TouchableOpacity>
   );
 }
 
 function FilterPill({ label, isSelected, onPress, renderIcon }: { label: string; isSelected: boolean; onPress: () => void; renderIcon?: () => React.ReactNode }) {
+  const { colors } = useTheme();
+  
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={[styles.pill, isSelected && styles.pillSelected]}>
+    <TouchableOpacity 
+      onPress={onPress} 
+      activeOpacity={0.85} 
+      style={[
+        styles.pill, 
+        { backgroundColor: isSelected ? colors.pillSelectedBackground : colors.pillBackground }
+      ]}
+    >
       <View style={styles.pillContent}>
         {renderIcon && renderIcon()}
-        <Text style={[styles.pillText, isSelected && styles.pillTextSelected]}>{label}</Text>
+        <Text style={[
+          styles.pillText, 
+          { color: isSelected ? colors.pillSelectedText : colors.text }
+        ]}>{label}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -125,7 +144,6 @@ function FilterPill({ label, isSelected, onPress, renderIcon }: { label: string;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   headerRow: {
     flexDirection: 'row',
@@ -145,7 +163,6 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#F4F4F4',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
@@ -154,7 +171,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   addressText: {
-    color: DARK_TEXT,
     fontSize: 16,
     fontWeight: '500',
   },
@@ -189,16 +205,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   chainName: {
-    color: DARK_TEXT,
     fontSize: 16,
   },
   chainBalance: {
-    color: DARK_TEXT,
     fontSize: 16,
     fontWeight: '600',
   },
   pill: {
-    backgroundColor: PILL_BG,
     borderRadius: 999,
     paddingHorizontal: 12,
     height: 36,
@@ -210,16 +223,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
-  pillSelected: {
-    backgroundColor: PILL_SELECTED_BG,
-  },
   pillText: {
-    color: DARK_TEXT,
     fontSize: 14,
     fontWeight: '500',
-  },
-  pillTextSelected: {
-    color: PILL_SELECTED_TEXT,
   },
   filterIcon: {
     width: 24,

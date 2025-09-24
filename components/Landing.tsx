@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import uniswapLogo from "../assets/Uniswap_icon_pink.png"
+import uniswapLogo from "../assets/Uniswap_icon_pink.png";
+import { useTheme } from '../theme';
 
 type LandingProps = {
   onImportWallet?: () => void;
@@ -8,8 +9,10 @@ type LandingProps = {
 };
 
 export default function Landing({ onImportWallet, onWatchAddress }: LandingProps) {
+  const { colors } = useTheme();
+  
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.logoWrapper}>
         <Image
           source={uniswapLogo}
@@ -18,26 +21,29 @@ export default function Landing({ onImportWallet, onWatchAddress }: LandingProps
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity style={[styles.button, styles.primaryButton]} onPress={onImportWallet} activeOpacity={0.85}>
-          <Text style={[styles.buttonText, styles.primaryText]}>Import a wallet</Text>
+        <TouchableOpacity 
+          style={[styles.button, { backgroundColor: colors.primary }]} 
+          onPress={onImportWallet} 
+          activeOpacity={0.85}
+        >
+          <Text style={[styles.buttonText, { color: colors.textInverse }]}>Import a wallet</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={onWatchAddress} activeOpacity={0.85}>
-          <Text style={[styles.buttonText, styles.secondaryText]}>Watch an address</Text>
+        <TouchableOpacity 
+          style={[styles.button, { backgroundColor: colors.backgroundSecondary }]} 
+          onPress={onWatchAddress} 
+          activeOpacity={0.85}
+        >
+          <Text style={[styles.buttonText, { color: colors.text }]}>Watch an address</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const PINK = '#FC72FF';
-const LIGHT_GRAY = '#efefef';
-const DARK_TEXT = '#0a0a0a';
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: 80,
@@ -66,20 +72,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
-  primaryButton: {
-    backgroundColor: PINK,
-  },
-  secondaryButton: {
-    backgroundColor: LIGHT_GRAY,
-  },
   buttonText: {
     fontSize: 17,
     fontWeight: '600',
-  },
-  primaryText: {
-    color: '#ffffff',
-  },
-  secondaryText: {
-    color: DARK_TEXT,
   },
 }); 

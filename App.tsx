@@ -5,6 +5,7 @@ import EnterWatchAddress from './components/EnterWatchAddress';
 import Portfolio from './components/Portfolio';
 import { ChainKey } from './components/chainConfig';
 import { providers, utils, BigNumber, BigNumberish } from 'ethers';
+import { ThemeProvider, useTheme } from './theme';
 
 async function fetchEthBalanceWei(address: string): Promise<BigNumber> {
   const provider = new providers.JsonRpcProvider('https://cloudflare-eth.com');
@@ -16,10 +17,11 @@ function formatEther(wei: BigNumberish): string {
   return utils.formatEther(wei);
 }
 
-export default function App() {
+function AppContent() {
   const [route, setRoute] = useState<'landing' | 'enterWatch' | 'portfolio'>('landing');
   const [watchedAddress, setWatchedAddress] = useState<string>('');
   const [balances, setBalances] = useState<Record<ChainKey, number> | null>(null);
+  const { colors } = useTheme();
 
   function handleContinue(address: string, nextBalances: Record<ChainKey, number>) {
     setWatchedAddress(address);
@@ -28,7 +30,7 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {route === 'landing' && (
         <Landing
           onImportWallet={() => console.log('Import wallet pressed')}
@@ -52,9 +54,16 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
 });

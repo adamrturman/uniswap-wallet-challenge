@@ -3,19 +3,16 @@ import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInp
 import { Feather } from '@expo/vector-icons';
 import { ethers } from 'ethers';
 import { chainConfig, ChainKey } from './chainConfig';
+import { useTheme } from '../theme';
 
 export type EnterWatchAddressProps = {
   onBack?: () => void;
   onContinue?: (address: string, balances: Record<ChainKey, number>) => void;
 };
 
-const PINK_ENABLED = '#FC72FF';
-const PINK_DISABLED = '#FAD6FF';
-const BORDER = '#EAEAEA';
-const DARK_TEXT = '#0a0a0a';
-const PLACEHOLDER = '#9AA0A6';
 
 export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddressProps) {
+  const { colors } = useTheme();
   const [address, setAddress] = useState('');
   const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0 });
 
@@ -59,29 +56,29 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
-        style={styles.container}
+        style={[styles.container, { backgroundColor: colors.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.headerRow}>
           <TouchableOpacity onPress={onBack} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel="Go back">
             {/* Back chevron icon */}
-            <Feather name="chevron-left" size={28} color={DARK_TEXT} />
+            <Feather name="chevron-left" size={28} color={colors.text} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.content}>
-          <View style={styles.avatar}>
+          <View style={[styles.avatar, { backgroundColor: colors.backgroundSecondary }]}>
             <Text style={styles.avatarText}>👤</Text>
           </View>
-          <Text style={styles.title}>Enter a wallet address</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Enter a wallet address</Text>
 
-          <View style={[styles.inputWrapper, { borderColor: BORDER }]}>
+          <View style={[styles.inputWrapper, { borderColor: colors.border }]}>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: colors.text }]}
               placeholder="Type or paste wallet address"
-              placeholderTextColor={PLACEHOLDER}
+              placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
               autoCorrect={false}
               value={address}
@@ -97,9 +94,9 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
             activeOpacity={0.85}
             onPress={handleContinue}
             disabled={!isValid}
-            style={[styles.ctaButton, { backgroundColor: isValid ? PINK_ENABLED : PINK_DISABLED }]}
+            style={[styles.ctaButton, { backgroundColor: isValid ? colors.primary : colors.primaryDisabled }]}
           >
-            <Text style={styles.ctaText}>Continue</Text>
+            <Text style={[styles.ctaText, { color: colors.textInverse }]}>Continue</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -110,11 +107,9 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   headerRow: {
     flexDirection: 'row',
@@ -126,7 +121,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F4F4F4',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
@@ -142,7 +136,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: DARK_TEXT,
     textAlign: 'center',
     marginBottom: 14,
   },
@@ -156,7 +149,6 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 16,
-    color: DARK_TEXT,
   },
   footer: {
     marginTop: 'auto',
@@ -170,7 +162,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   ctaText: {
-    color: '#ffffff',
     fontSize: 17,
     fontWeight: '600',
   },
