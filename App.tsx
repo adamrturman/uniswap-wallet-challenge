@@ -8,6 +8,7 @@ import Landing from './components/Landing';
 import EnterWatchAddress from './components/EnterWatchAddress';
 import EnterRecoveryPhrase from './components/EnterRecoveryPhrase';
 import EnterRecipientAddress from './components/EnterRecipientAddress';
+import SelectToken from './components/SelectToken';
 import Portfolio from './components/Portfolio';
 import { ThemeProvider } from './theme';
 
@@ -17,6 +18,7 @@ export default function App() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [watchedAddress, setWatchedAddress] = useState<string>('');
   const [balances, setBalances] = useState<Record<ChainKey, number> | null>(null);
+  const [recipientAddress, setRecipientAddress] = useState<string>('');
 
   const handleWatchAddressContinue = (address: string, nextBalances: Record<ChainKey, number>) => {
     setWatchedAddress(address);
@@ -37,6 +39,15 @@ export default function App() {
     }
   };
 
+  const handleRecipientAddressContinue = (address: string) => {
+    setRecipientAddress(address);
+  };
+
+  const handleTokenSelect = (chainKey: ChainKey, balance: number) => {
+    console.log('Selected token:', chainKey, 'Balance:', balance);
+    // TODO: Navigate to amount input screen
+  };
+
   return (
     <ThemeProvider>
       <NavigationContainer>
@@ -52,7 +63,17 @@ export default function App() {
             {() => <EnterRecoveryPhrase onContinue={handleRecoveryPhraseContinue} />}
           </Stack.Screen>
           <Stack.Screen name="EnterRecipientAddress">
-            {() => <EnterRecipientAddress onContinue={(address) => console.log('Recipient address:', address)} />}
+            {() => <EnterRecipientAddress onContinue={handleRecipientAddressContinue} />}
+          </Stack.Screen>
+          <Stack.Screen name="SelectToken">
+            {() => balances ? (
+              <SelectToken
+                address={watchedAddress}
+                balances={balances}
+                wallet={wallet}
+                onTokenSelect={handleTokenSelect}
+              />
+            ) : null}
           </Stack.Screen>
           <Stack.Screen name="Portfolio">
             {() => balances ? (

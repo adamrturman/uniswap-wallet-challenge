@@ -7,7 +7,7 @@ import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
-import HeaderIcon from './HeaderIcon';
+import HeaderIcon, { SendIcon } from './HeaderIcon';
 
 type EnterRecipientAddressProps = {
   onContinue?: (address: string) => void;
@@ -33,6 +33,9 @@ export default function EnterRecipientAddress({ onContinue }: EnterRecipientAddr
     // Call the continue handler
     onContinue?.(trimmedAddress);
     
+    // Navigate to SelectToken screen
+    navigation.navigate('SelectToken');
+    
     // Clear the input field for when user comes back
     setAddress('');
   };
@@ -49,7 +52,7 @@ export default function EnterRecipientAddress({ onContinue }: EnterRecipientAddr
 
         <View style={styles.content}>
           <Header
-            icon={<HeaderIcon name="send" library="ionicons" size="large" />}
+            icon={<HeaderIcon icon={SendIcon} size="large" />}
             text={
               <Text style={[styles.title, { color: colors.text }]}>
                 Enter recipient address

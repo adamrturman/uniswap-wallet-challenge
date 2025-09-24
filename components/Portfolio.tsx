@@ -9,7 +9,7 @@ import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
-import HeaderIcon from './HeaderIcon';
+import HeaderIcon, { WalletIcon } from './HeaderIcon';
 
 export type PortfolioProps = {
   address: string;
@@ -53,7 +53,7 @@ export default function Portfolio({ address, balances, wallet }: PortfolioProps)
 
       <View style={styles.addressCard}>
         <Header
-          icon={<HeaderIcon name="wallet" library="ionicons" size="xlarge" />}
+          icon={<HeaderIcon icon={WalletIcon} size="xlarge" />}
           text={
             <Text style={[styles.addressText, { color: colors.text }]}>
               {truncateAddress(address)}

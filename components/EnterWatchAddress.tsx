@@ -9,7 +9,7 @@ import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
-import HeaderIcon from './HeaderIcon';
+import HeaderIcon, { EyeIcon } from './HeaderIcon';
 
 type EnterWatchAddressProps = {
   onContinue?: (address: string, balances: Record<ChainKey, number>) => void;
@@ -81,7 +81,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
 
         <View style={styles.content}>
           <Header
-            icon={<HeaderIcon name="person" library="ionicons" size="large" />}
+            icon={<HeaderIcon icon={EyeIcon} size="large" />}
             text={
               <Text style={[styles.title, { color: colors.text }]}>
                 Enter a wallet address

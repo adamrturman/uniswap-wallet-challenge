@@ -15,7 +15,7 @@ import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
-import HeaderIcon from './HeaderIcon';
+import HeaderIcon, { KeyIcon } from './HeaderIcon';
 
 type EnterRecoveryPhraseProps = {
   onContinue?: (phrase: string) => void;
@@ -69,7 +69,7 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
       {/* Main content */}
       <View style={styles.content}>
         <Header
-          icon={<HeaderIcon name="document-text" library="ionicons" size="large" />}
+          icon={<HeaderIcon icon={KeyIcon} size="large" />}
           text={
             <View>
               <Text style={[styles.title, { color: colors.text }]}>

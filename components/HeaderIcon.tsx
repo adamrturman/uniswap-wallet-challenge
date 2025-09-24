@@ -2,13 +2,34 @@ import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { useTheme } from '../theme';
+
+// Named icon components
+export const CoinsIcon = ({ color, size }: { color: string; size: number }) => (
+  <FontAwesome6 name="coins" color={color} size={size} />
+);
+
+export const SendIcon = ({ color, size }: { color: string; size: number }) => (
+  <Ionicons name="send" color={color} size={size} />
+);
+
+export const WalletIcon = ({ color, size }: { color: string; size: number }) => (
+  <Ionicons name="wallet" color={color} size={size} />
+);
+
+export const EyeIcon = ({ color, size }: { color: string; size: number }) => (
+  <Ionicons name="eye" color={color} size={size} />
+);
+
+export const KeyIcon = ({ color, size }: { color: string; size: number }) => (
+  <Ionicons name="key" color={color} size={size} />
+);
 
 export type IconSize = 'small' | 'medium' | 'large' | 'xlarge';
 
 export type HeaderIconProps = {
-  name: string;
-  library?: 'material' | 'ionicons';
+  icon: React.ComponentType<{ color: string; size: number }>;
   size?: IconSize;
   backgroundColor?: string;
   style?: ViewStyle;
@@ -34,8 +55,7 @@ const sizeConfig = {
 };
 
 export default function HeaderIcon({ 
-  name, 
-  library = 'material', 
+  icon: IconComponent, 
   size = 'medium',
   backgroundColor,
   style 
@@ -57,16 +77,11 @@ export default function HeaderIcon({
 
   const renderIcon = () => {
     const iconProps = {
-      name: name as any,
       color: colors.primary,
       size: iconSize,
     };
 
-    if (library === 'ionicons') {
-      return <Ionicons {...iconProps} />;
-    }
-    
-    return <MaterialIcons {...iconProps} />;
+    return <IconComponent {...iconProps} />;
   };
 
   return (
