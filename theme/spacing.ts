@@ -4,6 +4,7 @@ export const spacing = {
   md: 12,   // 12px
   lg: 16,   // 16px
   xl: 20,   // 20px
+  xxl: 24,  // 24px
 } as const;
 
 export type Spacing = typeof spacing;

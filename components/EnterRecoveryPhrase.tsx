@@ -7,10 +7,13 @@ import {
   SafeAreaView,
   StatusBar
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
-import { useTheme, spacing } from '../theme';
+import { useTheme, spacing, typography } from '../theme';
 import Button from './Button';
 import BackButton from './BackButton';
+import Header from './Header';
+import HeaderIcon from './HeaderIcon';
 
 type EnterRecoveryPhraseProps = {
   onBack?: () => void;
@@ -44,7 +47,7 @@ export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecover
     }
   };
 
-  // Determine if we should show an error
+  // If a user has entered something but it's not valid
   const showError = phrase.trim().length > 0 && !isValidPhrase;
 
   return (
@@ -58,20 +61,19 @@ export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecover
 
       {/* Main content */}
       <View style={styles.content}>
-        {/* Icon */}
-        <View style={[styles.iconContainer, { backgroundColor: colors.backgroundSecondary }]}>
-          <Text style={[styles.icon, { color: colors.text }]}>📄</Text>
-        </View>
-
-        {/* Title */}
-        <Text style={[styles.title, { color: colors.text }]}>
-          Enter your recovery phrase
-        </Text>
-
-        {/* Subtitle */}
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          Your recovery phrase will only be stored locally on your device.
-        </Text>
+        <Header
+          icon={<HeaderIcon name="document-text" library="ionicons" size="large" />}
+          text={
+            <View>
+              <Text style={[styles.title, { color: colors.text }]}>
+                Enter your recovery phrase
+              </Text>
+              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+                Your recovery phrase will only be stored locally on your device.
+              </Text>
+            </View>
+          }
+        />
 
         {/* Input field */}
         <View style={styles.inputContainer}>
@@ -128,40 +130,30 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 20,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xl,
   },
   content: {
     flex: 1,
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24,
-  },
-  icon: {
-    fontSize: 24,
+    paddingHorizontal: spacing.xl,
+    marginTop: 0,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.medium,
     textAlign: 'center',
-    marginBottom: 12,
+    marginTop: spacing.xxl,
+    marginBottom: spacing.xxl,
     lineHeight: 32,
   },
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: spacing.xxl,
     lineHeight: 22,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
   },
   inputContainer: {
     width: '100%',

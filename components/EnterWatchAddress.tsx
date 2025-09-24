@@ -1,10 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { ethers } from 'ethers';
 import { chainConfig, ChainKey } from './chainConfig';
-import { useTheme, spacing } from '../theme';
+import { useTheme, spacing, typography } from '../theme';
 import Button from './Button';
 import BackButton from './BackButton';
+import Header from './Header';
+import HeaderIcon from './HeaderIcon';
 
 export type EnterWatchAddressProps = {
   onBack?: () => void;
@@ -70,10 +73,14 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
         </View>
 
         <View style={styles.content}>
-          <View style={[styles.avatar, { backgroundColor: colors.backgroundSecondary }]}>
-            <Text style={styles.avatarText}>👤</Text>
-          </View>
-          <Text style={[styles.title, { color: colors.text }]}>Enter a wallet address</Text>
+          <Header
+            icon={<HeaderIcon name="person" library="ionicons" size="large" />}
+            text={
+              <Text style={[styles.title, { color: colors.text }]}>
+                Enter a wallet address
+              </Text>
+            }
+          />
 
           <View style={[styles.inputWrapper, { borderColor: showError ? colors.error : colors.border }]}>
             <TextInput
@@ -125,30 +132,22 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 4,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  avatarText: {
-    fontSize: 20,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xl,
   },
   content: {
-    paddingHorizontal: 20,
-    marginTop: 20,
+    paddingHorizontal: spacing.xl,
+    marginTop: 0,
     alignItems: 'center',
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.medium,
     textAlign: 'center',
-    marginBottom: 14,
+    marginTop: spacing.xxl,
+    marginBottom: spacing.xxl,
+    lineHeight: 32,
   },
   inputWrapper: {
     borderWidth: 1,

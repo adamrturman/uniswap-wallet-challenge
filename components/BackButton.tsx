@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useTheme } from '../theme';
+import { useTheme, typography } from '../theme';
 
 type BackButtonProps = {
   onPress?: () => void;
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   backArrow: {
-    fontSize: 24,
-    fontWeight: '600',
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.semibold,
   },
 });

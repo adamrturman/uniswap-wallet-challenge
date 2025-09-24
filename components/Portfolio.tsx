@@ -1,10 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
 import { chainConfig, ChainKey, chainOrder } from './chainConfig';
-import { useTheme, spacing } from '../theme';
+import { useTheme, spacing, typography } from '../theme';
 import Button from './Button';
 import BackButton from './BackButton';
+import Header from './Header';
+import HeaderIcon from './HeaderIcon';
 
 
 export type PortfolioProps = {
@@ -30,8 +33,6 @@ export default function Portfolio({ address, balances, wallet, onBack }: Portfol
     return keys;
   }, [orderedKeys, selected]);
 
-  console.log('balances', balances);
-
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
@@ -40,8 +41,14 @@ export default function Portfolio({ address, balances, wallet, onBack }: Portfol
       </View>
 
       <View style={styles.addressCard}>
-        <View style={[styles.avatar, { backgroundColor: colors.backgroundSecondary }]}><Text style={styles.avatarText}>👛</Text></View>
-        <Text style={[styles.addressText, { color: colors.text }]}>{truncateAddress(address)}</Text>
+        <Header
+          icon={<HeaderIcon name="wallet" library="ionicons" size="xlarge" />}
+          text={
+            <Text style={[styles.addressText, { color: colors.text }]}>
+              {truncateAddress(address)}
+            </Text>
+          }
+        />
       </View>
 
       <View style={styles.filtersContainer}>
@@ -173,30 +180,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 4,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xl,
   },
   addressCard: {
-    marginTop: 16,
-    marginHorizontal: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    marginTop: 0,
+    marginHorizontal: spacing.xl,
+    paddingHorizontal: spacing.lg,
     alignItems: 'center',
-  },
-  avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  avatarText: {
-    fontSize: 24,
   },
   addressText: {
-    fontSize: 16,
-    fontWeight: '500',
+    fontSize: typography.sizes.lg,
+    fontWeight: typography.weights.medium,
+    marginTop: spacing.xxl,
   },
   filtersContainer: {
     marginTop: 16,
@@ -232,8 +229,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   chainBalance: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: typography.sizes.base,
+    fontWeight: typography.weights.semibold,
   },
   pill: {
     borderRadius: 999,
@@ -248,8 +245,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   pillText: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.medium,
   },
   filterIcon: {
     width: 24,

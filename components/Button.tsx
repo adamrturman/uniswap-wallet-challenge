@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
-import { useTheme, spacing } from '../theme';
+import { useTheme, spacing, typography } from '../theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'disabled';
 
@@ -66,8 +66,8 @@ export default function Button({
 
   const getTextStyle = (): TextStyle => {
     const baseTextStyle: TextStyle = {
-      fontSize: 17,
-      fontWeight: '600',
+      fontSize: typography.sizes.lg,
+      fontWeight: typography.weights.semibold,
     };
 
     switch (variant) {
