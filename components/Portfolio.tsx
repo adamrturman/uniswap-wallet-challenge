@@ -1,20 +1,20 @@
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
 import { chainConfig, ChainKey, chainOrder } from './chainConfig';
 import { useTheme, spacing, typography } from '../theme';
+import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
 import HeaderIcon from './HeaderIcon';
 
-
 export type PortfolioProps = {
   address: string;
   balances: Record<ChainKey, number>;
   wallet?: Wallet | null;
-  onBack?: () => void;
 };
 
 function truncateAddress(addr: string) {
@@ -22,8 +22,9 @@ function truncateAddress(addr: string) {
   return `${v.slice(0, 5)}...${v.slice(-5)}`;
 }
 
-export default function Portfolio({ address, balances, wallet, onBack }: PortfolioProps) {
+export default function Portfolio({ address, balances, wallet }: PortfolioProps) {
   const { colors } = useTheme();
+  const navigation = useNavigation<NavigationType>();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
 
   const orderedKeys = useMemo(() => chainOrder, []);
@@ -36,7 +37,7 @@ export default function Portfolio({ address, balances, wallet, onBack }: Portfol
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
-        <BackButton onPress={onBack} />
+        <BackButton onPress={() => navigation.goBack()} />
         <View style={{ width: 28 }} />
       </View>
 

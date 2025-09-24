@@ -7,21 +7,23 @@ import {
   SafeAreaView,
   StatusBar
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
 import { useTheme, spacing, typography } from '../theme';
+import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
 import HeaderIcon from './HeaderIcon';
 
 type EnterRecoveryPhraseProps = {
-  onBack?: () => void;
   onContinue?: (phrase: string) => void;
 };
 
-export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecoveryPhraseProps) {
+export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseProps) {
   const { colors } = useTheme();
+  const navigation = useNavigation<NavigationType>();
   const [phrase, setPhrase] = useState('');
   const [isValidPhrase, setIsValidPhrase] = useState(false);
 
@@ -44,6 +46,10 @@ export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecover
   const handleContinue = () => {
     if (onContinue && isValidPhrase) {
       onContinue(phrase);
+      navigation.navigate('Portfolio');
+      
+      // Clear the input field for when user comes back
+      setPhrase('');
     }
   };
 
@@ -56,7 +62,7 @@ export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecover
       
       {/* Header with back button */}
       <View style={styles.header}>
-        <BackButton onPress={onBack} />
+        <BackButton onPress={() => navigation.goBack()} />
       </View>
 
       {/* Main content */}

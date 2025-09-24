@@ -1,22 +1,23 @@
 import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { ethers } from 'ethers';
 import { chainConfig, ChainKey } from './chainConfig';
 import { useTheme, spacing, typography } from '../theme';
+import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
 import HeaderIcon from './HeaderIcon';
 
-export type EnterWatchAddressProps = {
-  onBack?: () => void;
+type EnterWatchAddressProps = {
   onContinue?: (address: string, balances: Record<ChainKey, number>) => void;
 };
 
-
-export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddressProps) {
+export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps) {
   const { colors } = useTheme();
+  const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
   const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0, sepolia: 0 });
 
@@ -56,7 +57,12 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
         console.log(`${chainConfig[key].name} native balance (${symbol}):`, nextBalances[key]);
       });
 
+      // Call the continue handler and navigate to portfolio
       onContinue?.(trimmedAddress, nextBalances);
+      navigation.navigate('Portfolio');
+      
+      // Clear the input field for when user comes back
+      setAddress('');
     } catch (error) {
       console.log('Failed to fetch native balances:', error);
     }
@@ -69,7 +75,7 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.headerRow}>
-          <BackButton onPress={onBack} />
+          <BackButton onPress={() => navigation.goBack()} />
         </View>
 
         <View style={styles.content}>

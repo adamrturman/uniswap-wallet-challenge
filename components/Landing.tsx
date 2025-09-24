@@ -1,16 +1,14 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import uniswapLogo from "../assets/Uniswap_icon_pink.png";
 import { useTheme, spacing } from '../theme';
+import { NavigationType } from '../types';
 import Button from './Button';
 
-type LandingProps = {
-  onImportWallet?: () => void;
-  onWatchAddress?: () => void;
-};
-
-export default function Landing({ onImportWallet, onWatchAddress }: LandingProps) {
+export default function Landing() {
   const { colors } = useTheme();
+  const navigation = useNavigation<NavigationType>();
   
   return (
     <View style={[styles.container, { backgroundColor: colors.background, paddingTop: spacing.xl * 4 }]}>
@@ -30,14 +28,14 @@ export default function Landing({ onImportWallet, onWatchAddress }: LandingProps
       }]}>
         <Button 
           title="Import a wallet"
-          onPress={onImportWallet || (() => {})}
+          onPress={() => navigation.navigate('EnterRecoveryPhrase')}
           variant="primary"
           fullWidth
         />
 
         <Button 
           title="Watch an address"
-          onPress={onWatchAddress || (() => {})}
+          onPress={() => navigation.navigate('EnterWatchAddress')}
           variant="secondary"
           fullWidth
         />
