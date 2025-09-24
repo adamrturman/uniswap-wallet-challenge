@@ -7,6 +7,7 @@ import { fetchBalancesForAllChains } from './utils/balanceUtils';
 import Landing from './components/Landing';
 import EnterWatchAddress from './components/EnterWatchAddress';
 import EnterRecoveryPhrase from './components/EnterRecoveryPhrase';
+import EnterRecipientAddress from './components/EnterRecipientAddress';
 import Portfolio from './components/Portfolio';
 import { ThemeProvider } from './theme';
 
@@ -49,6 +50,9 @@ export default function App() {
           </Stack.Screen>
           <Stack.Screen name="EnterRecoveryPhrase">
             {() => <EnterRecoveryPhrase onContinue={handleRecoveryPhraseContinue} />}
+          </Stack.Screen>
+          <Stack.Screen name="EnterRecipientAddress">
+            {() => <EnterRecipientAddress onContinue={(address) => console.log('Recipient address:', address)} />}
           </Stack.Screen>
           <Stack.Screen name="Portfolio">
             {() => balances ? (

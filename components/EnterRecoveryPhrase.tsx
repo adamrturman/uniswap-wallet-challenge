@@ -25,6 +25,7 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [phrase, setPhrase] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const [isValidPhrase, setIsValidPhrase] = useState(false);
 
   const handlePhraseChange = (newPhrase: string) => {
@@ -88,7 +89,11 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
               styles.input,
               { 
                 backgroundColor: colors.background,
-                borderColor: showError ? colors.error : colors.border,
+                borderColor: showError 
+                  ? colors.error 
+                  : isFocused 
+                    ? colors.primary 
+                    : colors.border,
                 color: colors.text
               }
             ]}
@@ -96,6 +101,8 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
             placeholderTextColor={colors.textSecondary}
             value={phrase}
             onChangeText={handlePhraseChange}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             multiline
             textAlignVertical="top"
             autoCapitalize="none"
@@ -174,6 +181,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     minHeight: 120,
     maxHeight: 200,
+    backgroundColor: '#ffffff',
   },
   errorText: {
     fontSize: 14,

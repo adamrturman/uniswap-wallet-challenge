@@ -1,9 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { MaterialIcons } from '@expo/vector-icons';
 import { ethers } from 'ethers';
-import { chainConfig, ChainKey } from './chainConfig';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
@@ -11,62 +9,32 @@ import BackButton from './BackButton';
 import Header from './Header';
 import HeaderIcon from './HeaderIcon';
 
-type EnterWatchAddressProps = {
-  onContinue?: (address: string, balances: Record<ChainKey, number>) => void;
+type EnterRecipientAddressProps = {
+  onContinue?: (address: string) => void;
 };
 
-export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps) {
+export default function EnterRecipientAddress({ onContinue }: EnterRecipientAddressProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0, sepolia: 0 });
 
   const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
   
   // Determine if we should show an error
   const showError = address.trim().length > 0 && !isValid;
 
-
-  const handleContinue = async () => {
+  const handleContinue = () => {
     if (!isValid) return;
 
     const trimmedAddress = address.trim();
     setAddress(trimmedAddress);
 
-    try {
-      // Fetch native balances across configured chains in parallel
-      const entries = (Object.keys(chainConfig) as ChainKey[]).map(async (key) => {
-        const { rpcUrl } = chainConfig[key];
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-        const balanceWei = await provider.getBalance(trimmedAddress);
-        const balanceEther = ethers.utils.formatEther(balanceWei);
-        return [key, Number(balanceEther)] as const;
-      });
-
-      const results = await Promise.all(entries);
-      const nextBalances = results.reduce((acc, [key, value]) => {
-        acc[key] = value;
-        return acc;
-      }, { ...balances } as Record<ChainKey, number>);
-
-      setBalances(nextBalances);
-
-      // Log for debugging
-      (Object.keys(nextBalances) as ChainKey[]).forEach((key) => {
-        const { symbol } = chainConfig[key];
-        console.log(`${chainConfig[key].name} native balance (${symbol}):`, nextBalances[key]);
-      });
-
-      // Call the continue handler and navigate to portfolio
-      onContinue?.(trimmedAddress, nextBalances);
-      navigation.navigate('Portfolio');
-      
-      // Clear the input field for when user comes back
-      setAddress('');
-    } catch (error) {
-      console.log('Failed to fetch native balances:', error);
-    }
+    // Call the continue handler
+    onContinue?.(trimmedAddress);
+    
+    // Clear the input field for when user comes back
+    setAddress('');
   };
 
   return (
@@ -81,10 +49,10 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
 
         <View style={styles.content}>
           <Header
-            icon={<HeaderIcon name="person" library="ionicons" size="large" />}
+            icon={<HeaderIcon name="send" library="ionicons" size="large" />}
             text={
               <Text style={[styles.title, { color: colors.text }]}>
-                Enter a wallet address
+                Enter recipient address
               </Text>
             }
           />
@@ -103,7 +71,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
                   color: colors.text
                 }
               ]}
-              placeholder="Type or paste wallet address"
+              placeholder="Type or paste recipient address"
               placeholderTextColor={colors.textSecondary}
               autoCapitalize="none"
               autoCorrect={false}
@@ -189,4 +157,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     textAlign: 'center',
   },
-}); 
+});
