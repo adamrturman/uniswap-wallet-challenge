@@ -3,13 +3,14 @@ import {
   StyleSheet, 
   Text, 
   TextInput, 
-  TouchableOpacity, 
   View,
   SafeAreaView,
   StatusBar
 } from 'react-native';
 import { Wallet } from 'ethers';
-import { useTheme } from '../theme';
+import { useTheme, spacing } from '../theme';
+import Button from './Button';
+import BackButton from './BackButton';
 
 type EnterRecoveryPhraseProps = {
   onBack?: () => void;
@@ -52,13 +53,7 @@ export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecover
       
       {/* Header with back button */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={onBack}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.backArrow, { color: colors.text }]}>←</Text>
-        </TouchableOpacity>
+        <BackButton onPress={onBack} />
       </View>
 
       {/* Main content */}
@@ -109,23 +104,18 @@ export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecover
       </View>
 
       {/* Continue button */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={[
-            styles.continueButton,
-            { 
-              backgroundColor: colors.primary,
-              opacity: isValidPhrase ? 1 : 0.5
-            }
-          ]} 
+      <View style={[styles.buttonContainer, { 
+        paddingHorizontal: spacing.xl, 
+        paddingBottom: spacing.xl * 2, 
+        paddingTop: spacing.xl 
+      }]}>
+        <Button
+          title="Continue"
           onPress={handleContinue}
-          activeOpacity={0.85}
+          variant={isValidPhrase ? 'primary' : 'disabled'}
           disabled={!isValidPhrase}
-        >
-          <Text style={[styles.continueButtonText, { color: colors.textInverse }]}>
-            Continue
-          </Text>
-        </TouchableOpacity>
+          fullWidth
+        />
       </View>
     </View>
   );
@@ -141,16 +131,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 20,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  backArrow: {
-    fontSize: 24,
-    fontWeight: '600',
   },
   content: {
     flex: 1,
@@ -203,23 +183,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   buttonContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-    paddingTop: 20,
-  },
-  continueButton: {
-    width: '100%',
-    height: 56,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  continueButtonText: {
-    fontSize: 17,
-    fontWeight: '600',
+    // Spacing will be applied via theme values
   },
 });

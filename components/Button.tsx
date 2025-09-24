@@ -1,0 +1,108 @@
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
+import { useTheme, spacing } from '../theme';
+
+export type ButtonVariant = 'primary' | 'secondary' | 'disabled';
+
+export type ButtonProps = {
+  title: string;
+  onPress: () => void;
+  variant?: ButtonVariant;
+  disabled?: boolean;
+  style?: ViewStyle;
+  textStyle?: TextStyle;
+  activeOpacity?: number;
+  fullWidth?: boolean;
+};
+
+export default function Button({ 
+  title, 
+  onPress, 
+  variant = 'primary', 
+  disabled = false, 
+  style,
+  textStyle,
+  activeOpacity = 0.85,
+  fullWidth = false
+}: ButtonProps) {
+  const { colors } = useTheme();
+
+  const getButtonStyle = (): ViewStyle => {
+    const baseStyle: ViewStyle = {
+      width: fullWidth ? '100%' : 'auto',
+      minWidth: fullWidth ? '100%' : 200,
+      height: 56,
+      borderRadius: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: spacing.xl * 1.2,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+    };
+
+    switch (variant) {
+      case 'primary':
+        return {
+          ...baseStyle,
+          backgroundColor: disabled ? colors.primaryDisabled : colors.primary,
+        };
+      case 'secondary':
+        return {
+          ...baseStyle,
+          backgroundColor: colors.backgroundSecondary,
+          shadowColor: colors.shadow,
+        };
+      case 'disabled':
+        return {
+          ...baseStyle,
+          backgroundColor: colors.primaryDisabled,
+        };
+      default:
+        return baseStyle;
+    }
+  };
+
+  const getTextStyle = (): TextStyle => {
+    const baseTextStyle: TextStyle = {
+      fontSize: 17,
+      fontWeight: '600',
+    };
+
+    switch (variant) {
+      case 'primary':
+        return {
+          ...baseTextStyle,
+          color: colors.textInverse,
+        };
+      case 'secondary':
+        return {
+          ...baseTextStyle,
+          color: colors.text,
+        };
+      case 'disabled':
+        return {
+          ...baseTextStyle,
+          color: colors.textInverse,
+        };
+      default:
+        return baseTextStyle;
+    }
+  };
+
+  const isDisabled = disabled || variant === 'disabled';
+
+  return (
+    <TouchableOpacity
+      style={[getButtonStyle(), style]}
+      onPress={onPress}
+      disabled={isDisabled}
+      activeOpacity={activeOpacity}
+    >
+      <Text style={[getTextStyle(), textStyle]}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+}

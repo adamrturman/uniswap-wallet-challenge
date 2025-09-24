@@ -1,13 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Wallet } from 'ethers';
 import { chainConfig, ChainKey, chainOrder } from './chainConfig';
-import { useTheme } from '../theme';
+import { useTheme, spacing } from '../theme';
+import Button from './Button';
+import BackButton from './BackButton';
 
 
 export type PortfolioProps = {
   address: string;
   balances: Record<ChainKey, number>;
+  wallet?: Wallet | null;
   onBack?: () => void;
 };
 
@@ -16,7 +19,7 @@ function truncateAddress(addr: string) {
   return `${v.slice(0, 5)}...${v.slice(-5)}`;
 }
 
-export default function Portfolio({ address, balances, onBack }: PortfolioProps) {
+export default function Portfolio({ address, balances, wallet, onBack }: PortfolioProps) {
   const { colors } = useTheme();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
 
@@ -27,12 +30,12 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
     return keys;
   }, [orderedKeys, selected]);
 
+  console.log('balances', balances);
+
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
-        <TouchableOpacity onPress={onBack} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel="Go back">
-          <Feather name="chevron-left" size={28} color={colors.text} />
-        </TouchableOpacity>
+        <BackButton onPress={onBack} />
         <View style={{ width: 28 }} />
       </View>
 
@@ -76,12 +79,33 @@ export default function Portfolio({ address, balances, onBack }: PortfolioProps)
                 source={chainConfig[key].nativeTokenIcon} 
                 style={styles.tokenIcon} 
               />
-              <Text style={[styles.chainName, { color: colors.text }]}>{chainConfig[key].name} ({chainConfig[key].symbol})</Text>
+              <Text style={[styles.chainName, { color: colors.text }]}>{chainConfig[key].name}</Text>
             </View>
-            <Text style={[styles.chainBalance, { color: colors.text }]}>{balances[key]}</Text>
+            <Text style={[styles.chainBalance, { color: colors.text }]}>
+              {Number(balances[key]).toFixed(4)} {chainConfig[key].symbol}
+            </Text>
           </View>
         ))}
       </ScrollView>
+
+      {/* Send button - only show if wallet is available */}
+      {wallet && (
+        <View style={[styles.sendButtonContainer, { 
+          paddingHorizontal: spacing.xl, 
+          paddingBottom: spacing.xl * 2, 
+          paddingTop: spacing.xl 
+        }]}>
+          <Button
+            title="Send"
+            onPress={() => {
+              // TODO: Implement send functionality
+              console.log('Send button pressed');
+            }}
+            variant="primary"
+            fullWidth
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -256,5 +280,8 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     resizeMode: 'contain',
-  }
+  },
+  sendButtonContainer: {
+    // Spacing will be applied via theme values
+  },
 });

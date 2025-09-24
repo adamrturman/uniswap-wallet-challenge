@@ -1,7 +1,8 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import uniswapLogo from "../assets/Uniswap_icon_pink.png";
-import { useTheme } from '../theme';
+import { useTheme, spacing } from '../theme';
+import Button from './Button';
 
 type LandingProps = {
   onImportWallet?: () => void;
@@ -12,9 +13,9 @@ export default function Landing({ onImportWallet, onWatchAddress }: LandingProps
   const { colors } = useTheme();
   
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background, paddingTop: spacing.xl * 4 }]}>
       <View style={styles.logoWrapper}>
-        <View style={[styles.logoContainer, { backgroundColor: colors.primaryLight }]}>
+        <View style={[styles.logoContainer, { backgroundColor: colors.primaryLight, padding: spacing.xl }]}>
           <Image
             source={uniswapLogo}
             style={{ width: 96, height: 104, resizeMode: 'contain' }}
@@ -22,22 +23,24 @@ export default function Landing({ onImportWallet, onWatchAddress }: LandingProps
         </View>
       </View>
 
-      <View style={styles.actions}>
-        <TouchableOpacity 
-          style={[styles.button, { backgroundColor: colors.primary }]} 
-          onPress={onImportWallet} 
-          activeOpacity={0.85}
-        >
-          <Text style={[styles.buttonText, { color: colors.textInverse }]}>Import a wallet</Text>
-        </TouchableOpacity>
+      <View style={[styles.actions, { 
+        gap: spacing.lg, 
+        paddingBottom: spacing.xl * 2, 
+        paddingTop: spacing.xl 
+      }]}>
+        <Button 
+          title="Import a wallet"
+          onPress={onImportWallet || (() => {})}
+          variant="primary"
+          fullWidth
+        />
 
-        <TouchableOpacity 
-          style={[styles.button, { backgroundColor: colors.backgroundSecondary, shadowColor: colors.shadow }]} 
-          onPress={onWatchAddress} 
-          activeOpacity={0.85}
-        >
-          <Text style={[styles.buttonText, { color: colors.text }]}>Watch an address</Text>
-        </TouchableOpacity>
+        <Button 
+          title="Watch an address"
+          onPress={onWatchAddress || (() => {})}
+          variant="secondary"
+          fullWidth
+        />
       </View>
     </View>
   );
@@ -48,8 +51,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 80,
-    paddingBottom: 40,
   },
   logoWrapper: {
     width: '100%',
@@ -59,7 +60,6 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     borderRadius: 24,
-    padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -71,21 +71,6 @@ const styles = StyleSheet.create({
   actions: {
     width: '100%',
     alignItems: 'center',
-    gap: 16,
-  },
-  button: {
-    width: '84%',
-    height: 56,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: '600',
+    paddingHorizontal: 20,
   },
 }); 

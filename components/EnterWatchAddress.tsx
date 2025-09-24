@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { ethers } from 'ethers';
 import { chainConfig, ChainKey } from './chainConfig';
-import { useTheme } from '../theme';
+import { useTheme, spacing } from '../theme';
+import Button from './Button';
+import BackButton from './BackButton';
 
 export type EnterWatchAddressProps = {
   onBack?: () => void;
@@ -14,7 +15,7 @@ export type EnterWatchAddressProps = {
 export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddressProps) {
   const { colors } = useTheme();
   const [address, setAddress] = useState('');
-  const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0 });
+  const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0, sepolia: 0 });
 
   const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
   
@@ -65,10 +66,7 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.headerRow}>
-          <TouchableOpacity onPress={onBack} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel="Go back">
-            {/* Back chevron icon */}
-            <Feather name="chevron-left" size={28} color={colors.text} />
-          </TouchableOpacity>
+          <BackButton onPress={onBack} />
         </View>
 
         <View style={styles.content}>
@@ -99,15 +97,18 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
           )}
         </View>
 
-        <View style={styles.footer}>
-          <TouchableOpacity
-            activeOpacity={0.85}
+        <View style={[styles.footer, { 
+          paddingHorizontal: spacing.xl, 
+          paddingBottom: spacing.xl * 2, 
+          paddingTop: spacing.xl 
+        }]}>
+          <Button
+            title="Continue"
             onPress={handleContinue}
+            variant={isValid ? 'primary' : 'disabled'}
             disabled={!isValid}
-            style={[styles.ctaButton, { backgroundColor: isValid ? colors.primary : colors.primaryDisabled }]}
-          >
-            <Text style={[styles.ctaText, { color: colors.textInverse }]}>Continue</Text>
-          </TouchableOpacity>
+            fullWidth
+          />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -162,18 +163,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginTop: 'auto',
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-  },
-  ctaButton: {
-    height: 56,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaText: {
-    fontSize: 17,
-    fontWeight: '600',
   },
   errorText: {
     fontSize: 14,
