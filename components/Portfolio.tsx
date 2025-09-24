@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
@@ -10,6 +10,7 @@ import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
 import HeaderIcon from './HeaderIcon';
+import { sendNativeTransaction } from '../utils/transactionUtils';
 
 export type PortfolioProps = {
   address: string;
@@ -26,6 +27,49 @@ export default function Portfolio({ address, balances, wallet }: PortfolioProps)
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
+  const [isSending, setIsSending] = useState(false);
+
+  const handleSendTransaction = async () => {
+    if (!wallet) {
+      Alert.alert('Error', 'Wallet not available');
+      return;
+    }
+
+    setIsSending(true);
+    
+    try {
+      const result = await sendNativeTransaction(
+        wallet,
+        '0x2fc6FC28d932a9396019dB44f71A309e699Ff75D',
+        '0.000001',
+        chainConfig.sepolia.rpcUrl
+      );
+
+      if (result.success && result.hash) {
+        console.log('Transaction completed successfully!');
+        console.log('Transaction hash:', result.hash);
+        Alert.alert(
+          'Transaction Successful!',
+          `Transaction hash: ${result.hash}`,
+          [{ text: 'OK' }]
+        );
+      } else {
+        Alert.alert(
+          'Transaction Failed',
+          result.error || 'Unknown error occurred',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        'Transaction Error',
+        'An unexpected error occurred',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   const orderedKeys = useMemo(() => chainOrder, []);
 
@@ -104,13 +148,11 @@ export default function Portfolio({ address, balances, wallet }: PortfolioProps)
           paddingTop: spacing.xl 
         }]}>
           <Button
-            title="Send"
-            onPress={() => {
-              // TODO: Implement send functionality
-              console.log('Send button pressed');
-            }}
+            title={isSending ? "Sending..." : "Send"}
+            onPress={handleSendTransaction}
             variant="primary"
             fullWidth
+            disabled={isSending}
           />
         </View>
       )}
