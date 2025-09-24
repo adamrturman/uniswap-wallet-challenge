@@ -10,6 +10,7 @@ export const lightTheme = {
   textInverse: '#ffffff',
   
   border: '#EAEAEA',
+  error: '#FF3B30',
   
   pillBackground: '#F4F4F4',
   pillSelectedBackground: '#FC72FF',

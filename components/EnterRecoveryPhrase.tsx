@@ -85,7 +85,7 @@ export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecover
               styles.input,
               { 
                 backgroundColor: colors.background,
-                borderColor: showError ? '#FF3B30' : colors.border,
+                borderColor: showError ? colors.error : colors.border,
                 color: colors.text
               }
             ]}
@@ -101,7 +101,7 @@ export default function EnterRecoveryPhrase({ onBack, onContinue }: EnterRecover
           
           {/* Error message */}
           {showError && (
-            <Text style={styles.errorText}>
+            <Text style={[styles.errorText, { color: colors.error }]}>
               Invalid recovery phrase. Please check and try again.
             </Text>
           )}
@@ -198,7 +198,6 @@ const styles = StyleSheet.create({
     maxHeight: 200,
   },
   errorText: {
-    color: '#FF3B30',
     fontSize: 14,
     marginTop: 8,
     paddingHorizontal: 4,

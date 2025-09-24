@@ -17,6 +17,9 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
   const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0 });
 
   const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
+  
+  // Determine if we should show an error
+  const showError = address.trim().length > 0 && !isValid;
 
 
   const handleContinue = async () => {
@@ -74,7 +77,7 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
           </View>
           <Text style={[styles.title, { color: colors.text }]}>Enter a wallet address</Text>
 
-          <View style={[styles.inputWrapper, { borderColor: colors.border }]}>
+          <View style={[styles.inputWrapper, { borderColor: showError ? colors.error : colors.border }]}>
             <TextInput
               style={[styles.input, { color: colors.text }]}
               placeholder="Type or paste wallet address"
@@ -87,6 +90,13 @@ export default function EnterWatchAddress({ onBack, onContinue }: EnterWatchAddr
               returnKeyType="done"
             />
           </View>
+          
+          {/* Error message */}
+          {showError && (
+            <Text style={[styles.errorText, { color: colors.error }]}>
+              Invalid wallet address. Please check and try again.
+            </Text>
+          )}
         </View>
 
         <View style={styles.footer}>
@@ -164,5 +174,11 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: '600',
+  },
+  errorText: {
+    fontSize: 14,
+    marginTop: 8,
+    paddingHorizontal: 4,
+    textAlign: 'center',
   },
 }); 
