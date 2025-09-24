@@ -14,10 +14,12 @@ export default function Landing({ onImportWallet, onWatchAddress }: LandingProps
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.logoWrapper}>
-        <Image
-          source={uniswapLogo}
-          style={{ width: 96, height: 104, resizeMode: 'contain' }}
-        />
+        <View style={[styles.logoContainer, { backgroundColor: colors.primaryLight }]}>
+          <Image
+            source={uniswapLogo}
+            style={{ width: 96, height: 104, resizeMode: 'contain' }}
+          />
+        </View>
       </View>
 
       <View style={styles.actions}>
@@ -30,7 +32,7 @@ export default function Landing({ onImportWallet, onWatchAddress }: LandingProps
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={[styles.button, { backgroundColor: colors.backgroundSecondary }]} 
+          style={[styles.button, { backgroundColor: colors.backgroundSecondary, shadowColor: colors.shadow }]} 
           onPress={onWatchAddress} 
           activeOpacity={0.85}
         >
@@ -55,6 +57,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
   },
+  logoContainer: {
+    borderRadius: 24,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
   actions: {
     width: '100%',
     alignItems: 'center',
@@ -66,7 +79,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,

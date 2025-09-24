@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { chainConfig, ChainKey, chainOrder } from './chainConfig';
 import { useTheme } from '../theme';
