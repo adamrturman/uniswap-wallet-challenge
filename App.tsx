@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Landing from './components/Landing';
 import EnterWatchAddress from './components/EnterWatchAddress';
+import EnterRecoveryPhrase from './components/EnterRecoveryPhrase';
 import Portfolio from './components/Portfolio';
 import { ChainKey } from './components/chainConfig';
-import { providers, utils, BigNumber, BigNumberish } from 'ethers';
+import { providers, utils, BigNumber, BigNumberish, Wallet } from 'ethers';
 import { ThemeProvider, useTheme } from './theme';
 
 async function fetchEthBalanceWei(address: string): Promise<BigNumber> {
@@ -18,7 +19,7 @@ function formatEther(wei: BigNumberish): string {
 }
 
 function AppContent() {
-  const [route, setRoute] = useState<'landing' | 'enterWatch' | 'portfolio'>('landing');
+  const [route, setRoute] = useState<'landing' | 'enterWatch' | 'enterRecoveryPhrase' | 'portfolio'>('landing');
   const [watchedAddress, setWatchedAddress] = useState<string>('');
   const [balances, setBalances] = useState<Record<ChainKey, number> | null>(null);
   const { colors } = useTheme();
@@ -29,11 +30,13 @@ function AppContent() {
     setRoute('portfolio');
   }
 
+
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {route === 'landing' && (
         <Landing
-          onImportWallet={() => console.log('Import wallet pressed')}
+          onImportWallet={() => setRoute('enterRecoveryPhrase')}
           onWatchAddress={() => setRoute('enterWatch')}
         />
       )}
@@ -41,6 +44,12 @@ function AppContent() {
         <EnterWatchAddress
           onBack={() => setRoute('landing')}
           onContinue={handleContinue}
+        />
+      )}
+      {route === 'enterRecoveryPhrase' && (
+        <EnterRecoveryPhrase
+          onBack={() => setRoute('landing')}
+          onContinue={(phrase) => console.log('Recovery phrase entered:', phrase)}
         />
       )}
       {route === 'portfolio' && balances && (
