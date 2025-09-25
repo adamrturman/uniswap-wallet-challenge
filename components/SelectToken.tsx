@@ -53,6 +53,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect }
 
   const handleTokenSelect = (token: TokenItem) => {
     onTokenSelect?.(token.chainKey, token.balance);
+    navigation.navigate('EnterAmountToSend');
   };
 
   return (

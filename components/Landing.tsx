@@ -6,7 +6,11 @@ import { useTheme, spacing, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
 
-export default function Landing() {
+type LandingProps = {
+  onDevNavigation?: () => void;
+};
+
+export default function Landing({ onDevNavigation }: LandingProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   
@@ -36,6 +40,16 @@ export default function Landing() {
         <Button 
           title="Watch an address"
           onPress={() => navigation.navigate('EnterWatchAddress')}
+          variant="secondary"
+          fullWidth
+        />
+
+        <Button 
+          title="DEV: Test Amount Screen"
+          onPress={() => {
+            onDevNavigation?.();
+            navigation.navigate('EnterAmountToSend');
+          }}
           variant="secondary"
           fullWidth
         />

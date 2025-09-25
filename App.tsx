@@ -9,6 +9,7 @@ import EnterWatchAddress from './components/EnterWatchAddress';
 import EnterRecoveryPhrase from './components/EnterRecoveryPhrase';
 import EnterRecipientAddress from './components/EnterRecipientAddress';
 import SelectToken from './components/SelectToken';
+import EnterAmountToSend from './components/EnterAmountToSend';
 import Portfolio from './components/Portfolio';
 import { ThemeProvider } from './theme';
 
@@ -19,6 +20,20 @@ export default function App() {
   const [watchedAddress, setWatchedAddress] = useState<string>('');
   const [balances, setBalances] = useState<Record<ChainKey, number> | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
+  const [selectedToken, setSelectedToken] = useState<{
+    chainKey: ChainKey;
+    balance: number;
+    symbol: string;
+  } | null>(null);
+
+  // Dev mode: Set up mock data for testing
+  const handleDevNavigation = () => {
+    setSelectedToken({
+      chainKey: 'sepolia',
+      balance: 0.399,
+      symbol: 'ETH',
+    });
+  };
 
   const handleWatchAddressContinue = (address: string, nextBalances: Record<ChainKey, number>) => {
     setWatchedAddress(address);
@@ -44,8 +59,19 @@ export default function App() {
   };
 
   const handleTokenSelect = (chainKey: ChainKey, balance: number) => {
-    console.log('Selected token:', chainKey, 'Balance:', balance);
-    // TODO: Navigate to amount input screen
+    const chainConfig = require('./components/chainConfig').chainConfig;
+    const config = chainConfig[chainKey];
+    
+    setSelectedToken({
+      chainKey,
+      balance,
+      symbol: config.symbol,
+    });
+  };
+
+  const handleAmountContinue = (amount: string) => {
+    console.log('Amount to send:', amount, 'Token:', selectedToken);
+    // TODO: Navigate to transaction confirmation screen
   };
 
   return (
@@ -55,7 +81,9 @@ export default function App() {
           initialRouteName="Landing"
           screenOptions={{ headerShown: false }}
         >
-          <Stack.Screen name="Landing" component={Landing} />
+          <Stack.Screen name="Landing">
+            {() => <Landing onDevNavigation={handleDevNavigation} />}
+          </Stack.Screen>
           <Stack.Screen name="EnterWatchAddress">
             {() => <EnterWatchAddress onContinue={handleWatchAddressContinue} />}
           </Stack.Screen>
@@ -72,6 +100,14 @@ export default function App() {
                 balances={balances}
                 wallet={wallet}
                 onTokenSelect={handleTokenSelect}
+              />
+            ) : null}
+          </Stack.Screen>
+          <Stack.Screen name="EnterAmountToSend">
+            {() => selectedToken ? (
+              <EnterAmountToSend
+                selectedToken={selectedToken}
+                onContinue={handleAmountContinue}
               />
             ) : null}
           </Stack.Screen>

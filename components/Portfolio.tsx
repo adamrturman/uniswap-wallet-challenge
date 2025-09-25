@@ -37,6 +37,7 @@ export default function Portfolio({ address, balances, wallet }: PortfolioProps)
     navigation.navigate('EnterRecipientAddress');
   };
 
+
   const orderedKeys = useMemo(() => chainOrder, []);
 
   const visibleKeys = useMemo(() => {
