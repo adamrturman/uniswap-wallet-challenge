@@ -2,6 +2,7 @@ import ethIcon from '../assets/eth-diamond-black.png';
 import arbitrumBadge from '../assets/arb-logo-official.png';
 import optimismBadge from '../assets/optimism.png';
 import polygonLogo from '../assets/polygon-logo.png';
+import EthIcon from './EthIcon';
 
 export type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum' | 'sepolia';
 
@@ -12,10 +13,10 @@ export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: stri
     rpcUrl: 'https://eth.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
-    nativeTokenIcon: ethIcon,
+    nativeTokenIcon: EthIcon,
   },
   polygon: {
-    name: 'Polygon Matic',
+    name: 'Polygon',
     nativeTokenName: 'Polygon Matic',
     rpcUrl: 'https://polygon.drpc.org',
     symbol: 'MATIC',
@@ -28,7 +29,7 @@ export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: stri
     rpcUrl: 'https://optimism.drpc.org',
     symbol: 'ETH',
     chainIcon: optimismBadge,
-    nativeTokenIcon: ethIcon,
+    nativeTokenIcon: 'ChainTokenIcon',
   },
   arbitrum: {
     name: 'Arbitrum',
@@ -36,15 +37,15 @@ export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: stri
     rpcUrl: 'https://arbitrum.drpc.org',
     symbol: 'ETH',
     chainIcon: arbitrumBadge,
-    nativeTokenIcon: ethIcon,
+    nativeTokenIcon: 'ChainTokenIcon',
   },
   sepolia: {
     name: 'Sepolia',
-    nativeTokenName: 'Ethereum',
+    nativeTokenName: 'Sepolia Ethereum',
     rpcUrl: 'https://sepolia.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
-    nativeTokenIcon: ethIcon,
+    nativeTokenIcon: 'ChainTokenIcon',
   },
 };
 

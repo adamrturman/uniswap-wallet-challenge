@@ -17,6 +17,7 @@ export const lightTheme = {
   pillSelectedText: '#ffffff',
   
   ethBackground: '#5B8DEF',
+  chainTokenBackground: '#627EEA',
   
   shadow: '#000000',
 } as const;
