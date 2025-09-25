@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Linking,
+  ScrollView,
 } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -56,7 +57,7 @@ export default function TransactionModal({
       case 'success':
         return <FontAwesome6 name="check-circle" size={48} color={colors.success} />;
       case 'error':
-        return <FontAwesome6 name="exclamation-triangle" size={48} color={colors.error} />;
+        return <MaterialIcons name="error-outline" size={48} color={colors.error} />;
       default:
         return null;
     }
@@ -82,7 +83,7 @@ export default function TransactionModal({
       case 'success':
         return 'Your transaction has been successfully submitted to the blockchain.';
       case 'error':
-        return errorMessage || 'An error occurred while processing your transaction.';
+        return 'Please check and try again.';
       default:
         return '';
     }
@@ -118,30 +119,36 @@ export default function TransactionModal({
             <MaterialIcons name="close" size={24} color={colors.textSecondary} />
           </TouchableOpacity>
 
-          <View style={styles.content}>
-            <View style={styles.iconContainer}>
-              {getStatusIcon()}
-            </View>
-            
-            <Text style={[styles.title, { color: getStatusColor() }]}>
-              {getStatusTitle()}
-            </Text>
-            
-            <Text style={[styles.message, { color: colors.textSecondary }]}>
-              {getStatusMessage()}
-            </Text>
+          <ScrollView 
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={true}
+          >
+            <View style={styles.content}>
+              <View style={styles.iconContainer}>
+                {getStatusIcon()}
+              </View>
+              
+              <Text style={[styles.title, { color: getStatusColor() }]}>
+                {getStatusTitle()}
+              </Text>
+              
+              <Text style={[styles.message, { color: colors.text }]}>
+                {getStatusMessage()}
+              </Text>
 
-            {status === 'success' && transactionHash && (
-              <TouchableOpacity 
-                style={[styles.explorerButton, { backgroundColor: colors.primary }]}
-                onPress={handleViewExplorer}
-              >
-                <Text style={[styles.explorerButtonText, { color: colors.background }]}>
-                  View transaction on explorer
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
+              {status === 'success' && transactionHash && (
+                <TouchableOpacity 
+                  style={[styles.explorerButton, { backgroundColor: colors.primary }]}
+                  onPress={handleViewExplorer}
+                >
+                  <Text style={[styles.explorerButtonText, { color: colors.background }]}>
+                    View transaction on explorer
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </ScrollView>
         </View>
       </View>
     </Modal>
@@ -159,6 +166,7 @@ const styles = StyleSheet.create({
   modal: {
     width: '100%',
     maxWidth: 400,
+    maxHeight: screenHeight * 0.8,
     borderRadius: radius.xl,
     padding: spacing.xl,
     shadowColor: '#000',
@@ -170,6 +178,12 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
     position: 'relative',
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   closeIcon: {
     position: 'absolute',
