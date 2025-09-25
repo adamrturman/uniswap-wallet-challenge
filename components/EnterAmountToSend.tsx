@@ -43,7 +43,7 @@ export default function EnterAmountToSend({
 
   const isValidAmount = useMemo(() => {
     const numAmount = parseFloat(amount);
-    if (numAmount <= 0) return false;
+    if (numAmount <= 0 || isNaN(numAmount)) return false;
     
     // If we don't have gas fee data, use simple balance check
     if (!networkFee) {
@@ -57,9 +57,9 @@ export default function EnterAmountToSend({
 
   const showError = useMemo(() => {
     const numAmount = parseFloat(amount);
-    if (amount.trim().length === 0 || numAmount <= 0) return false;
+    if (amount.trim().length === 0 || numAmount <= 0 || isNaN(numAmount)) return false;
     
-    // If we don't have gas fee data, use simple balance check
+    // Show error if amount exceeds balance
     if (!networkFee) {
       return numAmount > selectedToken.balance;
     }
@@ -68,6 +68,11 @@ export default function EnterAmountToSend({
     const totalCost = numAmount + parseFloat(networkFee);
     return totalCost > selectedToken.balance;
   }, [amount, selectedToken.balance, networkFee]);
+
+  const shouldShowTransactionDetails = useMemo(() => {
+    const numAmount = parseFloat(amount);
+    return recipientAddress && amount && numAmount > 0 && !isNaN(numAmount);
+  }, [recipientAddress, amount]);
 
   // Gas estimation function
   const estimateGas = async () => {
@@ -303,12 +308,12 @@ export default function EnterAmountToSend({
           )}
 
           {/* Transaction Details Section */}
-          {recipientAddress && amount && parseFloat(amount) > 0 && (
+          {shouldShowTransactionDetails && (
             <View style={[styles.transactionDetails, { backgroundColor: colors.backgroundSecondary, borderColor: colors.border }]}>
               <View style={styles.detailRow}>
                 <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>To</Text>
                 <Text style={[styles.detailValue, { color: colors.textSecondary }]}>
-                  {recipientAddress.slice(0, 6)}...{recipientAddress.slice(-4)}
+                  {recipientAddress?.slice(0, 6)}...{recipientAddress?.slice(-4)}
                 </Text>
               </View>
               
@@ -319,7 +324,7 @@ export default function EnterAmountToSend({
                 </Text>
               </View>
               
-              {networkFee && gasEstimate && gasPrice && (
+              {networkFee && gasEstimate && gasPrice && isValidAmount && (
                 <>
                   <View style={styles.detailRow}>
                     <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Network Fee</Text>
