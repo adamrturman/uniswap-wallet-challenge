@@ -54,13 +54,10 @@ export default function EthIcon({
     <View style={[styles.container, containerStyle, style]}>
       <Image
         source={ethIcon}
-        style={[
-          styles.icon,
-          {
-            width: config.icon,
-            height: config.icon,
-          }
-        ]}
+        style={{
+          width: config.icon,
+          height: config.icon,
+        }}
         resizeMode="contain"
       />
     </View>

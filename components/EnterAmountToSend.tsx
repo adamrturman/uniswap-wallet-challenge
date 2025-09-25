@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacit
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Toast from 'react-native-root-toast';
+import { Wallet } from 'ethers';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
@@ -18,13 +19,23 @@ type EnterAmountToSendProps = {
     symbol: string;
   };
   onContinue?: (amount: string) => void;
+  onTransactionExecute?: (amount: string) => Promise<{ success: boolean; hash?: string; error?: string }>;
+  wallet?: Wallet | null;
+  recipientAddress?: string;
 };
 
-export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAmountToSendProps) {
+export default function EnterAmountToSend({ 
+  selectedToken, 
+  onContinue, 
+  onTransactionExecute, 
+  wallet, 
+  recipientAddress 
+}: EnterAmountToSendProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [amount, setAmount] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   const isValidAmount = useMemo(() => {
     const numAmount = parseFloat(amount);
@@ -37,23 +48,75 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
     return amount.trim().length > 0 && numAmount > 0 && numAmount > selectedToken.balance;
   }, [amount, selectedToken.balance]);
 
-  const handleContinue = () => {
-    if (!isValidAmount) return;
+  const handleContinue = async () => {
+    if (!isValidAmount || isExecuting) return;
 
-    // Show transaction in progress toast
-    Toast.show('Transaction in progress...', {
-      duration: Toast.durations.LONG,
-      position: Toast.positions.TOP,
-      backgroundColor: '#4CAF50',
-      textColor: '#ffffff',
-      shadow: true,
-      animation: true,
-      hideOnPress: true,
-      delay: 0,
-    });
+    // Check if we have a wallet to execute transaction
+    if (wallet && onTransactionExecute) {
+      setIsExecuting(true);
+      
+      // Show transaction in progress toast
+      Toast.show('Transaction in progress...', {
+        duration: Toast.durations.LONG,
+        position: Toast.positions.TOP,
+        backgroundColor: '#2196F3',
+        textColor: '#ffffff',
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+      });
 
-    onContinue?.(amount);
-    // TODO: Navigate to next screen (transaction confirmation)
+      try {
+        const result = await onTransactionExecute(amount);
+        
+        if (result.success && result.hash) {
+          // Show success toast with transaction hash
+          Toast.show(`Transaction successful! Hash: ${result.hash.slice(0, 10)}...`, {
+            duration: Toast.durations.LONG,
+            position: Toast.positions.TOP,
+            backgroundColor: '#4CAF50',
+            textColor: '#ffffff',
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+          });
+          
+          // Navigate to transaction confirmation screen
+          navigation.navigate('TransactionConfirmation');
+        } else {
+          // Show error toast
+          Toast.show(`Transaction failed: ${result.error || 'Unknown error'}`, {
+            duration: Toast.durations.LONG,
+            position: Toast.positions.TOP,
+            backgroundColor: '#F44336',
+            textColor: '#ffffff',
+            shadow: true,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+          });
+        }
+      } catch (error) {
+        // Show error toast
+        Toast.show(`Transaction failed: ${error instanceof Error ? error.message : 'Unknown error'}`, {
+          duration: Toast.durations.LONG,
+          position: Toast.positions.TOP,
+          backgroundColor: '#F44336',
+          textColor: '#ffffff',
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        });
+      } finally {
+        setIsExecuting(false);
+      }
+    } else {
+      // Fallback to original behavior for watch-only mode
+      onContinue?.(amount);
+    }
   };
 
   const handleMaxAmount = () => {
@@ -159,10 +222,10 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
           paddingTop: spacing.xl 
         }]}>
           <Button
-            title="Send"
+            title={isExecuting ? "Sending..." : "Send"}
             onPress={handleContinue}
-            variant={isValidAmount ? 'primary' : 'disabled'}
-            disabled={!isValidAmount}
+            variant={isValidAmount && !isExecuting ? 'primary' : 'disabled'}
+            disabled={!isValidAmount || isExecuting}
             fullWidth
           />
         </View>

@@ -68,7 +68,6 @@ export default function Input({
         <TextInput
           style={[inputStyle, {
             borderWidth: 0,
-            outline: 'none',
             borderColor: 'transparent'
           }]}
           placeholder={placeholder}

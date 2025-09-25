@@ -13,6 +13,7 @@ import EnterRecipientAddress from './components/EnterRecipientAddress';
 import SelectToken from './components/SelectToken';
 import EnterAmountToSend from './components/EnterAmountToSend';
 import Portfolio from './components/Portfolio';
+import TransactionConfirmation from './components/TransactionConfirmation';
 import { ThemeProvider } from './theme';
 
 const Stack = createNativeStackNavigator();
@@ -27,6 +28,8 @@ export default function App() {
     balance: number;
     symbol: string;
   } | null>(null);
+  const [transactionAmount, setTransactionAmount] = useState<string>('');
+  const [transactionHash, setTransactionHash] = useState<string>('');
 
   // Dev mode: Set up mock data for testing
   const handleDevNavigation = () => {
@@ -72,8 +75,39 @@ export default function App() {
   };
 
   const handleAmountContinue = (amount: string) => {
-    console.log('Amount to send:', amount, 'Token:', selectedToken);
+    setTransactionAmount(amount);
     // TODO: Navigate to transaction confirmation screen
+  };
+
+  const handleTransactionExecute = async (amount: string): Promise<{ success: boolean; hash?: string; error?: string }> => {
+    if (!wallet || !selectedToken || !recipientAddress) {
+      console.error('Missing required transaction data');
+      return { success: false, error: 'Missing required transaction data' };
+    }
+
+    try {
+      const { sendNativeTransaction } = await import('./utils/transactionUtils');
+      const chainConfig = require('./components/chainConfig').chainConfig;
+      const config = chainConfig[selectedToken.chainKey];
+      
+      const result = await sendNativeTransaction(
+        wallet,
+        recipientAddress,
+        amount,
+        config.rpcUrl
+      );
+
+      if (result.success && result.hash) {
+        setTransactionHash(result.hash);
+        // Navigate to success screen or show success toast
+        return { success: true, hash: result.hash };
+      } else {
+        throw new Error(result.error || 'Transaction failed');
+      }
+    } catch (error) {
+      console.error('Transaction execution failed:', error);
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
   };
 
   return (
@@ -112,6 +146,9 @@ export default function App() {
                   <EnterAmountToSend
                     selectedToken={selectedToken}
                     onContinue={handleAmountContinue}
+                    onTransactionExecute={handleTransactionExecute}
+                    wallet={wallet}
+                    recipientAddress={recipientAddress}
                   />
                 ) : null}
               </Stack.Screen>
@@ -121,6 +158,17 @@ export default function App() {
                     address={watchedAddress}
                     balances={balances}
                     wallet={wallet}
+                  />
+                ) : null}
+              </Stack.Screen>
+              <Stack.Screen name="TransactionConfirmation">
+                {() => transactionHash && selectedToken && recipientAddress && transactionAmount ? (
+                  <TransactionConfirmation
+                    transactionHash={transactionHash}
+                    amount={transactionAmount}
+                    tokenSymbol={selectedToken.symbol}
+                    recipientAddress={recipientAddress}
+                    fromAddress={watchedAddress}
                   />
                 ) : null}
               </Stack.Screen>

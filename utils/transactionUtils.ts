@@ -23,13 +23,15 @@ export async function sendNativeTransaction(
     // Convert amount to wei
     const amountInWei = ethers.utils.parseEther(amount);
     
-    // Get current fee data
+    // Get current fee data for gas estimation
     const feeData = await provider.getFeeData();
     
     // Create the transaction object
     const transaction = {
       to: toAddress,
       value: amountInWei,
+      gasLimit: 21000, // Standard gas limit for ETH transfers
+      gasPrice: feeData.gasPrice || undefined,
     };
     
     // Send the transaction

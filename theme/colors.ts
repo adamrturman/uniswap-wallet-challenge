@@ -11,6 +11,8 @@ export const lightTheme = {
   
   border: '#EAEAEA',
   error: '#FF3B30',
+  success: '#4CAF50',
+  surface: '#F8F9FA',
   
   pillBackground: '#F4F4F4',
   pillSelectedBackground: '#FC72FF',
