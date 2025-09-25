@@ -33,6 +33,13 @@ const sizeConfig = {
   },
 };
 
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
 export default function HeaderIcon({ 
   icon, 
   library = 'material', 
@@ -41,37 +48,24 @@ export default function HeaderIcon({
   style 
 }: HeaderIconProps) {
   const { colors } = useTheme();
-  
   const config = sizeConfig[size];
-  const iconSize = config.icon;
-  const containerSize = config.container;
   
-  const containerStyle: ViewStyle = {
-    width: containerSize,
-    height: containerSize,
-    borderRadius: containerSize / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+  const dynamicStyles: ViewStyle = {
+    width: config.container,
+    height: config.container,
+    borderRadius: config.container / 2,
     backgroundColor: backgroundColor || colors.primaryLight,
   };
 
-  const renderIcon = () => {
-    const iconProps = {
-      name: icon as any,
-      color: colors.primary,
-      size: iconSize,
-    };
-
-    if (library === 'ionicons') {
-      return <Ionicons {...iconProps} />;
-    }
-    
-    return <MaterialIcons {...iconProps} />;
-  };
+  const IconComponent = library === 'ionicons' ? Ionicons : MaterialIcons;
 
   return (
-    <View style={[containerStyle, style]}>
-      {renderIcon()}
+    <View style={[styles.container, dynamicStyles, style]}>
+      <IconComponent
+        name={icon as any}
+        color={colors.primary}
+        size={config.icon}
+      />
     </View>
   );
 }
