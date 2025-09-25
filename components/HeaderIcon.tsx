@@ -2,13 +2,14 @@ import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useTheme } from '../theme';
 
 export type IconSize = 'small' | 'medium' | 'large' | 'xlarge';
 
 export type HeaderIconProps = {
   icon: string;
-  library?: 'material' | 'ionicons';
+  library?: 'material' | 'ionicons' | 'fontawesome6';
   size?: IconSize;
   backgroundColor?: string;
   style?: ViewStyle;
@@ -57,7 +58,8 @@ export default function HeaderIcon({
     backgroundColor: backgroundColor || colors.primaryLight,
   };
 
-  const IconComponent = library === 'ionicons' ? Ionicons : MaterialIcons;
+  const IconComponent = library === 'ionicons' ? Ionicons : 
+                        library === 'fontawesome6' ? FontAwesome6 : MaterialIcons;
 
   return (
     <View style={[styles.container, dynamicStyles, style]}>

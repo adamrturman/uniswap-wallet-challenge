@@ -11,7 +11,7 @@ export type HeaderProps = {
 export default function Header({ icon, text }: HeaderProps) {
   return (
     <View style={styles.container}>
-      <HeaderIcon icon={icon} size="large" />
+      <HeaderIcon icon={icon} library="fontawesome6" size="large" />
       {text}
     </View>
   );

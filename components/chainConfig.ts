@@ -6,14 +6,26 @@ import EthIcon from './EthIcon';
 
 export type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum' | 'sepolia';
 
-export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: string; rpcUrl: string; symbol: string; chainIcon: any; nativeTokenIcon: any }> = {
+export const chainConfig: Record<ChainKey, { 
+  name: string; 
+  nativeTokenName: string; 
+  rpcUrl: string; 
+  symbol: string; 
+  chainIcon: any; 
+  nativeTokenIcon: {
+    baseIcon: any;
+    overlayIcon?: any;
+  };
+}> = {
   ethereum: {
     name: 'Ethereum',
     nativeTokenName: 'Ethereum',
     rpcUrl: 'https://eth.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
-    nativeTokenIcon: EthIcon,
+    nativeTokenIcon: {
+      baseIcon: EthIcon,
+    },
   },
   polygon: {
     name: 'Polygon',
@@ -21,7 +33,9 @@ export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: stri
     rpcUrl: 'https://polygon.drpc.org',
     symbol: 'MATIC',
     chainIcon: polygonLogo,
-    nativeTokenIcon: polygonLogo,
+    nativeTokenIcon: {
+      baseIcon: polygonLogo,
+    },
   },
   optimism: {
     name: 'Optimism',
@@ -29,7 +43,10 @@ export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: stri
     rpcUrl: 'https://optimism.drpc.org',
     symbol: 'ETH',
     chainIcon: optimismBadge,
-    nativeTokenIcon: 'ChainTokenIcon',
+    nativeTokenIcon: {
+      baseIcon: ethIcon,
+      overlayIcon: optimismBadge,
+    },
   },
   arbitrum: {
     name: 'Arbitrum',
@@ -37,7 +54,10 @@ export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: stri
     rpcUrl: 'https://arbitrum.drpc.org',
     symbol: 'ETH',
     chainIcon: arbitrumBadge,
-    nativeTokenIcon: 'ChainTokenIcon',
+    nativeTokenIcon: {
+      baseIcon: ethIcon,
+      overlayIcon: arbitrumBadge,
+    },
   },
   sepolia: {
     name: 'Sepolia',
@@ -45,7 +65,9 @@ export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: stri
     rpcUrl: 'https://sepolia.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
-    nativeTokenIcon: 'ChainTokenIcon',
+    nativeTokenIcon: {
+      baseIcon: ethIcon,
+    },
   },
 };
 
