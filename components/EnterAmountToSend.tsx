@@ -32,8 +32,8 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
 
   const showError = useMemo(() => {
     const numAmount = parseFloat(amount);
-    // Only show error if we have a valid number that exceeds balance
-    return amount.trim().length > 0 && !isNaN(numAmount) && numAmount > 0 && numAmount > selectedToken.balance;
+    // Only show error if we have a positive number that exceeds balance
+    return amount.trim().length > 0 && numAmount > 0 && numAmount > selectedToken.balance;
   }, [amount, selectedToken.balance]);
 
   const handleContinue = () => {
@@ -100,6 +100,8 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
                 }]}
                 value={amount}
                 onChangeText={handleAmountChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 placeholder="0"
                 placeholderTextColor={colors.textSecondary}
                 keyboardType="numeric"
