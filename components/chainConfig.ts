@@ -5,9 +5,10 @@ import polygonLogo from '../assets/polygon-logo.png';
 
 export type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum' | 'sepolia';
 
-export const chainConfig: Record<ChainKey, { name: string; rpcUrl: string; symbol: string; chainIcon: any; nativeTokenIcon: any }> = {
+export const chainConfig: Record<ChainKey, { name: string; nativeTokenName: string; rpcUrl: string; symbol: string; chainIcon: any; nativeTokenIcon: any }> = {
   ethereum: {
     name: 'Ethereum',
+    nativeTokenName: 'Ethereum',
     rpcUrl: 'https://eth.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
@@ -15,27 +16,31 @@ export const chainConfig: Record<ChainKey, { name: string; rpcUrl: string; symbo
   },
   polygon: {
     name: 'Polygon Matic',
+    nativeTokenName: 'Polygon Matic',
     rpcUrl: 'https://polygon.drpc.org',
     symbol: 'MATIC',
     chainIcon: polygonLogo,
     nativeTokenIcon: polygonLogo,
   },
   optimism: {
-    name: 'Ethereum',
+    name: 'Optimism',
+    nativeTokenName: 'Ethereum',
     rpcUrl: 'https://optimism.drpc.org',
     symbol: 'ETH',
     chainIcon: optimismBadge,
     nativeTokenIcon: ethIcon,
   },
   arbitrum: {
-    name: 'Ethereum',
+    name: 'Arbitrum',
+    nativeTokenName: 'Ethereum',
     rpcUrl: 'https://arbitrum.drpc.org',
     symbol: 'ETH',
     chainIcon: arbitrumBadge,
     nativeTokenIcon: ethIcon,
   },
   sepolia: {
-    name: 'Ethereum',
+    name: 'Sepolia',
+    nativeTokenName: 'Ethereum',
     rpcUrl: 'https://sepolia.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,

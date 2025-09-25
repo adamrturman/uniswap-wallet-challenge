@@ -20,7 +20,7 @@ export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
           style={styles.tokenIcon} 
         />
         <Text style={[styles.chainName, { color: colors.text }]}>
-          {chain.name}
+          {chain.nativeTokenName}
         </Text>
       </View>
       <Text style={[styles.chainBalance, { color: colors.text }]}>

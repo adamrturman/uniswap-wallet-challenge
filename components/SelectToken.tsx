@@ -39,7 +39,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect }
         const config = chainConfig[chainKey];
         tokens.push({
           chainKey,
-          name: config.name,
+          name: config.nativeTokenName,
           symbol: config.symbol,
           balance,
           chainIcon: config.chainIcon,
