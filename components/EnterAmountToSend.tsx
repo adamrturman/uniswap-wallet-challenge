@@ -43,14 +43,31 @@ export default function EnterAmountToSend({
 
   const isValidAmount = useMemo(() => {
     const numAmount = parseFloat(amount);
-    return numAmount > 0 && numAmount <= selectedToken.balance;
-  }, [amount, selectedToken.balance]);
+    if (numAmount <= 0) return false;
+    
+    // If we don't have gas fee data, use simple balance check
+    if (!networkFee) {
+      return numAmount <= selectedToken.balance;
+    }
+    
+    // Check if amount + gas fees exceeds balance
+    const totalCost = numAmount + parseFloat(networkFee);
+    return totalCost <= selectedToken.balance;
+  }, [amount, selectedToken.balance, networkFee]);
 
   const showError = useMemo(() => {
     const numAmount = parseFloat(amount);
-    // Only show error if we have a positive number that exceeds balance
-    return amount.trim().length > 0 && numAmount > 0 && numAmount > selectedToken.balance;
-  }, [amount, selectedToken.balance]);
+    if (amount.trim().length === 0 || numAmount <= 0) return false;
+    
+    // If we don't have gas fee data, use simple balance check
+    if (!networkFee) {
+      return numAmount > selectedToken.balance;
+    }
+    
+    // Check if amount + gas fees exceeds balance
+    const totalCost = numAmount + parseFloat(networkFee);
+    return totalCost > selectedToken.balance;
+  }, [amount, selectedToken.balance, networkFee]);
 
   // Gas estimation function
   const estimateGas = async () => {
@@ -146,8 +163,51 @@ export default function EnterAmountToSend({
     }
   };
 
-  const handleMaxAmount = () => {
-    setAmount(selectedToken.balance.toString());
+  const handleMaxAmount = async () => {
+    if (!wallet || !recipientAddress) {
+      // If no wallet or recipient, just use the full balance
+      setAmount(selectedToken.balance.toString());
+      return;
+    }
+
+    try {
+      const chain = chainConfig[selectedToken.chainKey];
+      const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
+      const connectedWallet = wallet.connect(provider);
+      
+      // Get fee data
+      const feeData = await provider.getFeeData();
+      
+      if (!feeData.gasPrice) {
+        // If we can't get gas price, use the full balance
+        setAmount(selectedToken.balance.toString());
+        return;
+      }
+
+      // Estimate gas for a transaction with the full balance
+      const fullBalanceInWei = ethers.utils.parseEther(selectedToken.balance.toString());
+      const gasEstimate = await provider.estimateGas({
+        to: recipientAddress,
+        value: fullBalanceInWei,
+        from: wallet.address,
+      });
+      
+      // Calculate total gas cost
+      const totalGasCost = gasEstimate.mul(feeData.gasPrice);
+      const gasCostInEth = parseFloat(ethers.utils.formatEther(totalGasCost));
+      
+      // Calculate max amount by subtracting gas cost from balance
+      const maxAmount = Math.max(0, selectedToken.balance - gasCostInEth);
+      
+      // Set the amount to the calculated max (with some buffer for safety)
+      const safeMaxAmount = Math.max(0, maxAmount - 0.0001); // Small buffer to ensure transaction succeeds
+      setAmount(safeMaxAmount.toFixed(8));
+      
+    } catch (error) {
+      console.error('Error calculating max amount with gas:', error);
+      // Fallback to full balance if gas calculation fails
+      setAmount(selectedToken.balance.toString());
+    }
   };
 
   const handleAmountChange = (text: string) => {
@@ -221,7 +281,7 @@ export default function EnterAmountToSend({
               {/* Balance and Max button positioned inside input */}
               <View style={styles.balanceRow}>
                 <Text style={[styles.balanceText, { color: colors.textSecondary }]}>
-                  {selectedToken.balance.toFixed(4)} {selectedToken.symbol}
+                  {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
                 </Text>
                 <TouchableOpacity
                   style={[styles.maxButton, { backgroundColor: colors.primaryLight }]}
@@ -238,7 +298,7 @@ export default function EnterAmountToSend({
           
           {showError && (
             <Text style={[styles.errorText, { color: colors.error }]}>
-              Amount exceeds your balance of {selectedToken.balance.toFixed(4)} {selectedToken.symbol}
+              Total cost exceeds your balance of {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
             </Text>
           )}
 
@@ -252,12 +312,19 @@ export default function EnterAmountToSend({
                 </Text>
               </View>
               
+              <View style={styles.detailRow}>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Amount</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>
+                  {parseFloat(amount).toFixed(8)} {selectedToken.symbol}
+                </Text>
+              </View>
+              
               {networkFee && gasEstimate && gasPrice && (
                 <>
                   <View style={styles.detailRow}>
                     <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Network Fee</Text>
                     <Text style={[styles.detailValue, { color: colors.textSecondary }]}>
-                      {parseFloat(networkFee).toFixed(4)} ETH ({chainConfig[selectedToken.chainKey].name})
+                      {parseFloat(networkFee).toFixed(8)} ETH ({chainConfig[selectedToken.chainKey].name})
                     </Text>
                   </View>
                   
@@ -265,6 +332,13 @@ export default function EnterAmountToSend({
                     <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Gas</Text>
                     <Text style={[styles.detailValue, { color: colors.textSecondary }]}>
                       {parseInt(gasEstimate).toLocaleString()} × {parseFloat(gasPrice).toFixed(2)} gwei
+                    </Text>
+                  </View>
+                  
+                  <View style={[styles.detailRow, styles.totalRow]}>
+                    <Text style={[styles.detailLabel, styles.totalLabel, { color: colors.text }]}>Total</Text>
+                    <Text style={[styles.detailValue, styles.totalValue, { color: colors.text }]}>
+                      {(parseFloat(amount) + parseFloat(networkFee)).toFixed(8)} {selectedToken.symbol}
                     </Text>
                   </View>
                 </>
@@ -433,6 +507,20 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.medium,
+  },
+  totalRow: {
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingTop: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  totalLabel: {
+    fontSize: typography.sizes.base,
+    fontWeight: typography.weights.semibold,
+  },
+  totalValue: {
+    fontSize: typography.sizes.base,
+    fontWeight: typography.weights.semibold,
   },
   footer: {
     marginTop: 'auto',
