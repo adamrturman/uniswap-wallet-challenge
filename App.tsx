@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Wallet } from 'ethers';
-import { RootSiblingParent } from 'react-native-root-siblings';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey } from './components/chainConfig';
 import { fetchBalancesForAllChains } from './utils/balanceUtils';
@@ -15,6 +14,8 @@ import EnterAmountToSend from './components/EnterAmountToSend';
 import Portfolio from './components/Portfolio';
 import TransactionConfirmation from './components/TransactionConfirmation';
 import { ThemeProvider } from './theme';
+import { TransactionProvider } from './context/TransactionContext';
+import TransactionModalWrapper from './components/TransactionModalWrapper';
 
 const Stack = createNativeStackNavigator();
 
@@ -99,6 +100,8 @@ export default function App() {
 
       if (result.success && result.hash) {
         setTransactionHash(result.hash);
+        console.log('Transaction hash set:', result.hash);
+        console.log('Current state:', { transactionHash: result.hash, selectedToken, recipientAddress, transactionAmount });
         // Navigate to success screen or show success toast
         return { success: true, hash: result.hash };
       } else {
@@ -110,10 +113,21 @@ export default function App() {
     }
   };
 
+  const handleRefetchBalances = async () => {
+    if (!watchedAddress) return;
+    
+    try {
+      const fetchedBalances = await fetchBalancesForAllChains(watchedAddress);
+      setBalances(fetchedBalances);
+    } catch (error) {
+      console.error('Failed to refetch balances:', error);
+    }
+  };
+
   return (
     <SafeAreaProvider>
-      <RootSiblingParent>
-        <ThemeProvider>
+      <ThemeProvider>
+        <TransactionProvider>
           <NavigationContainer>
             <Stack.Navigator
               initialRouteName="Landing"
@@ -158,24 +172,35 @@ export default function App() {
                     address={watchedAddress}
                     balances={balances}
                     wallet={wallet}
+                    onRefetchBalances={handleRefetchBalances}
                   />
                 ) : null}
               </Stack.Screen>
               <Stack.Screen name="TransactionConfirmation">
-                {() => transactionHash && selectedToken && recipientAddress && transactionAmount ? (
-                  <TransactionConfirmation
-                    transactionHash={transactionHash}
-                    amount={transactionAmount}
-                    tokenSymbol={selectedToken.symbol}
-                    recipientAddress={recipientAddress}
-                    fromAddress={watchedAddress}
-                  />
-                ) : null}
+                {() => {
+                  console.log('TransactionConfirmation render check:', {
+                    transactionHash,
+                    selectedToken,
+                    recipientAddress,
+                    transactionAmount,
+                    allPresent: !!(transactionHash && selectedToken && recipientAddress && transactionAmount)
+                  });
+                  return transactionHash && selectedToken && recipientAddress && transactionAmount ? (
+                    <TransactionConfirmation
+                      transactionHash={transactionHash}
+                      amount={transactionAmount}
+                      tokenSymbol={selectedToken.symbol}
+                      recipientAddress={recipientAddress}
+                      fromAddress={watchedAddress}
+                    />
+                  ) : null;
+                }}
               </Stack.Screen>
             </Stack.Navigator>
+            <TransactionModalWrapper />
           </NavigationContainer>
-        </ThemeProvider>
-      </RootSiblingParent>
+        </TransactionProvider>
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

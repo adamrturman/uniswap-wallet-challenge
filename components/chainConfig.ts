@@ -12,6 +12,7 @@ export const chainConfig: Record<ChainKey, {
   rpcUrl: string; 
   symbol: string; 
   chainIcon: any; 
+  explorerUrl: string;
   nativeTokenIcon: {
     baseIcon: any;
     overlayIcon?: any;
@@ -23,6 +24,7 @@ export const chainConfig: Record<ChainKey, {
     rpcUrl: 'https://eth.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
+    explorerUrl: 'https://etherscan.io/tx/',
     nativeTokenIcon: {
       baseIcon: EthIcon,
     },
@@ -33,6 +35,7 @@ export const chainConfig: Record<ChainKey, {
     rpcUrl: 'https://polygon.drpc.org',
     symbol: 'MATIC',
     chainIcon: polygonLogo,
+    explorerUrl: 'https://polygonscan.com/tx/',
     nativeTokenIcon: {
       baseIcon: polygonLogo,
     },
@@ -43,6 +46,7 @@ export const chainConfig: Record<ChainKey, {
     rpcUrl: 'https://optimism.drpc.org',
     symbol: 'ETH',
     chainIcon: optimismBadge,
+    explorerUrl: 'https://optimistic.etherscan.io/tx/',
     nativeTokenIcon: {
       baseIcon: ethIcon,
       overlayIcon: optimismBadge,
@@ -54,6 +58,7 @@ export const chainConfig: Record<ChainKey, {
     rpcUrl: 'https://arbitrum.drpc.org',
     symbol: 'ETH',
     chainIcon: arbitrumBadge,
+    explorerUrl: 'https://arbiscan.io/tx/',
     nativeTokenIcon: {
       baseIcon: ethIcon,
       overlayIcon: arbitrumBadge,
@@ -65,6 +70,7 @@ export const chainConfig: Record<ChainKey, {
     rpcUrl: 'https://sepolia.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
+    explorerUrl: 'https://sepolia.etherscan.io/tx/',
     nativeTokenIcon: {
       baseIcon: ethIcon,
     },

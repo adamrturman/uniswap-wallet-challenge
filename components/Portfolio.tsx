@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Wallet } from 'ethers';
@@ -15,6 +15,7 @@ export type PortfolioProps = {
   address: string;
   balances: Record<ChainKey, number>;
   wallet?: Wallet | null;
+  onRefetchBalances?: () => Promise<void>;
 };
 
 function truncateAddress(addr: string) {
@@ -22,10 +23,17 @@ function truncateAddress(addr: string) {
   return `${v.slice(0, 5)}...${v.slice(-5)}`;
 }
 
-export default function Portfolio({ address, balances, wallet }: PortfolioProps) {
+export default function Portfolio({ address, balances, wallet, onRefetchBalances }: PortfolioProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
+
+  // Refetch balances when component mounts (e.g., after a transaction)
+  useEffect(() => {
+    if (onRefetchBalances) {
+      onRefetchBalances();
+    }
+  }, [onRefetchBalances]);
 
   const handleSendTransaction = () => {
     if (!wallet) {

@@ -2,10 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import Toast from 'react-native-root-toast';
 import { Wallet } from 'ethers';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
+import { useTransaction } from '../context/TransactionContext';
 import Button from './Button';
 import BackButton from './BackButton';
 import ChainTokenIcon from './ChainTokenIcon';
@@ -33,6 +33,7 @@ export default function EnterAmountToSend({
 }: EnterAmountToSendProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
+  const { showTransactionModal, updateTransactionStatus } = useTransaction();
   const [amount, setAmount] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -55,61 +56,30 @@ export default function EnterAmountToSend({
     if (wallet && onTransactionExecute) {
       setIsExecuting(true);
       
-      // Show transaction in progress toast
-      Toast.show('Transaction in progress...', {
-        duration: Toast.durations.LONG,
-        position: Toast.positions.TOP,
-        backgroundColor: '#2196F3',
-        textColor: '#ffffff',
-        shadow: true,
-        animation: true,
-        hideOnPress: true,
-        delay: 0,
-      });
+      // Show transaction in progress modal
+      showTransactionModal('pending', undefined, undefined, selectedToken.chainKey);
 
       try {
         const result = await onTransactionExecute(amount);
+        console.log('Transaction result:', result);
         
         if (result.success && result.hash) {
-          // Show success toast with transaction hash
-          Toast.show(`Transaction successful! Hash: ${result.hash.slice(0, 10)}...`, {
-            duration: Toast.durations.LONG,
-            position: Toast.positions.TOP,
-            backgroundColor: '#4CAF50',
-            textColor: '#ffffff',
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          });
+          // Update modal to show success
+          updateTransactionStatus('success', result.hash, undefined, selectedToken.chainKey);
           
-          // Navigate to transaction confirmation screen
-          navigation.navigate('TransactionConfirmation');
+          // Set the transaction amount before navigating
+          onContinue?.(amount);
+          
+          // Navigate to portfolio to show updated balances
+          navigation.navigate('Portfolio');
         } else {
-          // Show error toast
-          Toast.show(`Transaction failed: ${result.error || 'Unknown error'}`, {
-            duration: Toast.durations.LONG,
-            position: Toast.positions.TOP,
-            backgroundColor: '#F44336',
-            textColor: '#ffffff',
-            shadow: true,
-            animation: true,
-            hideOnPress: true,
-            delay: 0,
-          });
+          // Update modal to show error
+          updateTransactionStatus('error', undefined, result.error, selectedToken.chainKey);
         }
       } catch (error) {
-        // Show error toast
-        Toast.show(`Transaction failed: ${error instanceof Error ? error.message : 'Unknown error'}`, {
-          duration: Toast.durations.LONG,
-          position: Toast.positions.TOP,
-          backgroundColor: '#F44336',
-          textColor: '#ffffff',
-          shadow: true,
-          animation: true,
-          hideOnPress: true,
-          delay: 0,
-        });
+        // Update modal to show error
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        updateTransactionStatus('error', undefined, errorMessage, selectedToken.chainKey);
       } finally {
         setIsExecuting(false);
       }
