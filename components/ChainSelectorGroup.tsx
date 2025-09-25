@@ -134,8 +134,8 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.medium,
   },
   filterIcon: {
-    width: spacing.xxl,
-    height: spacing.xxl,
+    width: spacing.lg,
+    height: spacing.lg,
     resizeMode: 'contain',
   },
   allButtonContent: {
@@ -144,18 +144,20 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   chainGrid: {
-    width: spacing.xxl,
-    height: spacing.xxl,
+    width: spacing.lg + spacing.xs,
+    height: spacing.lg + spacing.xs,
     justifyContent: 'space-between',
+    padding: spacing.xs,
   },
   gridRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     flex: 1,
+    gap: spacing.xs,
   },
   gridIcon: {
-    width: spacing.sm + 2,
-    height: spacing.sm + 2,
+    width: spacing.sm,
+    height: spacing.sm,
     resizeMode: 'contain',
   },
 });
