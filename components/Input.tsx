@@ -38,15 +38,21 @@ export default function Input({
 
   const showError = value.trim().length > 0 && !isValid;
 
-  const inputStyle = [
-    styles.input,
+  const containerStyle = [
+    styles.container,
     {
-      backgroundColor: colors.background,
       borderColor: showError 
         ? colors.error 
         : isFocused 
           ? colors.primary 
           : colors.border,
+    }
+  ];
+
+  const inputStyle = [
+    styles.input,
+    {
+      backgroundColor: colors.background,
       color: colors.text,
       ...(multiline && {
         minHeight: minHeight || 120,
@@ -57,22 +63,28 @@ export default function Input({
   ];
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={inputStyle}
-        placeholder={placeholder}
-        placeholderTextColor={colors.textSecondary}
-        value={value}
-        onChangeText={onChangeText}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        multiline={multiline}
-        textAlignVertical={textAlignVertical}
-        autoCapitalize={autoCapitalize}
-        autoCorrect={autoCorrect}
-        keyboardType={keyboardType}
-        returnKeyType={returnKeyType}
-      />
+    <View style={styles.wrapper}>
+      <View style={containerStyle}>
+        <TextInput
+          style={[inputStyle, {
+            borderWidth: 0,
+            outline: 'none',
+            borderColor: 'transparent'
+          }]}
+          placeholder={placeholder}
+          placeholderTextColor={colors.textSecondary}
+          value={value}
+          onChangeText={onChangeText}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          multiline={multiline}
+          textAlignVertical={textAlignVertical}
+          autoCapitalize={autoCapitalize}
+          autoCorrect={autoCorrect}
+          keyboardType={keyboardType}
+          returnKeyType={returnKeyType}
+        />
+      </View>
       
       {showError && (
         <Text style={[styles.errorText, { color: colors.error }]}>
@@ -84,11 +96,15 @@ export default function Input({
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     width: '100%',
   },
-  input: {
+  container: {
+    width: '100%',
     borderWidth: 1,
+    borderRadius: radius.lg,
+  },
+  input: {
     borderRadius: radius.lg,
     padding: spacing.md,
     fontSize: typography.sizes.base,

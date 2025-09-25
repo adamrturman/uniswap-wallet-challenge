@@ -7,6 +7,7 @@ import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import ChainTokenIcon from './ChainTokenIcon';
+import EthIcon from './EthIcon';
 import { ChainKey, chainConfig } from './chainConfig';
 
 type EnterAmountToSendProps = {
@@ -27,6 +28,12 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
   const isValidAmount = useMemo(() => {
     const numAmount = parseFloat(amount);
     return numAmount > 0 && numAmount <= selectedToken.balance;
+  }, [amount, selectedToken.balance]);
+
+  const showError = useMemo(() => {
+    const numAmount = parseFloat(amount);
+    // Only show error if we have a valid number that exceeds balance
+    return amount.trim().length > 0 && !isNaN(numAmount) && numAmount > 0 && numAmount > selectedToken.balance;
   }, [amount, selectedToken.balance]);
 
   const handleContinue = () => {
@@ -77,9 +84,20 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
           </View>
 
           <View style={styles.inputContainer}>
-            <View style={[styles.amountInputContainer, { borderColor: colors.border }]}>
+            <View style={[styles.amountInputContainer, { 
+          borderColor: showError 
+            ? colors.error 
+            : isFocused 
+              ? colors.primary 
+              : colors.border 
+        }]}>
               <TextInput
-                style={[styles.amountInput, { color: colors.text }]}
+                style={[styles.amountInput, { 
+                  color: colors.text,
+                  borderWidth: 0,
+                  outline: 'none',
+                  borderColor: 'transparent'
+                }]}
                 value={amount}
                 onChangeText={handleAmountChange}
                 placeholder="0"
@@ -89,22 +107,8 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
               />
               
               {/* Token selector positioned inside input */}
-              <View style={[styles.tokenSelector, { backgroundColor: colors.pillBackground }]}>
-                {(() => {
-                  const chain = chainConfig[selectedToken.chainKey];
-                  const { baseIcon, overlayIcon } = chain.nativeTokenIcon;
-                  
-                  if (overlayIcon) {
-                    return <ChainTokenIcon overlayIcon={overlayIcon} style={styles.tokenIcon} />;
-                  }
-                  
-                  if (typeof baseIcon === 'function') {
-                    const Component = baseIcon;
-                    return <Component style={styles.tokenIcon} />;
-                  }
-                  
-                  return <Image source={baseIcon} style={styles.tokenIcon} resizeMode="contain" />;
-                })()}
+              <View style={[styles.tokenSelector, { backgroundColor: '#ffffff', borderColor: colors.border, borderWidth: 1 }]}>
+                <EthIcon size="small" />
                 <Text style={[styles.tokenSymbol, { color: colors.text }]}>
                   {selectedToken.symbol}
                 </Text>
@@ -116,17 +120,23 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
                   {selectedToken.balance.toFixed(4)} {selectedToken.symbol}
                 </Text>
                 <TouchableOpacity
-                  style={[styles.maxButton, { backgroundColor: colors.primary }]}
+                  style={[styles.maxButton, { backgroundColor: colors.primaryLight }]}
                   onPress={handleMaxAmount}
                   activeOpacity={0.8}
                 >
-                  <Text style={[styles.maxButtonText, { color: colors.textInverse }]}>
+                  <Text style={[styles.maxButtonText, { color: colors.primary }]}>
                     Max
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
+          
+          {showError && (
+            <Text style={[styles.errorText, { color: colors.error }]}>
+              Amount exceeds your balance of {selectedToken.balance.toFixed(4)} {selectedToken.symbol}
+            </Text>
+          )}
         </View>
 
         <View style={[styles.footer, { 
@@ -225,15 +235,15 @@ const styles = StyleSheet.create({
     right: spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderRadius: radius.xl,
     gap: spacing.sm,
-  },
-  tokenIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   tokenSymbol: {
     fontSize: typography.sizes.base,
@@ -246,7 +256,8 @@ const styles = StyleSheet.create({
     right: spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
+    gap: spacing.sm,
   },
   balanceText: {
     fontSize: typography.sizes.sm,
@@ -260,6 +271,12 @@ const styles = StyleSheet.create({
   maxButtonText: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.medium,
+  },
+  errorText: {
+    fontSize: typography.sizes.sm,
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.xs,
+    textAlign: 'center',
   },
   footer: {
     marginTop: 'auto',
