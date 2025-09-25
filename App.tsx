@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Wallet } from 'ethers';
+import { RootSiblingParent } from 'react-native-root-siblings';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey } from './components/chainConfig';
 import { fetchBalancesForAllChains } from './utils/balanceUtils';
 import Landing from './components/Landing';
@@ -75,53 +77,57 @@ export default function App() {
   };
 
   return (
-    <ThemeProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Landing"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="Landing">
-            {() => <Landing onDevNavigation={handleDevNavigation} />}
-          </Stack.Screen>
-          <Stack.Screen name="EnterWatchAddress">
-            {() => <EnterWatchAddress onContinue={handleWatchAddressContinue} />}
-          </Stack.Screen>
-          <Stack.Screen name="EnterRecoveryPhrase">
-            {() => <EnterRecoveryPhrase onContinue={handleRecoveryPhraseContinue} />}
-          </Stack.Screen>
-          <Stack.Screen name="EnterRecipientAddress">
-            {() => <EnterRecipientAddress onContinue={handleRecipientAddressContinue} />}
-          </Stack.Screen>
-          <Stack.Screen name="SelectToken">
-            {() => balances ? (
-              <SelectToken
-                address={watchedAddress}
-                balances={balances}
-                wallet={wallet}
-                onTokenSelect={handleTokenSelect}
-              />
-            ) : null}
-          </Stack.Screen>
-          <Stack.Screen name="EnterAmountToSend">
-            {() => selectedToken ? (
-              <EnterAmountToSend
-                selectedToken={selectedToken}
-                onContinue={handleAmountContinue}
-              />
-            ) : null}
-          </Stack.Screen>
-          <Stack.Screen name="Portfolio">
-            {() => balances ? (
-              <Portfolio
-                address={watchedAddress}
-                balances={balances}
-                wallet={wallet}
-              />
-            ) : null}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <RootSiblingParent>
+        <ThemeProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="Landing"
+              screenOptions={{ headerShown: false }}
+            >
+              <Stack.Screen name="Landing">
+                {() => <Landing onDevNavigation={handleDevNavigation} />}
+              </Stack.Screen>
+              <Stack.Screen name="EnterWatchAddress">
+                {() => <EnterWatchAddress onContinue={handleWatchAddressContinue} />}
+              </Stack.Screen>
+              <Stack.Screen name="EnterRecoveryPhrase">
+                {() => <EnterRecoveryPhrase onContinue={handleRecoveryPhraseContinue} />}
+              </Stack.Screen>
+              <Stack.Screen name="EnterRecipientAddress">
+                {() => <EnterRecipientAddress onContinue={handleRecipientAddressContinue} />}
+              </Stack.Screen>
+              <Stack.Screen name="SelectToken">
+                {() => balances ? (
+                  <SelectToken
+                    address={watchedAddress}
+                    balances={balances}
+                    wallet={wallet}
+                    onTokenSelect={handleTokenSelect}
+                  />
+                ) : null}
+              </Stack.Screen>
+              <Stack.Screen name="EnterAmountToSend">
+                {() => selectedToken ? (
+                  <EnterAmountToSend
+                    selectedToken={selectedToken}
+                    onContinue={handleAmountContinue}
+                  />
+                ) : null}
+              </Stack.Screen>
+              <Stack.Screen name="Portfolio">
+                {() => balances ? (
+                  <Portfolio
+                    address={watchedAddress}
+                    balances={balances}
+                    wallet={wallet}
+                  />
+                ) : null}
+              </Stack.Screen>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </ThemeProvider>
+      </RootSiblingParent>
+    </SafeAreaProvider>
   );
 }

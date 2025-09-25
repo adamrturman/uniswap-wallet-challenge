@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Toast from 'react-native-root-toast';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
@@ -38,6 +39,18 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
 
   const handleContinue = () => {
     if (!isValidAmount) return;
+
+    // Show transaction in progress toast
+    Toast.show('Transaction in progress...', {
+      duration: Toast.durations.LONG,
+      position: Toast.positions.TOP,
+      backgroundColor: '#4CAF50',
+      textColor: '#ffffff',
+      shadow: true,
+      animation: true,
+      hideOnPress: true,
+      delay: 0,
+    });
 
     onContinue?.(amount);
     // TODO: Navigate to next screen (transaction confirmation)
@@ -95,7 +108,6 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
                 style={[styles.amountInput, { 
                   color: colors.text,
                   borderWidth: 0,
-                  outline: 'none',
                   borderColor: 'transparent'
                 }]}
                 value={amount}
