@@ -87,6 +87,8 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
                 keyboardType="numeric"
                 autoFocus
               />
+              
+              {/* Token selector positioned inside input */}
               <View style={[styles.tokenSelector, { backgroundColor: colors.pillBackground }]}>
                 {(() => {
                   const chain = chainConfig[selectedToken.chainKey];
@@ -107,21 +109,22 @@ export default function EnterAmountToSend({ selectedToken, onContinue }: EnterAm
                   {selectedToken.symbol}
                 </Text>
               </View>
-            </View>
-            
-            <View style={styles.balanceRow}>
-              <Text style={[styles.balanceText, { color: colors.textSecondary }]}>
-                {selectedToken.balance.toFixed(4)} {selectedToken.symbol}
-              </Text>
-              <TouchableOpacity
-                style={[styles.maxButton, { backgroundColor: colors.primary }]}
-                onPress={handleMaxAmount}
-                activeOpacity={0.8}
-              >
-                <Text style={[styles.maxButtonText, { color: colors.textInverse }]}>
-                  Max
+              
+              {/* Balance and Max button positioned inside input */}
+              <View style={styles.balanceRow}>
+                <Text style={[styles.balanceText, { color: colors.textSecondary }]}>
+                  {selectedToken.balance.toFixed(4)} {selectedToken.symbol}
                 </Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.maxButton, { backgroundColor: colors.primary }]}
+                  onPress={handleMaxAmount}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.maxButtonText, { color: colors.textInverse }]}>
+                    Max
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
@@ -194,22 +197,32 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   amountInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    position: 'relative',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.xl,
     borderWidth: 1,
     borderRadius: radius.lg,
     backgroundColor: '#ffffff',
-    minHeight: 80,
+    minHeight: 120,
   },
   amountInput: {
     fontSize: 32,
     fontWeight: typography.weights.medium,
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
+    paddingRight: 120, // Make space for token selector
+    paddingBottom: 30, // Make space for balance row
+    borderRadius: radius.lg, // Match the container border radius
   },
   tokenSelector: {
+    position: 'absolute',
+    top: spacing.xl,
+    right: spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: spacing.md,
@@ -227,10 +240,13 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.medium,
   },
   balanceRow: {
+    position: 'absolute',
+    bottom: spacing.sm,
+    left: spacing.lg,
+    right: spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: spacing.md,
   },
   balanceText: {
     fontSize: typography.sizes.sm,
