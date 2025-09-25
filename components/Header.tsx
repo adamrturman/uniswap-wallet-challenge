@@ -1,16 +1,17 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { spacing } from '../theme';
+import HeaderIcon from './HeaderIcon';
 
 export type HeaderProps = {
-  icon: React.ReactNode;
+  icon: string;
   text: React.ReactNode;
 };
 
 export default function Header({ icon, text }: HeaderProps) {
   return (
     <View style={styles.container}>
-      {icon}
+      <HeaderIcon icon={icon} size="large" />
       {text}
     </View>
   );
@@ -19,15 +20,6 @@ export default function Header({ icon, text }: HeaderProps) {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  title: {
-    textAlign: 'center',
-    lineHeight: 32,
-  },
-  subtitle: {
-    textAlign: 'center',
-    lineHeight: 22,
     paddingHorizontal: spacing.xl,
   },
 });

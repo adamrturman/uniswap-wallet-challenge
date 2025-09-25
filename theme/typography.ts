@@ -4,7 +4,6 @@ export const typography = {
     normal: '400' as const,
     medium: '500' as const,
     semibold: '600' as const,
-    bold: '700' as const,
   },
   
   // Font sizes
@@ -14,17 +13,17 @@ export const typography = {
     base: 16,
     lg: 18,
     xl: 20,
-    '2xl': 24,
-    '3xl': 28,
-    '4xl': 32,
+    xxl: 24,
   },
   
   // Line heights
   lineHeights: {
-    tight: 1.2,
-    normal: 1.4,
-    relaxed: 1.6,
-    loose: 1.8,
+    xs: 16,
+    sm: 20,
+    base: 24,
+    lg: 28,
+    xl: 32,
+    xxl: 36,
   },
 } as const;
 

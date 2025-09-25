@@ -2,20 +2,18 @@ import React, { useState } from 'react';
 import { 
   StyleSheet, 
   Text, 
-  TextInput, 
   View,
-  SafeAreaView,
   StatusBar
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
-import { useTheme, spacing, typography } from '../theme';
+import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
-import HeaderIcon, { KeyIcon } from './HeaderIcon';
+import Input from './Input';
 
 type EnterRecoveryPhraseProps = {
   onContinue?: (phrase: string) => void;
@@ -25,7 +23,6 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [phrase, setPhrase] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
   const [isValidPhrase, setIsValidPhrase] = useState(false);
 
   const handlePhraseChange = (newPhrase: string) => {
@@ -54,22 +51,18 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
     }
   };
 
-  // If a user has entered something but it's not valid
-  const showError = phrase.trim().length > 0 && !isValidPhrase;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
       
-      {/* Header with back button */}
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />
       </View>
 
-      {/* Main content */}
       <View style={styles.content}>
         <Header
-          icon={<HeaderIcon icon={KeyIcon} size="large" />}
+          icon="key"
           text={
             <View>
               <Text style={[styles.title, { color: colors.text }]}>
@@ -82,43 +75,21 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
           }
         />
 
-        {/* Input field */}
         <View style={styles.inputContainer}>
-          <TextInput
-            style={[
-              styles.input,
-              { 
-                backgroundColor: colors.background,
-                borderColor: showError 
-                  ? colors.error 
-                  : isFocused 
-                    ? colors.primary 
-                    : colors.border,
-                color: colors.text
-              }
-            ]}
-            placeholder="Type or paste your recovery phrase"
-            placeholderTextColor={colors.textSecondary}
+          <Input
             value={phrase}
             onChangeText={handlePhraseChange}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
+            placeholder="Type or paste your recovery phrase"
+            isValid={isValidPhrase}
+            errorMessage="Invalid recovery phrase. Please check and try again."
             multiline
+            minHeight={120}
+            maxHeight={200}
             textAlignVertical="top"
-            autoCapitalize="none"
-            autoCorrect={false}
           />
-          
-          {/* Error message */}
-          {showError && (
-            <Text style={[styles.errorText, { color: colors.error }]}>
-              Invalid recovery phrase. Please check and try again.
-            </Text>
-          )}
         </View>
       </View>
 
-      {/* Continue button */}
       <View style={[styles.buttonContainer, { 
         paddingHorizontal: spacing.xl, 
         paddingBottom: spacing.xl * 2, 
@@ -154,18 +125,18 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   title: {
-    fontSize: typography.sizes['2xl'],
+    fontSize: typography.sizes.lg,
     fontWeight: typography.weights.medium,
     textAlign: 'center',
     marginTop: spacing.xxl,
     marginBottom: spacing.xxl,
-    lineHeight: 32,
+    lineHeight: typography.lineHeights.xl,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: typography.sizes.base,
     textAlign: 'center',
     marginBottom: spacing.xxl,
-    lineHeight: 22,
+    lineHeight: typography.lineHeights.sm,
     paddingHorizontal: spacing.xl,
   },
   inputContainer: {
@@ -173,22 +144,7 @@ const styles = StyleSheet.create({
     flex: 1,
     maxHeight: 200,
   },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 16,
-    minHeight: 120,
-    maxHeight: 200,
-    backgroundColor: '#ffffff',
-  },
-  errorText: {
-    fontSize: 14,
-    marginTop: 8,
-    paddingHorizontal: 4,
-  },
   buttonContainer: {
-    // Spacing will be applied via theme values
+    marginTop: 'auto',
   },
 });

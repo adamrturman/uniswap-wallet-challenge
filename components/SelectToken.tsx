@@ -4,11 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
 import { chainConfig, ChainKey, chainOrder } from './chainConfig';
-import { useTheme, spacing, typography } from '../theme';
+import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import BackButton from './BackButton';
 import Header from './Header';
-import HeaderIcon, { CoinsIcon } from './HeaderIcon';
 
 export type SelectTokenProps = {
   address: string;
@@ -64,7 +63,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect }
 
       <View style={styles.content}>
         <Header
-          icon={<HeaderIcon icon={CoinsIcon} size="large" />}
+          icon="coins"
           text={
             <Text style={[styles.title, { color: colors.text }]}>
               Select a token to send
@@ -129,12 +128,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
   },
   title: {
-    fontSize: typography.sizes['2xl'],
+    fontSize: typography.sizes.lg,
     fontWeight: typography.weights.medium,
     textAlign: 'center',
     marginTop: spacing.xxl,
     marginBottom: spacing.xxl,
-    lineHeight: 32,
+    lineHeight: typography.lineHeights.xl,
   },
   tokenList: {
     flex: 1,
@@ -149,18 +148,18 @@ const styles = StyleSheet.create({
   tokenLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   tokenIcon: {
-    width: 40,
-    height: 40,
+    width: spacing.xxl,
+    height: spacing.xxl,
     resizeMode: 'contain',
   },
   tokenInfo: {
     flex: 1,
   },
   tokenName: {
-    fontSize: 16,
+    fontSize: typography.sizes.base,
     fontWeight: typography.weights.medium,
   },
   chainName: {

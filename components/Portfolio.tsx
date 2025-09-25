@@ -4,12 +4,11 @@ import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
 import { chainConfig, ChainKey, chainOrder } from './chainConfig';
-import { useTheme, spacing, typography } from '../theme';
+import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
-import HeaderIcon, { WalletIcon } from './HeaderIcon';
 
 export type PortfolioProps = {
   address: string;
@@ -48,12 +47,12 @@ export default function Portfolio({ address, balances, wallet }: PortfolioProps)
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
         <BackButton onPress={() => navigation.goBack()} />
-        <View style={{ width: 28 }} />
+        <View style={{ width: spacing.xxl + spacing.sm }} />
       </View>
 
       <View style={styles.addressCard}>
         <Header
-          icon={<HeaderIcon icon={WalletIcon} size="xlarge" />}
+          icon="wallet"
           text={
             <Text style={[styles.addressText, { color: colors.text }]}>
               {truncateAddress(address)}
@@ -204,37 +203,37 @@ const styles = StyleSheet.create({
     marginTop: spacing.xxl,
   },
   filtersContainer: {
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
   },
   filtersScrollView: {
-    maxHeight: 48,
+    maxHeight: spacing.xxxl
   },
   filtersContent: {
-    gap: 8,
+    gap: spacing.sm,
     alignItems: 'center',
-    minHeight: 48,
-    paddingHorizontal: 20,
+    minHeight: spacing.xxxl,
+    paddingHorizontal: spacing.xl,
     justifyContent: 'center',
     flexGrow: 1,
   },
   list: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
   },
   rowLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   chainName: {
-    fontSize: 16,
+    fontSize: typography.sizes.base,
   },
   chainBalance: {
     fontSize: typography.sizes.base,
@@ -242,38 +241,38 @@ const styles = StyleSheet.create({
   },
   pill: {
     borderRadius: 999,
-    paddingHorizontal: 12,
-    height: 36,
+    paddingHorizontal: spacing.md,
+    height: spacing.xxl - spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
   },
   pillContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   pillText: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.medium,
   },
   filterIcon: {
-    width: 24,
-    height: 24,
+    width: spacing.xxl,
+    height: spacing.xxl,
     resizeMode: 'contain',
   },
   tokenIcon: {
-    width: 40,
-    height: 40,
+    width: spacing.xxl,
+    height: spacing.xxl,
     resizeMode: 'contain',
   },
   allButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   chainGrid: {
-    width: 24,
-    height: 24,
+    width: spacing.xxl,
+    height: spacing.xxl,
     justifyContent: 'space-between',
   },
   gridRow: {
@@ -282,8 +281,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   gridIcon: {
-    width: 10,
-    height: 10,
+    width: spacing.sm + 2,
+    height: spacing.sm + 2,
     resizeMode: 'contain',
   },
   sendButtonContainer: {

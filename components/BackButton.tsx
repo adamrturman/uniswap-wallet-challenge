@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useTheme, typography } from '../theme';
+import { useTheme, typography, spacing } from '../theme';
 
 type BackButtonProps = {
   onPress?: () => void;
@@ -23,13 +23,13 @@ export default function BackButton({ onPress, style }: BackButtonProps) {
 
 const styles = StyleSheet.create({
   backButton: {
-    width: 40,
-    height: 40,
+    width: spacing.xxl,
+    height: spacing.xxl,
     alignItems: 'center',
     justifyContent: 'center',
   },
   backArrow: {
-    fontSize: typography.sizes['2xl'],
+    fontSize: typography.sizes.xxl,
     fontWeight: typography.weights.semibold,
   },
 });

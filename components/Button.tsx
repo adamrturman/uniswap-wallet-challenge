@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
-import { useTheme, spacing, typography } from '../theme';
+import { useTheme, spacing, typography, radius } from '../theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'disabled';
 
@@ -32,7 +32,7 @@ export default function Button({
       width: fullWidth ? '100%' : 'auto',
       minWidth: fullWidth ? '100%' : 200,
       height: 56,
-      borderRadius: 18,
+      borderRadius: radius.xl,
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: spacing.xl * 1.2,

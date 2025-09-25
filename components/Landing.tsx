@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import uniswapLogo from "../assets/Uniswap_icon_pink.png";
-import { useTheme, spacing } from '../theme';
+import { useTheme, spacing, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
 
@@ -16,7 +16,7 @@ export default function Landing() {
         <View style={[styles.logoContainer, { backgroundColor: colors.primaryLight, padding: spacing.xl }]}>
           <Image
             source={uniswapLogo}
-            style={{ width: 96, height: 104, resizeMode: 'contain' }}
+            style={{ width: spacing.xxxl * 3, height: spacing.xxxl * 3, resizeMode: 'contain' }}
           />
         </View>
       </View>
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   logoContainer: {
-    borderRadius: 24,
+    borderRadius: radius.xxl,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
@@ -69,6 +69,6 @@ const styles = StyleSheet.create({
   actions: {
     width: '100%',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
   },
 }); 
