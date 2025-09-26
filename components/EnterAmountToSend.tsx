@@ -86,7 +86,6 @@ export default function EnterAmountToSend({
     try {
       const chain = chainConfig[selectedToken.chainKey];
       const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
-      const connectedWallet = wallet.connect(provider);
       
       const amountInWei = ethers.utils.parseEther(amount);
       
@@ -140,7 +139,6 @@ export default function EnterAmountToSend({
 
       try {
         const result = await onTransactionExecute(amount);
-        console.log('Transaction result:', result);
         
         if (result.success && result.hash) {
           // Update modal to show success

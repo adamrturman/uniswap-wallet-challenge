@@ -7,9 +7,9 @@ interface TransactionContextType {
   transactionHash?: string;
   errorMessage?: string;
   chainKey?: string;
-  showTransactionModal: (status: TransactionStatus, hash?: string, error?: string, chainKey?: string) => void;
+  showTransactionModal: (params: { status: TransactionStatus; hash?: string; error?: string; chainKey?: string }) => void;
   hideTransactionModal: () => void;
-  updateTransactionStatus: (status: TransactionStatus, hash?: string, error?: string, chainKey?: string) => void;
+  updateTransactionStatus: (params: { status: TransactionStatus; hash?: string; error?: string; chainKey?: string }) => void;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -21,7 +21,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [chainKey, setChainKey] = useState<string | undefined>();
 
-  const showTransactionModal = (status: TransactionStatus, hash?: string, error?: string, chainKey?: string) => {
+  const showTransactionModal = ({ status, hash, error, chainKey }: { status: TransactionStatus; hash?: string; error?: string; chainKey?: string }) => {
     setTransactionStatus(status);
     setTransactionHash(hash);
     setErrorMessage(error);
@@ -40,7 +40,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     }, 300);
   };
 
-  const updateTransactionStatus = (status: TransactionStatus, hash?: string, error?: string, chainKey?: string) => {
+  const updateTransactionStatus = ({ status, hash, error, chainKey }: { status: TransactionStatus; hash?: string; error?: string; chainKey?: string }) => {
     setTransactionStatus(status);
     if (hash) setTransactionHash(hash);
     if (error) setErrorMessage(error);
