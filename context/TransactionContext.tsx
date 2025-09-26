@@ -1,15 +1,22 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { TransactionStatus } from '../components/TransactionModal';
 
+type TransactionParams = {
+  status: TransactionStatus;
+  hash?: string;
+  error?: string;
+  chainKey?: string;
+};
+
 interface TransactionContextType {
   isModalVisible: boolean;
   transactionStatus: TransactionStatus;
   transactionHash?: string;
   errorMessage?: string;
   chainKey?: string;
-  showTransactionModal: (params: { status: TransactionStatus; hash?: string; error?: string; chainKey?: string }) => void;
+  showTransactionModal: (params: TransactionParams) => void;
   hideTransactionModal: () => void;
-  updateTransactionStatus: (params: { status: TransactionStatus; hash?: string; error?: string; chainKey?: string }) => void;
+  updateTransactionStatus: (params: TransactionParams) => void;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -21,7 +28,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [chainKey, setChainKey] = useState<string | undefined>();
 
-  const showTransactionModal = ({ status, hash, error, chainKey }: { status: TransactionStatus; hash?: string; error?: string; chainKey?: string }) => {
+  const showTransactionModal = ({ status, hash, error, chainKey }: TransactionParams) => {
     setTransactionStatus(status);
     setTransactionHash(hash);
     setErrorMessage(error);
@@ -40,7 +47,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     }, 300);
   };
 
-  const updateTransactionStatus = ({ status, hash, error, chainKey }: { status: TransactionStatus; hash?: string; error?: string; chainKey?: string }) => {
+  const updateTransactionStatus = ({ status, hash, error, chainKey }: TransactionParams) => {
     setTransactionStatus(status);
     if (hash) setTransactionHash(hash);
     if (error) setErrorMessage(error);
