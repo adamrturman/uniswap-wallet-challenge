@@ -1,7 +1,7 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList, Clipboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ethers, Wallet } from 'ethers';
+import { Wallet } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, spacing, typography } from '../theme';
@@ -9,7 +9,7 @@ import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
-import Input from './Input';
+import AddressInput, { useAddressResolution } from './AddressInput';
 import LogoutButton from './LogoutButton';
 
 type EnterRecipientAddressProps = {
@@ -27,8 +27,7 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
   const [address, setAddress] = useState('');
   const [addressHistory, setAddressHistory] = useState<string[]>([]);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-
-  const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
+  const { resolveAddress } = useAddressResolution();
 
   // Load address history on component mount
   useEffect(() => {
@@ -72,38 +71,60 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
   };
 
   const handleContinue = async () => {
-    if (!isValid) return;
+    if (!address.trim()) return;
 
-    const trimmedAddress = address.trim();
-    setAddress(trimmedAddress);
+    const trimmedInput = address.trim();
+    setAddress(trimmedInput);
 
-    // Save address to history
-    await saveAddressToHistory(trimmedAddress);
+    try {
+      // Resolve address (handles ENS names)
+      const finalAddress = await resolveAddress(trimmedInput);
+      if (!finalAddress) {
+        console.log('Failed to resolve address');
+        return;
+      }
+      
+      // Save the original input (ENS name or address) to history
+      await saveAddressToHistory(trimmedInput);
 
-    // Call the continue handler
-    onContinue?.(trimmedAddress);
-    
-    // Navigate to SelectToken screen
-    navigation.navigate('SelectToken');
-    
-    // Clear the input field for when user comes back
-    setAddress('');
+      // Call the continue handler with the resolved address
+      onContinue?.(finalAddress);
+      
+      // Navigate to SelectToken screen
+      navigation.navigate('SelectToken');
+      
+      // Clear the input field for when user comes back
+      setAddress('');
+    } catch (error) {
+      console.log('Failed to process address:', error);
+    }
   };
 
   const handleAddressSelect = async (selectedAddress: string) => {
     setAddress(selectedAddress);
     
-    // Save address to history (move to top)
-    await saveAddressToHistory(selectedAddress);
+    try {
+      // Resolve address (handles ENS names)
+      const finalAddress = await resolveAddress(selectedAddress);
+      if (!finalAddress) {
+        console.log('Failed to resolve address');
+        return;
+      }
+      
+      // Save address to history (move to top)
+      await saveAddressToHistory(selectedAddress);
 
-    // Call the continue handler
-    onContinue?.(selectedAddress);
-    
-    // Navigate to SelectToken screen
-    navigation.navigate('SelectToken');
-    
-    // Clear the input field for when user comes back
-    setAddress('');
+      // Call the continue handler with the resolved address
+      onContinue?.(finalAddress);
+      
+      // Navigate to SelectToken screen
+      navigation.navigate('SelectToken');
+      
+      // Clear the input field for when user comes back
+      setAddress('');
+    } catch (error) {
+      console.log('Failed to process address:', error);
+    }
   };
 
   const truncateAddress = (address: string) => {
@@ -145,12 +166,10 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
           />
 
           <View style={styles.inputContainer}>
-            <Input
+            <AddressInput
               value={address}
               onChangeText={setAddress}
-              placeholder="Type or paste recipient address"
-              isValid={isValid}
-              errorMessage="Invalid wallet address. Please check and try again."
+              placeholder="Enter a wallet address or ENS name"
             />
             
             {addressHistory.length > 0 && (
@@ -231,8 +250,8 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
           <Button
             title="Continue"
             onPress={handleContinue}
-            variant={isValid ? 'primary' : 'disabled'}
-            disabled={!isValid}
+            variant={address.trim() ? 'primary' : 'disabled'}
+            disabled={!address.trim()}
             fullWidth
           />
         </View>

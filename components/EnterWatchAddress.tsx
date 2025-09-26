@@ -1,8 +1,7 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useNavigation } from '@react-navigation/native';
-import { ethers } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, spacing, typography } from '../theme';
@@ -10,7 +9,7 @@ import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
-import Input from './Input';
+import AddressInput, { useAddressResolution } from './AddressInput';
 import { ChainBalances, createInitialChainBalances, fetchChainBalances } from '../utils/balanceUtils';
 
 type EnterWatchAddressProps = {
@@ -26,8 +25,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
   const [address, setAddress] = useState('');
   const [addressHistory, setAddressHistory] = useState<string[]>([]);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
-
-  const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
+  const { resolveAddress } = useAddressResolution();
 
   // Load address history on component mount
   useEffect(() => {
@@ -81,23 +79,30 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
 
 
   const handleContinue = async () => {
-    if (!isValid) return;
+    if (!address.trim()) return;
 
-    const trimmedAddress = address.trim();
-    setAddress(trimmedAddress);
+    const trimmedInput = address.trim();
+    setAddress(trimmedInput);
 
     try {
-      // Save address to history
-      await saveAddressToHistory(trimmedAddress);
+      // Resolve address (handles ENS names)
+      const finalAddress = await resolveAddress(trimmedInput);
+      if (!finalAddress) {
+        console.log('Failed to resolve address');
+        return;
+      }
+      
+      // Save the original input (ENS name or address) to history
+      await saveAddressToHistory(trimmedInput);
       
       // Set initial loading state and navigate immediately
       const initialBalances = createInitialChainBalances();
-      onContinue?.(trimmedAddress, initialBalances);
+      onContinue?.(trimmedInput, initialBalances);
       navigation.navigate('Portfolio');
       
       // Fetch balances in the background
-      const fetchedBalances = await fetchChainBalances(trimmedAddress);
-      onContinue?.(trimmedAddress, fetchedBalances);
+      const fetchedBalances = await fetchChainBalances(finalAddress);
+      onContinue?.(finalAddress, fetchedBalances);
       
       // Clear the input field for when user comes back
       setAddress('');
@@ -110,6 +115,13 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     setAddress(selectedAddress);
     
     try {
+      // Resolve address (handles ENS names)
+      const finalAddress = await resolveAddress(selectedAddress);
+      if (!finalAddress) {
+        console.log('Failed to resolve address');
+        return;
+      }
+      
       // Save address to history (move to top)
       await saveAddressToHistory(selectedAddress);
       
@@ -119,8 +131,8 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
       navigation.navigate('Portfolio');
       
       // Fetch balances in the background
-      const fetchedBalances = await fetchChainBalances(selectedAddress);
-      onContinue?.(selectedAddress, fetchedBalances);
+      const fetchedBalances = await fetchChainBalances(finalAddress);
+      onContinue?.(finalAddress, fetchedBalances);
       
       // Clear the input field for when user comes back
       setAddress('');
@@ -144,6 +156,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     }
   };
 
+
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
@@ -165,12 +178,10 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
           />
 
           <View style={styles.inputContainer}>
-            <Input
+            <AddressInput
               value={address}
               onChangeText={setAddress}
-              placeholder="Type or paste wallet address"
-              isValid={isValid}
-              errorMessage="Invalid wallet address. Please check and try again."
+              placeholder="Enter a wallet address or ENS name"
             />
             
             {addressHistory.length > 0 && (
@@ -251,8 +262,8 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
           <Button
             title="Continue"
             onPress={handleContinue}
-            variant={isValid ? 'primary' : 'disabled'}
-            disabled={!isValid}
+            variant={address.trim() ? 'primary' : 'disabled'}
+            disabled={!address.trim()}
             fullWidth
           />
         </View>
