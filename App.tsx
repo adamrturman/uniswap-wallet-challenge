@@ -44,12 +44,16 @@ export default function App() {
   const handleWatchAddressContinue = (address: string, watchedAddressBalances: ChainBalances) => {
     setWatchedAddress(address);
     setBalances(watchedAddressBalances);
+    // Clear wallet state when entering watch mode
+    setWallet(null);
   };
 
   const handleRecoveryPhraseContinue = async (phrase: string) => {
     try {
       const walletFromPhrase = Wallet.fromMnemonic(phrase);
       setWallet(walletFromPhrase);
+      // Clear watched address when entering wallet mode
+      setWatchedAddress('');
       
       // Set initial loading state and navigate immediately
       const initialBalances = createInitialChainBalances();
@@ -172,7 +176,7 @@ export default function App() {
               <Stack.Screen name="Portfolio">
                 {() => balances ? (
                   <Portfolio
-                    address={watchedAddress}
+                    address={wallet?.address || watchedAddress}
                     balances={balances}
                     wallet={wallet}
                     onRefetchBalances={handleRefetchBalances}
