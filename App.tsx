@@ -5,6 +5,7 @@ import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey } from './components/chainConfig';
 import { fetchChainBalances, createInitialChainBalances, ChainBalances } from './utils/balanceUtils';
+import { NavigationType } from './types';
 import Landing from './components/Landing';
 import EnterWatchAddress from './components/EnterWatchAddress';
 import EnterRecoveryPhrase from './components/EnterRecoveryPhrase';
@@ -131,6 +132,19 @@ export default function App() {
     }
   };
 
+  const handleLogout = (navigation: NavigationType) => {
+    // Clear wallet state
+    setWallet(null);
+    setBalances(null);
+    setRecipientAddress('');
+    setSelectedToken(null);
+    setTransactionAmount('');
+    setTransactionHash('');
+    
+    // Navigate back to landing page
+    navigation.navigate('Landing');
+  };
+
   return (
     <SafeAreaProvider>
       <ThemeProvider>
@@ -150,36 +164,39 @@ export default function App() {
                 {() => <EnterRecoveryPhrase onContinue={handleRecoveryPhraseContinue} />}
               </Stack.Screen>
               <Stack.Screen name="EnterRecipientAddress">
-                {() => <EnterRecipientAddress onContinue={handleRecipientAddressContinue} />}
+                {({ navigation }) => <EnterRecipientAddress onContinue={handleRecipientAddressContinue} onLogout={() => handleLogout(navigation)} wallet={wallet} />}
               </Stack.Screen>
               <Stack.Screen name="SelectToken">
-                {() => balances ? (
+                {({ navigation }) => balances ? (
                   <SelectToken
                     address={watchedAddress}
                     balances={balances}
                     wallet={wallet}
                     onTokenSelect={handleTokenSelect}
+                    onLogout={() => handleLogout(navigation)}
                   />
                 ) : null}
               </Stack.Screen>
               <Stack.Screen name="EnterAmountToSend">
-                {() => selectedToken ? (
+                {({ navigation }) => selectedToken ? (
                   <EnterAmountToSend
                     selectedToken={selectedToken}
                     onContinue={handleAmountContinue}
                     onTransactionExecute={handleTransactionExecute}
                     wallet={wallet}
                     recipientAddress={recipientAddress}
+                    onLogout={() => handleLogout(navigation)}
                   />
                 ) : null}
               </Stack.Screen>
               <Stack.Screen name="Portfolio">
-                {() => balances ? (
+                {({ navigation }) => balances ? (
                   <Portfolio
                     address={wallet?.address || watchedAddress}
                     balances={balances}
                     wallet={wallet}
                     onRefetchBalances={handleRefetchBalances}
+                    onLogout={() => handleLogout(navigation)}
                   />
                 ) : null}
               </Stack.Screen>

@@ -1,19 +1,22 @@
 import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { ethers } from 'ethers';
+import { ethers, Wallet } from 'ethers';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
 import Input from './Input';
+import LogoutButton from './LogoutButton';
 
 type EnterRecipientAddressProps = {
   onContinue?: (address: string) => void;
+  onLogout?: () => void;
+  wallet?: Wallet | null;
 };
 
-export default function EnterRecipientAddress({ onContinue }: EnterRecipientAddressProps) {
+export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: EnterRecipientAddressProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
@@ -44,6 +47,9 @@ export default function EnterRecipientAddress({ onContinue }: EnterRecipientAddr
       >
         <View style={styles.headerRow}>
           <BackButton onPress={() => navigation.goBack()} />
+          {wallet && onLogout && (
+            <LogoutButton onPress={onLogout} />
+          )}
         </View>
 
         <View style={styles.content}>
@@ -95,6 +101,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.sm,
     paddingBottom: spacing.xl,

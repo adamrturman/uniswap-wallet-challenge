@@ -8,6 +8,7 @@ import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import BackButton from './BackButton';
 import Header from './Header';
+import LogoutButton from './LogoutButton';
 import { ChainBalances } from '../utils/balanceUtils';
 
 export type SelectTokenProps = {
@@ -15,6 +16,7 @@ export type SelectTokenProps = {
   balances: ChainBalances;
   wallet?: Wallet | null;
   onTokenSelect?: (chainKey: ChainKey, balance: number) => void;
+  onLogout?: () => void;
 };
 
 type TokenItem = {
@@ -26,7 +28,7 @@ type TokenItem = {
   tokenIcon: any;
 };
 
-export default function SelectToken({ address, balances, wallet, onTokenSelect }: SelectTokenProps) {
+export default function SelectToken({ address, balances, wallet, onTokenSelect, onLogout }: SelectTokenProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
 
@@ -61,6 +63,9 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect }
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
         <BackButton onPress={() => navigation.goBack()} />
+        {wallet && onLogout && (
+          <LogoutButton onPress={onLogout} />
+        )}
       </View>
 
       <View style={styles.content}>
@@ -121,6 +126,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.sm,
     paddingBottom: spacing.xl,

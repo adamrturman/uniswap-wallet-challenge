@@ -9,6 +9,7 @@ import Button from './Button';
 import BackButton from './BackButton';
 import EthIcon from './EthIcon';
 import Header from './Header';
+import LogoutButton from './LogoutButton';
 import { ChainKey, chainConfig } from './chainConfig';
 
 type EnterAmountToSendProps = {
@@ -21,6 +22,7 @@ type EnterAmountToSendProps = {
   onTransactionExecute?: (amount: string) => Promise<{ success: boolean; hash?: string; error?: string }>;
   wallet?: Wallet | null;
   recipientAddress?: string;
+  onLogout?: () => void;
 };
 
 export default function EnterAmountToSend({ 
@@ -28,7 +30,8 @@ export default function EnterAmountToSend({
   onContinue, 
   onTransactionExecute, 
   wallet, 
-  recipientAddress 
+  recipientAddress,
+  onLogout
 }: EnterAmountToSendProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
@@ -233,6 +236,9 @@ export default function EnterAmountToSend({
       >
         <View style={styles.headerRow}>
           <BackButton onPress={() => navigation.goBack()} />
+          {wallet && onLogout && (
+            <LogoutButton onPress={onLogout} />
+          )}
         </View>
 
         <View style={styles.content}>

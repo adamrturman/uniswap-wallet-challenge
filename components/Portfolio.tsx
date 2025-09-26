@@ -10,6 +10,7 @@ import BackButton from './BackButton';
 import Header from './Header';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
+import LogoutButton from './LogoutButton';
 import { ChainBalances } from '../utils/balanceUtils';
 
 export type PortfolioProps = {
@@ -17,6 +18,7 @@ export type PortfolioProps = {
   balances: ChainBalances;
   wallet?: Wallet | null;
   onRefetchBalances?: () => Promise<void>;
+  onLogout?: () => void;
 };
 
 function truncateAddress(addr: string) {
@@ -24,7 +26,7 @@ function truncateAddress(addr: string) {
   return `${v.slice(0, 5)}...${v.slice(-5)}`;
 }
 
-export default function Portfolio({ address, balances, wallet, onRefetchBalances }: PortfolioProps) {
+export default function Portfolio({ address, balances, wallet, onRefetchBalances, onLogout }: PortfolioProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
@@ -51,7 +53,9 @@ export default function Portfolio({ address, balances, wallet, onRefetchBalances
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
         <BackButton onPress={() => navigation.goBack()} />
-        <View style={{ width: spacing.xxl + spacing.sm }} />
+        {wallet && onLogout && (
+          <LogoutButton onPress={onLogout} />
+        )}
       </View>
 
       <View style={styles.addressCard}>
