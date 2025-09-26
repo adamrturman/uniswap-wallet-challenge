@@ -122,10 +122,11 @@ export default function App() {
   };
 
   const handleRefetchBalances = async () => {
-    if (!watchedAddress) return;
+    const addressToRefetch = wallet?.address;
+    if (!addressToRefetch) return;
     
     try {
-      const fetchedBalances = await fetchChainBalances(watchedAddress);
+      const fetchedBalances = await fetchChainBalances(addressToRefetch);
       setBalances(fetchedBalances);
     } catch (error) {
       console.error('Failed to refetch balances:', error);
@@ -216,6 +217,7 @@ export default function App() {
                       tokenSymbol={selectedToken.symbol}
                       recipientAddress={recipientAddress}
                       fromAddress={watchedAddress}
+                      onRefetchBalances={handleRefetchBalances}
                     />
                   ) : null;
                 }}

@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import { ChainKey, chainOrder } from './chainConfig';
 import { useTheme, spacing, typography } from '../theme';
@@ -30,6 +30,15 @@ export default function Portfolio({ address, balances, wallet, onRefetchBalances
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
+
+  // Refetch balances when Portfolio screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      if (onRefetchBalances) {
+        onRefetchBalances();
+      }
+    }, [onRefetchBalances])
+  );
 
   const handleSendTransaction = () => {
     if (!wallet) {

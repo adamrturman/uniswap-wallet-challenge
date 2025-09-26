@@ -14,6 +14,7 @@ type TransactionConfirmationProps = {
   tokenSymbol: string;
   recipientAddress: string;
   fromAddress: string;
+  onRefetchBalances?: () => Promise<void>;
 };
 
 export default function TransactionConfirmation({
@@ -22,6 +23,7 @@ export default function TransactionConfirmation({
   tokenSymbol,
   recipientAddress,
   fromAddress,
+  onRefetchBalances,
 }: TransactionConfirmationProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
@@ -31,7 +33,11 @@ export default function TransactionConfirmation({
     console.log('View transaction on explorer:', transactionHash);
   };
 
-  const handleDone = () => {
+  const handleDone = async () => {
+    // Refetch balances before navigating back to Portfolio
+    if (onRefetchBalances) {
+      await onRefetchBalances();
+    }
     navigation.navigate('Portfolio');
   };
 
