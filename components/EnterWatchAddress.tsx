@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacit
 import { useNavigation } from '@react-navigation/native';
 import { ethers } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 import { chainConfig, ChainKey } from './chainConfig';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
@@ -51,6 +52,29 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
       await AsyncStorage.setItem(ADDRESS_HISTORY_KEY, JSON.stringify(updatedHistory));
     } catch (error) {
       console.log('Failed to save address to history:', error);
+    }
+  };
+
+  const clearAddressHistory = async () => {
+    try {
+      setAddressHistory([]);
+      await AsyncStorage.removeItem(ADDRESS_HISTORY_KEY);
+    } catch (error) {
+      console.log('Failed to clear address history:', error);
+    }
+  };
+
+  const removeAddressFromHistory = async (addressToRemove: string) => {
+    try {
+      const updatedHistory = addressHistory.filter(addr => addr !== addressToRemove);
+      setAddressHistory(updatedHistory);
+      if (updatedHistory.length === 0) {
+        await AsyncStorage.removeItem(ADDRESS_HISTORY_KEY);
+      } else {
+        await AsyncStorage.setItem(ADDRESS_HISTORY_KEY, JSON.stringify(updatedHistory));
+      }
+    } catch (error) {
+      console.log('Failed to remove address from history:', error);
     }
   };
 
@@ -145,14 +169,22 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
                   data={addressHistory}
                   keyExtractor={(item, index) => `${item}-${index}`}
                   renderItem={({ item }) => (
-                    <TouchableOpacity
-                      style={[styles.historyItem, { borderBottomColor: colors.border }]}
-                      onPress={() => handleAddressSelect(item)}
-                    >
-                      <Text style={[styles.historyItemText, { color: colors.text }]} numberOfLines={1}>
-                        {truncateAddress(item)}
-                      </Text>
-                    </TouchableOpacity>
+                    <View style={[styles.historyItem, { borderBottomColor: colors.border }]}>
+                      <TouchableOpacity
+                        style={styles.historyItemContent}
+                        onPress={() => handleAddressSelect(item)}
+                      >
+                        <Text style={[styles.historyItemText, { color: colors.text }]} numberOfLines={1}>
+                          {truncateAddress(item)}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => removeAddressFromHistory(item)}
+                      >
+                        <Ionicons name="trash-outline" size={16} color={colors.textSecondary} />
+                      </TouchableOpacity>
+                    </View>
                   )}
                   style={styles.historyList}
                   showsVerticalScrollIndicator={false}
@@ -228,12 +260,21 @@ const styles = StyleSheet.create({
     maxHeight: 150,
   },
   historyItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: spacing.md,
     borderBottomWidth: 1,
+  },
+  historyItemContent: {
+    flex: 1,
   },
   historyItemText: {
     fontSize: typography.sizes.sm,
     fontFamily: 'monospace',
+  },
+  removeButton: {
+    padding: spacing.xs,
+    marginLeft: spacing.sm,
   },
   footer: {
     marginTop: 'auto',
