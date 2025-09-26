@@ -1,15 +1,14 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Wallet, ethers } from 'ethers';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import { useTransaction } from '../context/TransactionContext';
 import Button from './Button';
 import BackButton from './BackButton';
-import ChainTokenIcon from './ChainTokenIcon';
 import EthIcon from './EthIcon';
+import Header from './Header';
 import { ChainKey, chainConfig } from './chainConfig';
 
 type EnterAmountToSendProps = {
@@ -135,14 +134,14 @@ export default function EnterAmountToSend({
       setIsExecuting(true);
       
       // Show transaction in progress modal
-      showTransactionModal('pending', undefined, undefined, selectedToken.chainKey);
+      showTransactionModal({ status: 'pending', chainKey: selectedToken.chainKey });
 
       try {
         const result = await onTransactionExecute(amount);
         
         if (result.success && result.hash) {
           // Update modal to show success
-          updateTransactionStatus('success', result.hash, undefined, selectedToken.chainKey);
+          updateTransactionStatus({ status: 'success', hash: result.hash, chainKey: selectedToken.chainKey });
           
           // Set the transaction amount before navigating
           onContinue?.(amount);
@@ -151,12 +150,12 @@ export default function EnterAmountToSend({
           navigation.navigate('Portfolio');
         } else {
           // Update modal to show error
-          updateTransactionStatus('error', undefined, result.error, selectedToken.chainKey);
+          updateTransactionStatus({ status: 'error', error: result.error, chainKey: selectedToken.chainKey });
         }
       } catch (error) {
         // Update modal to show error
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        updateTransactionStatus('error', undefined, errorMessage, selectedToken.chainKey);
+        updateTransactionStatus({ status: 'error', error: errorMessage, chainKey: selectedToken.chainKey });
       } finally {
         setIsExecuting(false);
       }
@@ -234,12 +233,6 @@ export default function EnterAmountToSend({
       >
         <View style={styles.headerRow}>
           <BackButton onPress={() => navigation.goBack()} />
-          <View style={styles.headerCenter}>
-            <View style={[styles.questionIcon, { backgroundColor: colors.primaryLight }]}>
-              <FontAwesome6 name="question" size={16} color={colors.textInverse} />
-            </View>
-          </View>
-          <View style={styles.headerRight} />
         </View>
 
         <View style={styles.content}>
@@ -382,20 +375,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.sm,
     paddingBottom: spacing.xl,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  headerRight: {
-    width: 40, // Same width as back button for balance
-  },
-  questionIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   content: {
     paddingHorizontal: spacing.xl,

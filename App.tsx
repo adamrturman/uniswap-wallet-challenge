@@ -41,17 +41,15 @@ export default function App() {
     });
   };
 
-  const handleWatchAddressContinue = (address: string, nextBalances: Record<ChainKey, number>) => {
+  const handleWatchAddressContinue = (address: string, watchedAddressBalances: Record<ChainKey, number>) => {
     setWatchedAddress(address);
-    setBalances(nextBalances);
-    setWallet(null); // Clear wallet when watching address
+    setBalances(watchedAddressBalances);
   };
 
   const handleRecoveryPhraseContinue = async (phrase: string) => {
     try {
       const walletFromPhrase = Wallet.fromMnemonic(phrase);
       setWallet(walletFromPhrase);
-      setWatchedAddress(walletFromPhrase.address);
       
       const fetchedBalances = await fetchBalancesForAllChains(walletFromPhrase.address);
       setBalances(fetchedBalances);
