@@ -25,6 +25,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
   const [addressHistory, setAddressHistory] = useState<string[]>([]);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
 
   const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
 
@@ -164,31 +165,43 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
             
             {addressHistory.length > 0 && (
               <View style={[styles.historyContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                <Text style={[styles.historyTitle, { color: colors.text }]}>View Recent Addresses</Text>
-                <FlatList
-                  data={addressHistory}
-                  keyExtractor={(item, index) => `${item}-${index}`}
-                  renderItem={({ item }) => (
-                    <View style={[styles.historyItem, { borderBottomColor: colors.border }]}>
-                      <TouchableOpacity
-                        style={styles.historyItemContent}
-                        onPress={() => handleAddressSelect(item)}
-                      >
-                        <Text style={[styles.historyItemText, { color: colors.text }]} numberOfLines={1}>
-                          {truncateAddress(item)}
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.removeButton}
-                        onPress={() => removeAddressFromHistory(item)}
-                      >
-                        <Ionicons name="trash-outline" size={16} color={colors.textSecondary} />
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  style={styles.historyList}
-                  showsVerticalScrollIndicator={false}
-                />
+                <TouchableOpacity
+                  style={[styles.historyHeader, { borderBottomColor: colors.border }]}
+                  onPress={() => setIsHistoryExpanded(!isHistoryExpanded)}
+                >
+                  <Text style={[styles.historyTitle, { color: colors.text }]}>View Recent Addresses</Text>
+                  <Ionicons 
+                    name={isHistoryExpanded ? "chevron-up" : "chevron-down"} 
+                    size={20} 
+                    color={colors.text} 
+                  />
+                </TouchableOpacity>
+                {isHistoryExpanded && (
+                  <FlatList
+                    data={addressHistory}
+                    keyExtractor={(item, index) => `${item}-${index}`}
+                    renderItem={({ item }) => (
+                      <View style={[styles.historyItem, { borderBottomColor: colors.border }]}>
+                        <TouchableOpacity
+                          style={styles.historyItemContent}
+                          onPress={() => handleAddressSelect(item)}
+                        >
+                          <Text style={[styles.historyItemText, { color: colors.text }]} numberOfLines={1}>
+                            {truncateAddress(item)}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.removeButton}
+                          onPress={() => removeAddressFromHistory(item)}
+                        >
+                          <Ionicons name="trash-outline" size={16} color={colors.textSecondary} />
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                    style={styles.historyList}
+                    showsVerticalScrollIndicator={false}
+                  />
+                )}
               </View>
             )}
           </View>
@@ -249,12 +262,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     maxHeight: 200,
   },
+  historyHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.md,
+    borderBottomWidth: 1,
+  },
   historyTitle: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.medium,
-    padding: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.1)',
   },
   historyList: {
     maxHeight: 150,
