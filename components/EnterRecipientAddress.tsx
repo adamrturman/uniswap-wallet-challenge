@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList, Clipboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ethers, Wallet } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -108,7 +108,17 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
 
   const truncateAddress = (address: string) => {
     if (address.length <= 30) return address;
-    return `${address.slice(0, 15)}...${address.slice(-12)}`;
+    return `${address.slice(0, 12)}...${address.slice(-10)}`;
+  };
+
+  const copyAddressToClipboard = async (address: string) => {
+    try {
+      await Clipboard.setString(address);
+      // You could add a toast notification here if desired
+      console.log('Address copied to clipboard:', address);
+    } catch (error) {
+      console.log('Failed to copy address to clipboard:', error);
+    }
   };
 
   return (
@@ -144,31 +154,57 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
             />
             
             {addressHistory.length > 0 && (
-              <View style={[styles.historyContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <View style={[
+                styles.historyContainer, 
+                { 
+                  backgroundColor: 'transparent',
+                  borderColor: 'transparent'
+                }
+              ]}>
                 <TouchableOpacity
-                  style={[styles.historyHeader, { borderBottomColor: colors.border }]}
+                  style={[
+                    styles.historyHeader, 
+                    { 
+                      borderBottomColor: 'transparent',
+                      backgroundColor: 'transparent'
+                    }
+                  ]}
                   onPress={() => setIsHistoryExpanded(!isHistoryExpanded)}
                 >
-                  <Text style={[styles.historyTitle, { color: colors.text }]}>Recent Recipients</Text>
-                  <Ionicons 
-                    name={isHistoryExpanded ? "chevron-up" : "chevron-down"} 
-                    size={20} 
-                    color={colors.text} 
-                  />
+                  <View style={styles.historyTitleContainer}>
+                    <Text style={[
+                      styles.historyTitle, 
+                      { 
+                        color: colors.textSecondary
+                      }
+                    ]}>Recent Recipients</Text>
+                    <Ionicons 
+                      name={isHistoryExpanded ? "chevron-up" : "chevron-down"} 
+                      size={16} 
+                      color={colors.textSecondary} 
+                      style={styles.chevronIcon}
+                    />
+                  </View>
                 </TouchableOpacity>
                 {isHistoryExpanded && (
                   <FlatList
                     data={addressHistory}
                     keyExtractor={(item, index) => `${item}-${index}`}
                     renderItem={({ item }) => (
-                      <View style={[styles.historyItem, { borderBottomColor: colors.border }]}>
+                      <View style={[styles.historyItem, { borderBottomColor: 'transparent' }]}>
                         <TouchableOpacity
                           style={styles.historyItemContent}
                           onPress={() => handleAddressSelect(item)}
                         >
-                          <Text style={[styles.historyItemText, { color: colors.text }]} numberOfLines={1}>
+                          <Text style={[styles.historyItemText, { color: colors.textSecondary }]} numberOfLines={1}>
                             {truncateAddress(item)}
                           </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.copyButton}
+                          onPress={() => copyAddressToClipboard(item)}
+                        >
+                          <Ionicons name="copy-outline" size={16} color={colors.textSecondary} />
                         </TouchableOpacity>
                         <TouchableOpacity
                           style={styles.removeButton}
@@ -245,17 +281,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     maxHeight: 200,
+    overflow: 'hidden',
   },
   historyHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     padding: spacing.md,
     borderBottomWidth: 1,
+  },
+  historyTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   historyTitle: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.medium,
+  },
+  chevronIcon: {
+    marginLeft: spacing.xs,
   },
   historyList: {
     maxHeight: 150,
@@ -272,6 +316,10 @@ const styles = StyleSheet.create({
   historyItemText: {
     fontSize: typography.sizes.sm,
     fontFamily: 'monospace',
+  },
+  copyButton: {
+    padding: spacing.xs,
+    marginLeft: spacing.sm,
   },
   removeButton: {
     padding: spacing.xs,
