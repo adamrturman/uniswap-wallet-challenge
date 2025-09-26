@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import React, { useMemo, useState, useEffect } from 'react';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ethers } from 'ethers';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { chainConfig, ChainKey } from './chainConfig';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
@@ -15,12 +16,43 @@ type EnterWatchAddressProps = {
   onContinue?: (address: string, balances: ChainBalances) => void;
 };
 
+const ADDRESS_HISTORY_KEY = 'wallet_address_history';
+const MAX_HISTORY_ITEMS = 10;
+
 export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
+  const [addressHistory, setAddressHistory] = useState<string[]>([]);
 
   const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
+
+  // Load address history on component mount
+  useEffect(() => {
+    loadAddressHistory();
+  }, []);
+
+  const loadAddressHistory = async () => {
+    try {
+      const history = await AsyncStorage.getItem(ADDRESS_HISTORY_KEY);
+      if (history) {
+        setAddressHistory(JSON.parse(history));
+      }
+    } catch (error) {
+      console.log('Failed to load address history:', error);
+    }
+  };
+
+  const saveAddressToHistory = async (newAddress: string) => {
+    try {
+      const trimmedAddress = newAddress.trim();
+      const updatedHistory = [trimmedAddress, ...addressHistory.filter(addr => addr !== trimmedAddress)].slice(0, MAX_HISTORY_ITEMS);
+      setAddressHistory(updatedHistory);
+      await AsyncStorage.setItem(ADDRESS_HISTORY_KEY, JSON.stringify(updatedHistory));
+    } catch (error) {
+      console.log('Failed to save address to history:', error);
+    }
+  };
 
 
   const handleContinue = async () => {
@@ -30,6 +62,9 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     setAddress(trimmedAddress);
 
     try {
+      // Save address to history
+      await saveAddressToHistory(trimmedAddress);
+      
       // Set initial loading state and navigate immediately
       const initialBalances = createInitialChainBalances();
       onContinue?.(trimmedAddress, initialBalances);
@@ -44,6 +79,34 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     } catch (error) {
       console.log('Failed to fetch native balances:', error);
     }
+  };
+
+  const handleAddressSelect = async (selectedAddress: string) => {
+    setAddress(selectedAddress);
+    
+    try {
+      // Save address to history (move to top)
+      await saveAddressToHistory(selectedAddress);
+      
+      // Set initial loading state and navigate immediately
+      const initialBalances = createInitialChainBalances();
+      onContinue?.(selectedAddress, initialBalances);
+      navigation.navigate('Portfolio');
+      
+      // Fetch balances in the background
+      const fetchedBalances = await fetchChainBalances(selectedAddress);
+      onContinue?.(selectedAddress, fetchedBalances);
+      
+      // Clear the input field for when user comes back
+      setAddress('');
+    } catch (error) {
+      console.log('Failed to fetch native balances:', error);
+    }
+  };
+
+  const truncateAddress = (address: string) => {
+    if (address.length <= 30) return address;
+    return `${address.slice(0, 15)}...${address.slice(-12)}`;
   };
 
   return (
@@ -74,6 +137,28 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
               isValid={isValid}
               errorMessage="Invalid wallet address. Please check and try again."
             />
+            
+            {addressHistory.length > 0 && (
+              <View style={[styles.historyContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <Text style={[styles.historyTitle, { color: colors.text }]}>View Recent Addresses</Text>
+                <FlatList
+                  data={addressHistory}
+                  keyExtractor={(item, index) => `${item}-${index}`}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={[styles.historyItem, { borderBottomColor: colors.border }]}
+                      onPress={() => handleAddressSelect(item)}
+                    >
+                      <Text style={[styles.historyItemText, { color: colors.text }]} numberOfLines={1}>
+                        {truncateAddress(item)}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  style={styles.historyList}
+                  showsVerticalScrollIndicator={false}
+                />
+              </View>
+            )}
           </View>
         </View>
 
@@ -125,6 +210,30 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '100%',
     marginTop: spacing.lg,
+  },
+  historyContainer: {
+    marginTop: spacing.md,
+    borderWidth: 1,
+    borderRadius: 8,
+    maxHeight: 200,
+  },
+  historyTitle: {
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.medium,
+    padding: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  historyList: {
+    maxHeight: 150,
+  },
+  historyItem: {
+    padding: spacing.md,
+    borderBottomWidth: 1,
+  },
+  historyItemText: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'monospace',
   },
   footer: {
     marginTop: 'auto',
