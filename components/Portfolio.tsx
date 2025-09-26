@@ -10,10 +10,11 @@ import BackButton from './BackButton';
 import Header from './Header';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
+import { ChainBalances } from '../utils/balanceUtils';
 
 export type PortfolioProps = {
   address: string;
-  balances: Record<ChainKey, number>;
+  balances: ChainBalances;
   wallet?: Wallet | null;
   onRefetchBalances?: () => Promise<void>;
 };
@@ -27,13 +28,6 @@ export default function Portfolio({ address, balances, wallet, onRefetchBalances
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
-
-  // Refetch balances when component mounts (e.g., after a transaction)
-  useEffect(() => {
-    if (onRefetchBalances) {
-      onRefetchBalances();
-    }
-  }, [onRefetchBalances]);
 
   const handleSendTransaction = () => {
     if (!wallet) {

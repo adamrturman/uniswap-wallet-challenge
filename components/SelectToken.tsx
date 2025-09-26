@@ -8,10 +8,11 @@ import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import BackButton from './BackButton';
 import Header from './Header';
+import { ChainBalances } from '../utils/balanceUtils';
 
 export type SelectTokenProps = {
   address: string;
-  balances: Record<ChainKey, number>;
+  balances: ChainBalances;
   wallet?: Wallet | null;
   onTokenSelect?: (chainKey: ChainKey, balance: number) => void;
 };
@@ -34,14 +35,14 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect }
     const tokens: TokenItem[] = [];
     
     chainOrder.forEach((chainKey) => {
-      const balance = balances[chainKey];
-      if (balance > 0) {
+      const balanceData = balances[chainKey];
+      if (balanceData && balanceData.value > 0) {
         const config = chainConfig[chainKey];
         tokens.push({
           chainKey,
           name: config.nativeTokenName,
           symbol: config.symbol,
-          balance,
+          balance: balanceData.value,
           chainIcon: config.chainIcon,
           tokenIcon: config.nativeTokenIcon,
         });

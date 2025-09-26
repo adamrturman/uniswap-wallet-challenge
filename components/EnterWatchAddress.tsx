@@ -9,16 +9,16 @@ import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
 import Input from './Input';
+import { ChainBalances, createInitialChainBalances, fetchChainBalances } from '../utils/balanceUtils';
 
 type EnterWatchAddressProps = {
-  onContinue?: (address: string, balances: Record<ChainKey, number>) => void;
+  onContinue?: (address: string, balances: ChainBalances) => void;
 };
 
 export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
-  const [balances, setBalances] = useState<Record<ChainKey, number>>({ ethereum: 0, polygon: 0, optimism: 0, arbitrum: 0, sepolia: 0 });
 
   const isValid = useMemo(() => ethers.utils.isAddress(address), [address]);
 
@@ -30,32 +30,14 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     setAddress(trimmedAddress);
 
     try {
-      // Fetch native balances across configured chains in parallel
-      const entries = (Object.keys(chainConfig) as ChainKey[]).map(async (key) => {
-        const { rpcUrl } = chainConfig[key];
-        const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-        const balanceWei = await provider.getBalance(trimmedAddress);
-        const balanceEther = ethers.utils.formatEther(balanceWei);
-        return [key, Number(balanceEther)] as const;
-      });
-
-      const results = await Promise.all(entries);
-      const nextBalances = results.reduce((acc, [key, value]) => {
-        acc[key] = value;
-        return acc;
-      }, { ...balances } as Record<ChainKey, number>);
-
-      setBalances(nextBalances);
-
-      // Log for debugging
-      (Object.keys(nextBalances) as ChainKey[]).forEach((key) => {
-        const { symbol } = chainConfig[key];
-        console.log(`${chainConfig[key].name} native balance (${symbol}):`, nextBalances[key]);
-      });
-
-      // Call the continue handler and navigate to portfolio
-      onContinue?.(trimmedAddress, nextBalances);
+      // Set initial loading state and navigate immediately
+      const initialBalances = createInitialChainBalances();
+      onContinue?.(trimmedAddress, initialBalances);
       navigation.navigate('Portfolio');
+      
+      // Fetch balances in the background
+      const fetchedBalances = await fetchChainBalances(trimmedAddress);
+      onContinue?.(trimmedAddress, fetchedBalances);
       
       // Clear the input field for when user comes back
       setAddress('');

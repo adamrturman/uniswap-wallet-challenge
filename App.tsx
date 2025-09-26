@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey } from './components/chainConfig';
-import { fetchBalancesForAllChains } from './utils/balanceUtils';
+import { fetchChainBalances, createInitialChainBalances, ChainBalances } from './utils/balanceUtils';
 import Landing from './components/Landing';
 import EnterWatchAddress from './components/EnterWatchAddress';
 import EnterRecoveryPhrase from './components/EnterRecoveryPhrase';
@@ -22,7 +22,7 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [watchedAddress, setWatchedAddress] = useState<string>('');
-  const [balances, setBalances] = useState<Record<ChainKey, number> | null>(null);
+  const [balances, setBalances] = useState<ChainBalances | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [selectedToken, setSelectedToken] = useState<{
     chainKey: ChainKey;
@@ -41,7 +41,7 @@ export default function App() {
     });
   };
 
-  const handleWatchAddressContinue = (address: string, watchedAddressBalances: Record<ChainKey, number>) => {
+  const handleWatchAddressContinue = (address: string, watchedAddressBalances: ChainBalances) => {
     setWatchedAddress(address);
     setBalances(watchedAddressBalances);
   };
@@ -51,7 +51,12 @@ export default function App() {
       const walletFromPhrase = Wallet.fromMnemonic(phrase);
       setWallet(walletFromPhrase);
       
-      const fetchedBalances = await fetchBalancesForAllChains(walletFromPhrase.address);
+      // Set initial loading state and navigate immediately
+      const initialBalances = createInitialChainBalances();
+      setBalances(initialBalances);
+      
+      // Fetch balances in the background
+      const fetchedBalances = await fetchChainBalances(walletFromPhrase.address);
       setBalances(fetchedBalances);
     } catch (error) {
       console.error('Error creating wallet from recovery phrase:', error);
@@ -115,7 +120,7 @@ export default function App() {
     if (!watchedAddress) return;
     
     try {
-      const fetchedBalances = await fetchBalancesForAllChains(watchedAddress);
+      const fetchedBalances = await fetchChainBalances(watchedAddress);
       setBalances(fetchedBalances);
     } catch (error) {
       console.error('Failed to refetch balances:', error);

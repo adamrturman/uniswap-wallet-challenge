@@ -3,10 +3,12 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { chainConfig, ChainKey } from './chainConfig';
 import { useTheme, spacing, typography } from '../theme';
 import ChainTokenIcon from './ChainTokenIcon';
+import Skeleton from './Skeleton';
+import { ChainBalance } from '../utils/balanceUtils';
 
 export type TokenBalanceProps = {
   chainKey: ChainKey;
-  balance: number;
+  balance: ChainBalance;
 };
 
 export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
@@ -30,6 +32,17 @@ export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
     return <Image source={baseIcon} style={styles.tokenIcon} resizeMode="contain" />;
   };
 
+  const renderBalance = () => {
+    if (balance.state === 'loading') {
+      return <Skeleton />;
+    }
+    return (
+      <Text style={[styles.chainBalance, { color: colors.text }]}>
+        {Number(balance.value).toFixed(4)} {chain.symbol}
+      </Text>
+    );
+  };
+
   return (
     <View style={styles.row}>
       <View style={styles.rowLeft}>
@@ -38,9 +51,7 @@ export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
           {chain.nativeTokenName}
         </Text>
       </View>
-      <Text style={[styles.chainBalance, { color: colors.text }]}>
-        {Number(balance).toFixed(4)} {chain.symbol}
-      </Text>
+      {renderBalance()}
     </View>
   );
 }
