@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { chainConfig } from '../components/chainConfig';
+import { chainConfig } from '../config/chain';
 
 export interface TransactionResult {
   success: boolean;

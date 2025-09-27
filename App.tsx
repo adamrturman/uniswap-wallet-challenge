@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ChainKey } from './components/chainConfig';
+import { ChainKey } from './config/chain';
 import { fetchChainBalances, createInitialChainBalances, ChainBalances } from './utils/balanceUtils';
 import { NavigationType } from './types';
 import Landing from './components/Landing';

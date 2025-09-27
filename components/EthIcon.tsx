@@ -8,7 +8,6 @@ export type EthIconProps = {
   style?: ViewStyle;
 };
 
-// Import the asset
 import ethIcon from '../assets/eth-diamond-black.png';
 
 const sizeConfig = {

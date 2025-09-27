@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { chainConfig, ChainKey } from './chainConfig';
+import { chainConfig, ChainKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import ChainTokenIcon from './ChainTokenIcon';
 import Skeleton from './Skeleton';

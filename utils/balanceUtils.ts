@@ -1,6 +1,6 @@
 import { providers, utils, BigNumber, BigNumberish } from 'ethers';
-import { ChainKey } from '../components/chainConfig';
-import { chainConfig } from '../components/chainConfig';
+import { ChainKey } from '../config/chain';
+import { chainConfig } from '../config/chain';
 
 export type BalanceLoadingState = 'loading' | 'loaded' | 'error';
 

@@ -10,7 +10,7 @@ import BackButton from './BackButton';
 import EthIcon from './EthIcon';
 import Header from './Header';
 import LogoutButton from './LogoutButton';
-import { ChainKey, chainConfig } from './chainConfig';
+import { ChainKey, chainConfig } from '../config/chain';
 
 type EnterAmountToSendProps = {
   selectedToken: {

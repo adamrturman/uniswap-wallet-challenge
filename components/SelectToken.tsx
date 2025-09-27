@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Wallet } from 'ethers';
-import { chainConfig, ChainKey, chainOrder } from './chainConfig';
+import { chainConfig, ChainKey, chainOrder } from '../config/chain';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import BackButton from './BackButton';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
-import { chainConfig, ChainKey, chainOrder } from './chainConfig';
+import { chainConfig, ChainKey, chainOrder } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 
 export type ChainSelectorGroupProps = {
