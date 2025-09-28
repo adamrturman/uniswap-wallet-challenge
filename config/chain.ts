@@ -8,7 +8,7 @@ export type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum' | 'sepol
 
 export const chainConfig: Record<ChainKey, { 
   name: string; 
-  nativeTokenName: string; 
+  nativeTokenDisplay: string; 
   rpcUrl: string; 
   symbol: string; 
   chainIcon: any; 
@@ -20,7 +20,7 @@ export const chainConfig: Record<ChainKey, {
 }> = {
   ethereum: {
     name: 'Ethereum',
-    nativeTokenName: 'Ethereum',
+    nativeTokenDisplay: 'ETH',
     rpcUrl: 'https://eth.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
@@ -31,7 +31,7 @@ export const chainConfig: Record<ChainKey, {
   },
   polygon: {
     name: 'Polygon',
-    nativeTokenName: 'Polygon Matic',
+    nativeTokenDisplay: 'MATIC',
     rpcUrl: 'https://polygon.drpc.org',
     symbol: 'MATIC',
     chainIcon: polygonLogo,
@@ -42,7 +42,7 @@ export const chainConfig: Record<ChainKey, {
   },
   optimism: {
     name: 'Optimism',
-    nativeTokenName: 'Ethereum',
+    nativeTokenDisplay: 'ETH (Optimism)',
     rpcUrl: 'https://optimism-rpc.publicnode.com',
     symbol: 'ETH',
     chainIcon: optimismBadge,
@@ -54,7 +54,7 @@ export const chainConfig: Record<ChainKey, {
   },
   arbitrum: {
     name: 'Arbitrum',
-    nativeTokenName: 'Ethereum',
+    nativeTokenDisplay: 'ETH (Arbitrum)',
     rpcUrl: 'https://arbitrum.drpc.org',
     symbol: 'ETH',
     chainIcon: arbitrumBadge,
@@ -66,7 +66,7 @@ export const chainConfig: Record<ChainKey, {
   },
   sepolia: {
     name: 'Sepolia',
-    nativeTokenName: 'Sepolia Ethereum',
+    nativeTokenDisplay: 'SepoliaETH',
     rpcUrl: 'https://sepolia.drpc.org',
     symbol: 'ETH',
     chainIcon: ethIcon,
@@ -77,4 +77,4 @@ export const chainConfig: Record<ChainKey, {
   },
 };
 
-export const chainOrder: ChainKey[] = ['ethereum', 'arbitrum', 'polygon', 'sepolia', 'optimism']; 
+export const chainOrder: ChainKey[] = ['ethereum', 'optimism', 'arbitrum', 'polygon', 'sepolia']; 

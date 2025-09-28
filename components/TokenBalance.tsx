@@ -46,8 +46,10 @@ export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
     }
     
     return (
-      <Text style={[styles.chainBalance, { color: colors.text }]}>
-        {Number(balance.value).toFixed(4)} {chain.symbol}
+      <Text style={[styles.chainBalance, { 
+        color: Number(balance.value) === 0 ? colors.textSecondary : colors.text 
+      }]}>
+        {Number(balance.value).toFixed(8)}
       </Text>
     );
   };
@@ -57,7 +59,7 @@ export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
       <View style={styles.rowLeft}>
         {renderIcon()}
         <Text style={[styles.chainName, { color: colors.text }]}>
-          {chain.nativeTokenName}
+          {chain.nativeTokenDisplay}
         </Text>
       </View>
       {renderBalance()}
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
   },
   chainBalance: {
     fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
+    fontWeight: typography.weights.normal,
   },
   tokenIcon: {
     width: spacing.xxl,
