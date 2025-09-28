@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Wallet, ethers } from 'ethers';
@@ -77,7 +77,7 @@ export default function EnterAmountToSend({
   }, [recipientAddress, amount]);
 
   // Gas estimation function
-  const estimateGas = async () => {
+  const estimateGas = useCallback(async () => {
     if (!wallet || !recipientAddress || !amount || parseFloat(amount) <= 0) {
       setGasEstimate(null);
       setGasPrice(null);
@@ -118,7 +118,7 @@ export default function EnterAmountToSend({
       setGasPrice(null);
       setNetworkFee(null);
     }
-  };
+  }, [wallet, recipientAddress, amount, selectedToken.chainKey]);
 
   // Estimate gas when amount or recipient changes
   useEffect(() => {
@@ -127,7 +127,7 @@ export default function EnterAmountToSend({
     }, 500); // Debounce the estimation
 
     return () => clearTimeout(timeoutId);
-  }, [amount, recipientAddress, selectedToken.chainKey, wallet]);
+  }, [estimateGas]);
 
   const handleContinue = async () => {
     if (!isValidAmount || isExecuting) return;
