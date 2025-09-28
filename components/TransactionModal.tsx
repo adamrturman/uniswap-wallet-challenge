@@ -41,7 +41,7 @@ export default function TransactionModal({
     if (!transactionHash || !chainKey) return;
     
     try {
-      const chainConfig = require('./chainConfig').chainConfig;
+      const chainConfig = require('../config/chain').chainConfig;
       const config = chainConfig[chainKey];
       const explorerUrl = `${config.explorerUrl}${transactionHash}`;
       await Linking.openURL(explorerUrl);

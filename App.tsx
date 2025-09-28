@@ -73,7 +73,7 @@ export default function App() {
   };
 
   const handleTokenSelect = (chainKey: ChainKey, balance: number) => {
-    const chainConfig = require('./components/chainConfig').chainConfig;
+    const chainConfig = require('./config/chain').chainConfig;
     const config = chainConfig[chainKey];
     
     setSelectedToken({
@@ -96,7 +96,7 @@ export default function App() {
 
     try {
       const { sendNativeTransaction } = await import('./utils/transactionUtils');
-      const chainConfig = require('./components/chainConfig').chainConfig;
+      const chainConfig = require('./config/chain').chainConfig;
       const config = chainConfig[selectedToken.chainKey];
       
       const result = await sendNativeTransaction(

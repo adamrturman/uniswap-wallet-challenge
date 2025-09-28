@@ -2,7 +2,7 @@ import ethIcon from '../assets/eth-diamond-black.png';
 import arbitrumBadge from '../assets/arb-logo-official.png';
 import optimismBadge from '../assets/optimism.png';
 import polygonLogo from '../assets/polygon-logo.png';
-import EthIcon from './EthIcon';
+import EthIcon from '../components/EthIcon';
 
 export type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum' | 'sepolia';
 
