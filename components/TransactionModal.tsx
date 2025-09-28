@@ -14,7 +14,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme, spacing, typography, radius } from '../theme';
 
-export type TransactionStatus = 'pending' | 'success' | 'error';
+export type TransactionStatus = 'review' | 'pending' | 'success' | 'error';
 
 export interface TransactionModalProps {
   visible: boolean;
@@ -22,7 +22,10 @@ export interface TransactionModalProps {
   transactionHash?: string;
   errorMessage?: string;
   chainKey?: string;
+  transactionData?: any;
+  onApprove?: () => void;
   onClose: () => void;
+  onExecuteTransaction?: () => Promise<void>;
 }
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -33,7 +36,10 @@ export default function TransactionModal({
   transactionHash,
   errorMessage,
   chainKey,
+  transactionData,
+  onApprove,
   onClose,
+  onExecuteTransaction,
 }: TransactionModalProps) {
   const { colors } = useTheme();
 
@@ -52,6 +58,8 @@ export default function TransactionModal({
 
   const getStatusIcon = () => {
     switch (status) {
+      case 'review':
+        return <MaterialIcons name="visibility" size={48} color={colors.primary} />;
       case 'pending':
         return <ActivityIndicator size="large" color={colors.primary} />;
       case 'success':
@@ -65,6 +73,8 @@ export default function TransactionModal({
 
   const getStatusTitle = () => {
     switch (status) {
+      case 'review':
+        return 'Review Transaction';
       case 'pending':
         return 'Transaction in Progress';
       case 'success':
@@ -78,6 +88,8 @@ export default function TransactionModal({
 
   const getStatusMessage = () => {
     switch (status) {
+      case 'review':
+        return 'Please review the transaction details below before approving.';
       case 'pending':
         return 'Your transaction is being processed. Please wait...';
       case 'success':
@@ -91,6 +103,8 @@ export default function TransactionModal({
 
   const getStatusColor = () => {
     switch (status) {
+      case 'review':
+        return colors.primary;
       case 'pending':
         return colors.primary;
       case 'success':
@@ -136,6 +150,40 @@ export default function TransactionModal({
               <Text style={[styles.message, { color: colors.text }]}>
                 {getStatusMessage()}
               </Text>
+
+              {status === 'review' && transactionData && (
+                <View style={[styles.transactionDataContainer, { backgroundColor: colors.backgroundSecondary }]}>
+                  <Text style={[styles.transactionDataTitle, { color: colors.text }]}>
+                    Transaction Details:
+                  </Text>
+                  <ScrollView style={styles.transactionDataScroll}>
+                    <Text style={[styles.transactionDataText, { color: colors.textSecondary }]}>
+                      {JSON.stringify(transactionData, null, 2)}
+                    </Text>
+                  </ScrollView>
+                </View>
+              )}
+
+              {status === 'review' && (
+                <TouchableOpacity 
+                  style={[styles.approveButton, { backgroundColor: colors.success }]}
+                  onPress={async () => {
+                    console.log('Approve button pressed in modal');
+                    console.log('Approving transaction...');
+                    
+                    if (onExecuteTransaction) {
+                      console.log('Executing transaction...');
+                      await onExecuteTransaction();
+                    } else {
+                      console.log('No transaction execution function provided');
+                    }
+                  }}
+                >
+                  <Text style={[styles.approveButtonText, { color: colors.background }]}>
+                    Approve Transaction
+                  </Text>
+                </TouchableOpacity>
+              )}
 
               {status === 'success' && transactionHash && (
                 <TouchableOpacity 
@@ -222,6 +270,38 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   explorerButtonText: {
+    fontSize: typography.sizes.base,
+    fontWeight: '600',
+  },
+  transactionDataContainer: {
+    width: '100%',
+    borderRadius: radius.md,
+    padding: spacing.md,
+    marginTop: spacing.md,
+    marginBottom: spacing.md,
+  },
+  transactionDataTitle: {
+    fontSize: typography.sizes.sm,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+  },
+  transactionDataScroll: {
+    maxHeight: 200,
+  },
+  transactionDataText: {
+    fontSize: typography.sizes.xs,
+    fontFamily: 'monospace',
+    lineHeight: 16,
+  },
+  approveButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: radius.lg,
+    marginTop: spacing.md,
+  },
+  approveButtonText: {
     fontSize: typography.sizes.base,
     fontWeight: '600',
   },

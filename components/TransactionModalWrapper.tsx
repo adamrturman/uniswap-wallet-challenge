@@ -9,6 +9,9 @@ export default function TransactionModalWrapper() {
     transactionHash,
     errorMessage,
     chainKey,
+    transactionData,
+    onApprove,
+    approveTransaction,
     hideTransactionModal,
   } = useTransaction();
 
@@ -19,6 +22,9 @@ export default function TransactionModalWrapper() {
       transactionHash={transactionHash}
       errorMessage={errorMessage}
       chainKey={chainKey}
+      transactionData={transactionData}
+      onApprove={onApprove}
+      onExecuteTransaction={approveTransaction}
       onClose={hideTransactionModal}
     />
   );

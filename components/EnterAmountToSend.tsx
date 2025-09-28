@@ -35,7 +35,7 @@ export default function EnterAmountToSend({
 }: EnterAmountToSendProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
-  const { showTransactionModal, updateTransactionStatus } = useTransaction();
+  const { showTransactionModal, updateTransactionStatus, hideTransactionModal, setApproveTransaction } = useTransaction();
   const [amount, setAmount] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -129,39 +129,93 @@ export default function EnterAmountToSend({
     return () => clearTimeout(timeoutId);
   }, [estimateGas]);
 
+  const handleApproveTransaction = async () => {
+    setIsExecuting(true);
+    
+    // Close the review modal
+    hideTransactionModal();
+    
+    // Wait a moment for the modal to close
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Open new transaction modal with pending status
+    showTransactionModal({ 
+      status: 'pending', 
+      chainKey: selectedToken.chainKey
+    });
+
+    // Add a small delay to ensure the spinner is visible
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    try {
+      if (!onTransactionExecute) {
+        throw new Error('Transaction execution function not available');
+      }
+      const result = await onTransactionExecute(amount);
+      
+      if (result.success && result.hash) {
+        // Update modal to show success
+        updateTransactionStatus({ 
+          status: 'success', 
+          hash: result.hash, 
+          chainKey: selectedToken.chainKey
+        });
+        
+        // Set the transaction amount before navigating
+        onContinue?.(amount);
+        
+        // Navigate to portfolio to show updated balances
+        navigation.navigate('Portfolio');
+      } else {
+        // Update modal to show error
+        updateTransactionStatus({ 
+          status: 'error', 
+          error: result.error, 
+          chainKey: selectedToken.chainKey
+        });
+      }
+    } catch (error) {
+      // Update modal to show error
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      updateTransactionStatus({ 
+        status: 'error', 
+        error: errorMessage, 
+        chainKey: selectedToken.chainKey
+      });
+    } finally {
+      setIsExecuting(false);
+    }
+  };
+
   const handleContinue = async () => {
     if (!isValidAmount || isExecuting) return;
 
     // Check if we have a wallet to execute transaction
     if (wallet && onTransactionExecute) {
-      setIsExecuting(true);
-      
-      // Show transaction in progress modal
-      showTransactionModal({ status: 'pending', chainKey: selectedToken.chainKey });
+      // Create transaction data object for review
+      const transactionData = {
+        from: wallet.address,
+        to: recipientAddress,
+        amount: amount,
+        token: {
+          symbol: selectedToken.symbol,
+          chainKey: selectedToken.chainKey,
+        },
+        gasEstimate: gasEstimate,
+        gasPrice: gasPrice,
+        networkFee: networkFee,
+        timestamp: new Date().toISOString(),
+      };
 
-      try {
-        const result = await onTransactionExecute(amount);
-        
-        if (result.success && result.hash) {
-          // Update modal to show success
-          updateTransactionStatus({ status: 'success', hash: result.hash, chainKey: selectedToken.chainKey });
-          
-          // Set the transaction amount before navigating
-          onContinue?.(amount);
-          
-          // Navigate to portfolio to show updated balances
-          navigation.navigate('Portfolio');
-        } else {
-          // Update modal to show error
-          updateTransactionStatus({ status: 'error', error: result.error, chainKey: selectedToken.chainKey });
-        }
-      } catch (error) {
-        // Update modal to show error
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        updateTransactionStatus({ status: 'error', error: errorMessage, chainKey: selectedToken.chainKey });
-      } finally {
-        setIsExecuting(false);
-      }
+      // Set the approve transaction function - this should only be called when user clicks approve
+      setApproveTransaction(handleApproveTransaction);
+      
+      // Show review modal - this should NOT execute the transaction automatically
+      showTransactionModal({ 
+        status: 'review', 
+        chainKey: selectedToken.chainKey,
+        transactionData: transactionData
+      });
     } else {
       // Fallback to original behavior for watch-only mode
       onContinue?.(amount);
