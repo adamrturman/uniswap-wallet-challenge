@@ -5,7 +5,6 @@ import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey } from './config/chain';
 import { fetchChainBalances, createInitialChainBalances, ChainBalances } from './utils/balanceUtils';
-import { sendNativeTransaction } from './utils/transactionUtils';
 import { NavigationType } from './types';
 import Landing from './components/Landing';
 import EnterWatchAddress from './components/EnterWatchAddress';
@@ -62,8 +61,7 @@ export default function App() {
       setBalances(initialBalances);
       
       // Fetch balances in the background
-      const fetchedBalances = await fetchChainBalances(walletFromPhrase.address);
-      setBalances(fetchedBalances);
+      await fetchChainBalances(walletFromPhrase.address, setBalances);
     } catch (error) {
       console.error('Error creating wallet from recovery phrase:', error);
     }
@@ -96,6 +94,7 @@ export default function App() {
     }
 
     try {
+      const { sendNativeTransaction } = await import('./utils/transactionUtils');
       const chainConfig = require('./config/chain').chainConfig;
       const config = chainConfig[selectedToken.chainKey];
       
@@ -126,8 +125,7 @@ export default function App() {
     if (!addressToRefetch) return;
     
     try {
-      const fetchedBalances = await fetchChainBalances(addressToRefetch);
-      setBalances(fetchedBalances);
+      await fetchChainBalances(addressToRefetch, setBalances);
     } catch (error) {
       console.error('Failed to refetch balances:', error);
     }
