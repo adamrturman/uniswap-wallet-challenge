@@ -36,6 +36,15 @@ export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
     if (balance.state === 'loading') {
       return <Skeleton />;
     }
+    
+    if (balance.state === 'error') {
+      return (
+        <Text style={[styles.chainBalance, { color: colors.textSecondary }]}>
+          Error loading
+        </Text>
+      );
+    }
+    
     return (
       <Text style={[styles.chainBalance, { color: colors.text }]}>
         {Number(balance.value).toFixed(4)} {chain.symbol}

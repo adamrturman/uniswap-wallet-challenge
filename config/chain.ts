@@ -43,7 +43,7 @@ export const chainConfig: Record<ChainKey, {
   optimism: {
     name: 'Optimism',
     nativeTokenName: 'Ethereum',
-    rpcUrl: 'https://optimism.drpc.org',
+    rpcUrl: 'https://optimism-rpc.publicnode.com',
     symbol: 'ETH',
     chainIcon: optimismBadge,
     explorerUrl: 'https://optimistic.etherscan.io/tx/',
@@ -77,4 +77,4 @@ export const chainConfig: Record<ChainKey, {
   },
 };
 
-export const chainOrder: ChainKey[] = ['ethereum', 'optimism', 'arbitrum', 'polygon', 'sepolia']; 
+export const chainOrder: ChainKey[] = ['ethereum', 'arbitrum', 'polygon', 'sepolia', 'optimism']; 

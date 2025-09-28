@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { ethers } from 'ethers';
 import { useTheme, spacing, typography } from '../theme';
+import { chainConfig } from '../config/chain';
 import Input from './Input';
 
 type AddressInputProps = {
@@ -45,7 +46,7 @@ export default function AddressInput({
   const resolveENS = async (ensName: string): Promise<string | null> => {
     try {
       setIsResolvingENS(true);
-      const provider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
+      const provider = new ethers.providers.JsonRpcProvider(chainConfig.ethereum.rpcUrl);
       const resolvedAddress = await provider.resolveName(ensName);
       setResolvedAddress(resolvedAddress);
       return resolvedAddress;
@@ -100,7 +101,7 @@ export default function AddressInput({
 export const useAddressResolution = () => {
   const resolveENS = async (ensName: string): Promise<string | null> => {
     try {
-      const provider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
+      const provider = new ethers.providers.JsonRpcProvider(chainConfig.ethereum.rpcUrl);
       return await provider.resolveName(ensName);
     } catch (error) {
       console.log('Failed to resolve ENS name:', error);

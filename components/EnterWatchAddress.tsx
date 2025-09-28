@@ -10,7 +10,7 @@ import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
 import AddressInput, { useAddressResolution } from './AddressInput';
-import { ChainBalances, createInitialChainBalances, fetchChainBalances } from '../utils/balanceUtils';
+import { ChainBalances, createInitialChainBalances } from '../utils/balanceUtils';
 
 type EnterWatchAddressProps = {
   onContinue?: (address: string, balances: ChainBalances) => void;
@@ -97,17 +97,13 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
       
       // Set initial loading state and navigate immediately
       const initialBalances = createInitialChainBalances();
-      onContinue?.(trimmedInput, initialBalances);
+      onContinue?.(finalAddress, initialBalances);
       navigation.navigate('Portfolio');
-      
-      // Fetch balances in the background
-      const fetchedBalances = await fetchChainBalances(finalAddress);
-      onContinue?.(finalAddress, fetchedBalances);
       
       // Clear the input field for when user comes back
       setAddress('');
     } catch (error) {
-      console.log('Failed to fetch native balances:', error);
+      console.log('Failed to resolve address:', error);
     }
   };
 
@@ -127,17 +123,13 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
       
       // Set initial loading state and navigate immediately
       const initialBalances = createInitialChainBalances();
-      onContinue?.(selectedAddress, initialBalances);
+      onContinue?.(finalAddress, initialBalances);
       navigation.navigate('Portfolio');
-      
-      // Fetch balances in the background
-      const fetchedBalances = await fetchChainBalances(finalAddress);
-      onContinue?.(finalAddress, fetchedBalances);
       
       // Clear the input field for when user comes back
       setAddress('');
     } catch (error) {
-      console.log('Failed to fetch native balances:', error);
+      console.log('Failed to resolve address:', error);
     }
   };
 

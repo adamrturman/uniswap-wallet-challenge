@@ -43,11 +43,18 @@ export default function App() {
     });
   };
 
-  const handleWatchAddressContinue = (address: string, watchedAddressBalances: ChainBalances) => {
+  const handleWatchAddressContinue = async (address: string, watchedAddressBalances: ChainBalances) => {
     setWatchedAddress(address);
     setBalances(watchedAddressBalances);
     // Clear wallet state when entering watch mode
     setWallet(null);
+    
+    try {
+      const fetchedBalances = await fetchChainBalances(address);
+      setBalances(fetchedBalances);
+    } catch (error) {
+      console.error('Failed to fetch balances for watched address:', error);
+    }
   };
 
   const handleRecoveryPhraseContinue = async (phrase: string) => {
@@ -61,7 +68,7 @@ export default function App() {
       const initialBalances = createInitialChainBalances();
       setBalances(initialBalances);
       
-      // Fetch balances in the background
+      // Fetch balances in the background with parallel execution
       const fetchedBalances = await fetchChainBalances(walletFromPhrase.address);
       setBalances(fetchedBalances);
     } catch (error) {
@@ -121,12 +128,12 @@ export default function App() {
     }
   };
 
-  const handleRefetchBalances = async () => {
-    const addressToRefetch = wallet?.address;
+  const handleRefetchBalances = async (forceRefresh: boolean = false) => {
+    const addressToRefetch = wallet?.address || watchedAddress;
     if (!addressToRefetch) return;
     
     try {
-      const fetchedBalances = await fetchChainBalances(addressToRefetch);
+      const fetchedBalances = await fetchChainBalances(addressToRefetch, forceRefresh);
       setBalances(fetchedBalances);
     } catch (error) {
       console.error('Failed to refetch balances:', error);
@@ -156,7 +163,7 @@ export default function App() {
               screenOptions={{ headerShown: false }}
             >
               <Stack.Screen name="Landing">
-                {() => <Landing onDevNavigation={handleDevNavigation} />}
+                {() => <Landing />}
               </Stack.Screen>
               <Stack.Screen name="EnterWatchAddress">
                 {() => <EnterWatchAddress onContinue={handleWatchAddressContinue} />}
