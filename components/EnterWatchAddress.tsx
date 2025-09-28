@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
+import * as Clipboard from 'expo-clipboard';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
@@ -148,7 +148,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
 
   const copyAddressToClipboard = async (address: string) => {
     try {
-      await Clipboard.setString(address);
+      await Clipboard.setStringAsync(address);
       // You could add a toast notification here if desired
       console.log('Address copied to clipboard:', address);
     } catch (error) {
