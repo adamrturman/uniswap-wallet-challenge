@@ -50,8 +50,14 @@ export default function Portfolio({ address, balances, wallet, onRefetchBalances
 
   const visibleKeys = useMemo(() => {
     const keys = selected === 'all' ? orderedKeys : orderedKeys.filter((k) => k === selected);
-    return keys;
-  }, [orderedKeys, selected]);
+    
+    // Sort by balance value (greatest to least)
+    return keys.sort((a, b) => {
+      const balanceA = balances[a]?.value || 0;
+      const balanceB = balances[b]?.value || 0;
+      return balanceB - balanceA; // Descending order (greatest first)
+    });
+  }, [orderedKeys, selected, balances]);
 
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
