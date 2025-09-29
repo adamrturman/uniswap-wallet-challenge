@@ -18,7 +18,7 @@ export default function Landing({}: LandingProps) {
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.content}>
           <View style={styles.logoWrapper}>
-          <View style={[styles.logoContainer, { backgroundColor: colors.primaryLight, padding: spacing.xl, shadowColor: colors.shadow }]}>
+          <View style={[styles.logoContainer, { backgroundColor: colors.primaryLightDark, padding: spacing.xl, shadowColor: colors.shadow }]}>
             <Image
               source={uniswapLogo}
               style={{ width: spacing.xxxl * 3, height: spacing.xxxl * 3, resizeMode: 'contain' }}

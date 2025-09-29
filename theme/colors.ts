@@ -2,6 +2,7 @@ export const lightTheme = {
   primary: '#FC72FF',
   primaryDisabled: '#FAD6FF',
   primaryLight: '#FEF4FF',
+  primaryLightDark: '#FEF4FF',
   background: '#ffffff',
   backgroundSecondary: '#F4F4F4',
   
@@ -31,6 +32,7 @@ export const darkTheme = {
   primary: '#FC72FF',
   primaryDisabled: '#666666',
   primaryLight: '#FEF4FF',
+  primaryLightDark: '#4A2C4A',
   background: '#131313',
   backgroundSecondary: '#2A2A2A',
   
