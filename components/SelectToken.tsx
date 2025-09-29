@@ -15,13 +15,13 @@ export type SelectTokenProps = {
   address: string;
   balances: AllTokenBalances;
   wallet?: Wallet | null;
-  onTokenSelect?: (chainKey: ChainKey, tokenKey: TokenKey | 'native', balance: number) => void;
+  onTokenSelect?: (chainKey: ChainKey, tokenKey: TokenKey, balance: number, symbol: string) => void;
   onLogout?: () => void;
 };
 
 type TokenItem = {
   chainKey: ChainKey;
-  tokenKey: TokenKey | 'native';
+  tokenKey: TokenKey;
   name: string;
   symbol: string;
   balance: number;
@@ -46,7 +46,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
         const config = chainConfig[chainKey];
         tokens.push({
           chainKey,
-          tokenKey: 'native',
+          tokenKey: config.symbol as TokenKey,
           name: config.nativeTokenDisplay,
           symbol: config.symbol,
           balance: chainBalances.native.value,
@@ -63,6 +63,10 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
         const tokenKeys: TokenKey[] = availableTokens;
         
         tokenKeys.forEach((tokenKey) => {
+          // Skip native token as it's handled separately
+          const nativeSymbol = chainConfig[chainKey].symbol;
+          if (tokenKey === nativeSymbol) return;
+          
           const tokenBalance = chainBalances.tokens[tokenKey];
           if (tokenBalance && tokenBalance.value > 0) {
             const token = tokenConfig[chainKey][tokenKey];
@@ -87,7 +91,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
   }, [balances]);
 
   const handleTokenSelect = (token: TokenItem) => {
-    onTokenSelect?.(token.chainKey, token.tokenKey, token.balance);
+    onTokenSelect?.(token.chainKey, token.tokenKey, token.balance, token.symbol);
     navigation.navigate('EnterAmountToSend');
   };
 

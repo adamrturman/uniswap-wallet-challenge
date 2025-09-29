@@ -10,8 +10,10 @@ import BackButton from './BackButton';
 import EthIcon from './EthIcon';
 import Header from './Header';
 import LogoutButton from './LogoutButton';
-import { ChainKey, chainConfig } from '../config/chain';
+import TokenSelectionModal from './TokenSelectionModal';
+import { ChainKey, TokenKey, chainConfig } from '../config/chain';
 import { GasEstimate } from '../utils/transactionUtils';
+import { AllTokenBalances } from '../utils/balanceUtils';
 
 type EnterAmountToSendProps = {
   selectedToken: {
@@ -25,6 +27,9 @@ type EnterAmountToSendProps = {
   wallet?: Wallet | null;
   recipientAddress?: string;
   onLogout?: () => void;
+  balances?: AllTokenBalances | null;
+  address?: string;
+  onTokenSelect?: (chainKey: ChainKey, tokenKey: TokenKey, balance: number, symbol: string) => void;
 };
 
 export default function EnterAmountToSend({ 
@@ -33,7 +38,10 @@ export default function EnterAmountToSend({
   onTransactionExecute, 
   wallet, 
   recipientAddress,
-  onLogout
+  onLogout,
+  balances,
+  address,
+  onTokenSelect
 }: EnterAmountToSendProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
@@ -41,6 +49,7 @@ export default function EnterAmountToSend({
   const [amount, setAmount] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [isTokenModalVisible, setIsTokenModalVisible] = useState(false);
 
   const isValidAmount = useMemo(() => {
     const numAmount = parseFloat(amount);
@@ -204,6 +213,10 @@ export default function EnterAmountToSend({
     setAmount(numericText);
   };
 
+  const handleTokenSelect = (chainKey: ChainKey, tokenKey: TokenKey, balance: number, symbol: string) => {
+    onTokenSelect?.(chainKey, tokenKey, balance, symbol);
+  };
+
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
@@ -249,12 +262,16 @@ export default function EnterAmountToSend({
               />
               
               {/* Token selector positioned inside input */}
-              <View style={[styles.tokenSelector, { backgroundColor: '#ffffff', borderColor: colors.border, borderWidth: 1 }]}>
+              <TouchableOpacity 
+                style={[styles.tokenSelector, { backgroundColor: '#ffffff', borderColor: colors.border, borderWidth: 1 }]}
+                onPress={() => setIsTokenModalVisible(true)}
+                activeOpacity={0.7}
+              >
                 <EthIcon size="small" />
                 <Text style={[styles.tokenSymbol, { color: colors.text }]}>
                   {selectedToken.symbol}
                 </Text>
-              </View>
+              </TouchableOpacity>
               
               {/* Balance and Max button positioned inside input */}
               <View style={styles.balanceRow}>
@@ -295,6 +312,21 @@ export default function EnterAmountToSend({
           />
         </View>
       </KeyboardAvoidingView>
+      
+      {/* Token Selection Modal */}
+      {balances && address && (
+        <TokenSelectionModal
+          visible={isTokenModalVisible}
+          onClose={() => setIsTokenModalVisible(false)}
+          onTokenSelect={handleTokenSelect}
+          address={address}
+          balances={balances}
+          currentToken={{
+            chainKey: selectedToken.chainKey,
+            tokenKey: selectedToken.tokenKey as any
+          }}
+        />
+      )}
     </View>
   );
 }

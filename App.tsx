@@ -28,7 +28,7 @@ export default function App() {
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [selectedToken, setSelectedToken] = useState<{
     chainKey: ChainKey;
-    tokenKey: TokenKey | 'native';
+    tokenKey: TokenKey;
     balance: number;
     symbol: string;
   } | null>(null);
@@ -39,7 +39,7 @@ export default function App() {
   const handleDevNavigation = () => {
     setSelectedToken({
       chainKey: 'sepolia',
-      tokenKey: 'native',
+      tokenKey: 'ETH',
       balance: 0.399,
       symbol: 'ETH',
     });
@@ -83,17 +83,7 @@ export default function App() {
     setRecipientAddress(address);
   };
 
-  const handleTokenSelect = (chainKey: ChainKey, tokenKey: TokenKey | 'native', balance: number) => {
-    const chainConfig = require('./config/chain').chainConfig;
-    const tokenConfig = require('./config/chain').tokenConfig;
-    
-    let symbol: string;
-    if (tokenKey === 'native') {
-      symbol = chainConfig[chainKey].symbol;
-    } else {
-      symbol = tokenConfig[chainKey][tokenKey].symbol;
-    }
-    
+  const handleTokenSelect = (chainKey: ChainKey, tokenKey: TokenKey, balance: number, symbol: string) => {
     setSelectedToken({
       chainKey,
       tokenKey,
@@ -121,7 +111,8 @@ export default function App() {
       let result;
       
       // Handle native token transactions
-      if (selectedToken.tokenKey === 'native') {
+      const nativeSymbol = chainConfig[selectedToken.chainKey].symbol;
+      if (selectedToken.tokenKey === nativeSymbol) {
         result = await sendNativeTransaction(
           wallet,
           recipientAddress,
@@ -221,6 +212,9 @@ export default function App() {
                     wallet={wallet}
                     recipientAddress={recipientAddress}
                     onLogout={() => handleLogout(navigation)}
+                    balances={balances}
+                    address={wallet?.address || watchedAddress}
+                    onTokenSelect={handleTokenSelect}
                   />
                 ) : null}
               </Stack.Screen>

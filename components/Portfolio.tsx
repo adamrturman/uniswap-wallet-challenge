@@ -49,7 +49,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
   const allTokens = useMemo(() => {
     const tokens: Array<{
       chainKey: ChainKey;
-      tokenKey: TokenKey | 'native';
+      tokenKey: TokenKey;
       name: string;
       symbol: string;
       balance: number;
@@ -70,7 +70,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
         const config = chainConfig[chainKey];
         tokens.push({
           chainKey,
-          tokenKey: 'native',
+          tokenKey: config.symbol as TokenKey,
           name: config.nativeTokenDisplay,
           symbol: config.symbol,
           balance: chainBalances.native.value,
