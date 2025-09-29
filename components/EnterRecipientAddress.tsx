@@ -150,7 +150,6 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
             <AddressInput
               value={address}
               onChangeText={handleAddressChange}
-              placeholder="Enter a wallet address or ENS name"
               onValidationChange={handleValidationChange}
             />
             

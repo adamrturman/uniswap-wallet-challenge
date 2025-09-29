@@ -6,16 +6,12 @@ import { isValidAddressOrENS } from '../utils/addressValidation';
 type AddressInputProps = {
   value: string;
   onChangeText: (text: string) => void;
-  placeholder?: string;
-  errorMessage?: string;
   onValidationChange?: (isValid: boolean) => void;
 };
 
 export default function AddressInput({ 
   value, 
   onChangeText, 
-  placeholder = "Enter a wallet address or ENS name",
-  errorMessage = "Invalid wallet address or ENS name. Please check and try again.",
   onValidationChange
 }: AddressInputProps) {
 
@@ -34,9 +30,9 @@ export default function AddressInput({
       <Input
         value={value}
         onChangeText={onChangeText}
-        placeholder={placeholder}
+        placeholder="Enter a wallet address or ENS name"
         isValid={isValid}
-        errorMessage={errorMessage}
+        errorMessage="Invalid wallet address or ENS name. Please check and try again."
       />
     </View>
   );

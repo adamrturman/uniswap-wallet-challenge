@@ -147,7 +147,6 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
             <AddressInput
               value={address}
               onChangeText={handleAddressChange}
-              placeholder="Enter a wallet address or ENS name"
               onValidationChange={handleValidationChange}
             />
             
