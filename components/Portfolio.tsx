@@ -107,8 +107,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       }
     });
 
-    // Sort by balance value (greatest to least)
-    return tokens.sort((a, b) => b.balance - a.balance);
+    return tokens;
   }, [orderedKeys, selected, balances]);
 
   return (
