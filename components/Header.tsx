@@ -11,14 +11,9 @@ export type HeaderProps = {
 
 // Map of icons to their appropriate libraries
 const iconLibraryMap: Record<string, 'material' | 'ionicons' | 'fontawesome6'> = {
-  // Person icons - use Ionicons
   'person': 'ionicons',
-  
-  // Coin/money icons - use MaterialIcons
-  'coins': 'material',
+  'coins': 'fontawesome6',
   'wallet': 'material',
-  
-  // Action icons - use FontAwesome6
   'check-circle': 'fontawesome6',
   'key': 'fontawesome6',
 };
