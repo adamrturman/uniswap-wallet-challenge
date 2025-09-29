@@ -84,12 +84,13 @@ export default function Input({
           returnKeyType={returnKeyType}
         />
       </View>
-      
-      {showError && (
-        <Text style={[styles.errorText, { color: colors.error }]}>
-          {errorMessage}
-        </Text>
-      )}
+       {/* This space is intentionally left blank to preserve layout white space */}
+      <Text style={[styles.errorText, { 
+        color: showError ? colors.error : 'transparent',
+        minHeight: showError ? undefined : typography.sizes.sm + spacing.xs
+      }]}>
+        {showError ? errorMessage : ' '}
+      </Text>
     </View>
   );
 }

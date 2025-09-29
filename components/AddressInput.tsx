@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ethers } from 'ethers';
 import Input from './Input';
+import { isValidAddressOrENS } from '../utils/addressValidation';
 
 type AddressInputProps = {
   value: string;
@@ -19,36 +19,9 @@ export default function AddressInput({
   onValidationChange
 }: AddressInputProps) {
 
-  // Enhanced ENS name validation using ethers.js
-  const isValidENSName = (name: string): boolean => {
-    if (!name.includes('.eth')) return false;
-    if (name.startsWith('0x')) return false;
-    
-    try {
-      // Use ethers.js to validate name format, but ensure it ends with .eth
-      // and is not a valid address, and doesn't start with 0x
-      return ethers.utils.isValidName(name) && 
-             name.endsWith('.eth') && 
-             !ethers.utils.isAddress(name) &&
-             !name.toLowerCase().startsWith('0x');
-    } catch (error) {
-      return false;
-    }
-  };
-
-  // Check if input is a valid address or ENS name
+  // Check if input is a valid address or ENS name using shared helper
   const isValid = useMemo(() => {
-    if (!value.trim()) return false;
-    
-    // If it's a valid address, return true
-    if (ethers.utils.isAddress(value)) return true;
-    
-    // If it's a valid ENS name format
-    if (isValidENSName(value)) {
-      return true;
-    }
-    
-    return false;
+    return isValidAddressOrENS(value);
   }, [value]);
 
   // Notify parent component of validation changes
@@ -84,7 +57,8 @@ export const useAddressResolution = () => {
   };
 
   const resolveAddress = async (inputValue: string): Promise<string | null> => {
-    if (inputValue.includes('.eth') && !inputValue.startsWith('0x')) {
+    const { isENSName } = require('../utils/addressValidation');
+    if (isENSName(inputValue)) {
       return await resolveENS(inputValue);
     }
     return inputValue;
