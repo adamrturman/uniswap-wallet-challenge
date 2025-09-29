@@ -120,11 +120,11 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
 
     // Sort by USD value if enabled
     if (sortByUsd) {
-      tokens.sort((a, b) => (b.usdValue || 0) - (a.usdValue || 0));
+      return [...tokens].sort((a, b) => (b.usdValue || 0) - (a.usdValue || 0));
     }
 
     return tokens;
-  }, [orderedKeys, selected, balances, sortByUsd, getTokenUsdValue]);
+  }, [orderedKeys, selected, balances, sortByUsd]);
 
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
