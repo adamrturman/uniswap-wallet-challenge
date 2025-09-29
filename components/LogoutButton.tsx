@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { SimpleLineIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../theme';
 
 type LogoutButtonProps = {
@@ -15,8 +15,8 @@ export default function LogoutButton({ onPress }: LogoutButtonProps) {
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <SimpleLineIcons 
-        name="logout" 
+      <MaterialCommunityIcons 
+        name="exit-run" 
         size={24} 
         color={colors.text} 
       />
