@@ -56,15 +56,6 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     }
   };
 
-  const clearAddressHistory = async () => {
-    try {
-      setAddressHistory([]);
-      await AsyncStorage.removeItem(ADDRESS_HISTORY_KEY);
-    } catch (error) {
-      console.log('Failed to clear address history:', error);
-    }
-  };
-
   const removeAddressFromHistory = async (addressToRemove: string) => {
     try {
       const updatedHistory = addressHistory.filter(addr => addr !== addressToRemove);

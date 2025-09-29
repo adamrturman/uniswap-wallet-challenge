@@ -7,9 +7,7 @@ import { NavigationType } from '../types';
 import Button from './Button';
 import ScreenWrapper from './ScreenWrapper';
 
-type LandingProps = {};
-
-export default function Landing({}: LandingProps) {
+export default function Landing() {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   
