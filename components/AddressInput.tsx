@@ -43,7 +43,7 @@ export default function AddressInput({
 }
 
 // Export the resolution function for use in parent components
-export const useAddressResolution = () => {
+export const resolveAddress = async (inputValue: string): Promise<string | null> => {
   const resolveENS = async (ensName: string): Promise<string | null> => {
     try {
       const { ethers } = require('ethers');
@@ -56,15 +56,11 @@ export const useAddressResolution = () => {
     }
   };
 
-  const resolveAddress = async (inputValue: string): Promise<string | null> => {
-    const { isENSName } = require('../utils/addressValidation');
-    if (isENSName(inputValue)) {
-      return await resolveENS(inputValue);
-    }
-    return inputValue;
-  };
-
-  return { resolveAddress };
+  const { isENSName } = require('../utils/addressValidation');
+  if (isENSName(inputValue)) {
+    return await resolveENS(inputValue);
+  }
+  return inputValue;
 };
 
 const styles = StyleSheet.create({

@@ -10,7 +10,7 @@ import { NavigationType } from '../types';
 import { truncateAddress } from '../utils/addressUtils';
 import Button from './Button';
 import Header from './Header';
-import AddressInput, { useAddressResolution } from './AddressInput';
+import AddressInput, { resolveAddress } from './AddressInput';
 import ScreenWrapper from './ScreenWrapper';
 
 type EnterRecipientAddressProps = {
@@ -30,7 +30,6 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
   const [isValidAddress, setIsValidAddress] = useState(false);
-  const { resolveAddress } = useAddressResolution();
 
   // Load address history on component mount
   useEffect(() => {
