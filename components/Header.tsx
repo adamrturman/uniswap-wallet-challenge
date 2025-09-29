@@ -1,11 +1,13 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { spacing } from '../theme';
 import HeaderIcon from './HeaderIcon';
 
 export type HeaderProps = {
   icon: string;
   text: React.ReactNode;
+  onPress?: () => void;
+  profileImage?: string | null;
 };
 
 // Map of icons to their appropriate libraries
@@ -22,20 +24,49 @@ const iconLibraryMap: Record<string, 'material' | 'ionicons' | 'fontawesome6'> =
   'key': 'fontawesome6',
 };
 
-export default function Header({ icon, text }: HeaderProps) {
+export default function Header({ icon, text, onPress, profileImage }: HeaderProps) {
   const library = iconLibraryMap[icon] || 'fontawesome6'; // Default to FontAwesome6 for unknown icons
   
-  return (
+  const renderIcon = () => {
+    if (profileImage) {
+      return (
+        <Image 
+          source={{ uri: profileImage }} 
+          style={styles.profileImage}
+          resizeMode="cover"
+        />
+      );
+    }
+    return <HeaderIcon icon={icon} library={library} size="large" />;
+  };
+
+  const content = (
     <View style={styles.container}>
-      <HeaderIcon icon={icon} library={library} size="large" />
+      {renderIcon()}
       {text}
     </View>
   );
+
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+        {content}
+      </TouchableOpacity>
+    );
+  }
+
+  return content;
 }
 
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: spacing.sm,
   },
 });
