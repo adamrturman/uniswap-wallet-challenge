@@ -219,7 +219,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
             styles.sortButtonText,
             { color: colors.textSecondary }
           ]}>
-            {sortByUsd ? 'USD ↑' : 'USD ↓'}
+            {sortByUsd ? 'USD Value ↑' : 'USD Value ↓'}
           </Text>
         </TouchableOpacity>
       </View>
