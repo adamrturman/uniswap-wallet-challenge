@@ -68,7 +68,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       const chainConfig = require('../config/chain').chainConfig;
       const tokenConfig = require('../config/chain').tokenConfig;
       
-      return activeTokens.map(token => {
+      const mappedTokens = activeTokens.map(token => {
         const usdValue = getTokenUsdValue(token.symbol, token.balance);
         return {
           chainKey: token.chainKey,
@@ -82,6 +82,13 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
           usdValue: usdValue || 0,
         };
       });
+
+      // Apply USD sorting to active tokens if enabled
+      if (sortByUsd) {
+        return [...mappedTokens].sort((a, b) => (b.usdValue || 0) - (a.usdValue || 0));
+      }
+
+      return mappedTokens;
     }
 
     const keys = selected === 'all' ? orderedKeys : orderedKeys.filter((k) => k === selected);
@@ -202,7 +209,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
 
       {/* Send button - only show if wallet is available */}
       {wallet && (
-        <View style={[styles.sendButtonContainer, { 
+        <View style={[{ 
           paddingHorizontal: spacing.xl, 
           paddingBottom: spacing.xl * 2, 
           paddingTop: spacing.xl 
@@ -262,7 +269,5 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.xs,
     fontWeight: typography.weights.normal,
   },
-  sendButtonContainer: {
-    // Spacing will be applied via theme values
-  },
+
 });
