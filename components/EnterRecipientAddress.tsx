@@ -28,6 +28,7 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
   const [address, setAddress] = useState('');
   const [addressHistory, setAddressHistory] = useState<string[]>([]);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
+  const [copySuccess, setCopySuccess] = useState<string | null>(null);
   const { resolveAddress } = useAddressResolution();
 
   // Load address history on component mount
@@ -112,10 +113,12 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
   const copyAddressToClipboard = async (address: string) => {
     try {
       await Clipboard.setString(address);
-      // You could add a toast notification here if desired
-      console.log('Address copied to clipboard:', address);
+      setCopySuccess(address);
+      setTimeout(() => {
+        setCopySuccess(null);
+      }, 1000);
     } catch (error) {
-      console.log('Failed to copy address to clipboard:', error);
+      console.error('Failed to copy address:', error);
     }
   };
 
@@ -200,7 +203,11 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
                           style={styles.copyButton}
                           onPress={() => copyAddressToClipboard(item)}
                         >
-                          <Ionicons name="copy-outline" size={16} color={colors.textSecondary} />
+                          <Ionicons 
+                            name={copySuccess === item ? "checkmark-circle" : "copy-outline"} 
+                            size={16} 
+                            color={copySuccess === item ? colors.success : colors.textSecondary} 
+                          />
                         </TouchableOpacity>
                         <TouchableOpacity
                           style={styles.removeButton}

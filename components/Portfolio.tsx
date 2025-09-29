@@ -35,6 +35,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
   const { getTokenUsdValue } = usePrice();
   const [selected, setSelected] = useState<'all' | 'active' | ChainKey>('all');
   const [sortByUsd, setSortByUsd] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   // Removed automatic balance refetching on focus to prevent 429 errors
 
@@ -51,9 +52,12 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
   const handleCopyAddress = async () => {
     try {
       await Clipboard.setStringAsync(address);
-      Alert.alert('Copied', 'Address copied to clipboard');
+      setCopySuccess(true);
+      setTimeout(() => {
+        setCopySuccess(false);
+      }, 1000);
     } catch (error) {
-      Alert.alert('Error', 'Failed to copy address');
+      console.error('Failed to copy address:', error);
     }
   };
 
@@ -190,9 +194,9 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
                 activeOpacity={0.7}
               >
                 <FontAwesome6
-                  name="copy"
+                  name={copySuccess ? "circle-check" : "copy"}
                   size={12}
-                  color={colors.textSecondary}
+                  color={copySuccess ? colors.success : colors.textSecondary}
                 />
               </TouchableOpacity>
             </View>
