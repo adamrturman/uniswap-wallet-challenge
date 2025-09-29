@@ -124,7 +124,17 @@ export default function TransactionModal({
       statusBarTranslucent
     >
       <View style={styles.overlay}>
-        <View style={[styles.modal, { backgroundColor: colors.backgroundSecondary }]}>
+        <View style={[styles.modal, { 
+          backgroundColor: colors.backgroundSecondary,
+          shadowColor: colors.shadow,
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 8,
+          elevation: 8,
+        }]}>
           {/* Close button in top-left corner */}
           <TouchableOpacity
             style={styles.closeIcon}
@@ -217,14 +227,6 @@ const styles = StyleSheet.create({
     maxHeight: screenHeight * 0.8,
     borderRadius: radius.xl,
     padding: spacing.xl,
-    shadowColor: colors.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 8,
     position: 'relative',
   },
   scrollContainer: {

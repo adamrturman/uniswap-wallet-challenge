@@ -274,7 +274,16 @@ export default function EnterAmountToSend({
               
               {/* Token selector positioned inside input */}
               <TouchableOpacity 
-                style={[styles.tokenSelector, { backgroundColor: colors.tokenSelectorBackground, borderColor: colors.border, borderWidth: 1 }]}
+                style={[styles.tokenSelector, { 
+                  backgroundColor: colors.tokenSelectorBackground, 
+                  borderColor: colors.border, 
+                  borderWidth: 1,
+                  shadowColor: colors.shadow,
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 2,
+                  elevation: 2,
+                }]}
                 onPress={() => setIsTokenModalVisible(true)}
                 activeOpacity={0.7}
               >
@@ -418,11 +427,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     borderRadius: radius.xl,
     gap: spacing.sm,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
   },
   tokenSymbol: {
     fontSize: typography.sizes.base,

@@ -55,7 +55,7 @@ export default function HeaderIcon({
     width: config.container,
     height: config.container,
     borderRadius: config.container / 2,
-    backgroundColor: backgroundColor || colors.primaryLight,
+    backgroundColor: backgroundColor || colors.backgroundSecondary,
   };
 
   const IconComponent = library === 'ionicons' ? Ionicons : 

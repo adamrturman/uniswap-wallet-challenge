@@ -1,13 +1,11 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import * as Clipboard from 'expo-clipboard';
-import * as ImagePicker from 'expo-image-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { ChainKey, chainOrder, TokenKey } from '../config/chain';
-import { useTheme, spacing, typography } from '../theme';
+import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
 import Header from './Header';
@@ -37,45 +35,6 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
   const [selected, setSelected] = useState<'all' | 'active' | ChainKey>('all');
   const [sortByUsd, setSortByUsd] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-
-  // Create a unique storage key for this user's profile image
-  const profileImageKey = `profile_image_${address}`;
-
-  // Load profile image from AsyncStorage on component mount
-  useEffect(() => {
-    const loadProfileImage = async () => {
-      try {
-        const savedImage = await AsyncStorage.getItem(profileImageKey);
-        if (savedImage) {
-          setProfileImage(savedImage);
-        }
-      } catch (error) {
-        console.error('Error loading profile image:', error);
-      }
-    };
-
-    loadProfileImage();
-  }, [profileImageKey]);
-
-  // Save profile image to AsyncStorage
-  const saveProfileImage = async (imageUri: string) => {
-    try {
-      await AsyncStorage.setItem(profileImageKey, imageUri);
-    } catch (error) {
-      console.error('Error saving profile image:', error);
-    }
-  };
-
-  // Clear profile image from AsyncStorage
-  const clearProfileImage = async () => {
-    try {
-      await AsyncStorage.removeItem(profileImageKey);
-      setProfileImage(null);
-    } catch (error) {
-      console.error('Error clearing profile image:', error);
-    }
-  };
 
   // Removed automatic balance refetching on focus to prevent 429 errors
 
@@ -101,34 +60,6 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
     }
   };
 
-  const handleImagePicker = async () => {
-    try {
-      // Request permission to access media library
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
-      if (permissionResult.granted === false) {
-        Alert.alert('Permission Required', 'Permission to access camera roll is required!');
-        return;
-      }
-
-      // Launch image picker
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        const imageUri = result.assets[0].uri;
-        setProfileImage(imageUri);
-        await saveProfileImage(imageUri);
-      }
-    } catch (error) {
-      console.error('Error picking image:', error);
-      Alert.alert('Error', 'Failed to pick image');
-    }
-  };
 
 
   const orderedKeys = useMemo(() => chainOrder, []);
@@ -267,8 +198,6 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
               </TouchableOpacity>
             </View>
           }
-          onPress={handleImagePicker}
-          profileImage={profileImage}
         />
       </View>
 
