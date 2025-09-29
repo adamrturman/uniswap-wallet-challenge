@@ -2,12 +2,15 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Wallet } from 'ethers';
+import * as Clipboard from 'expo-clipboard';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { ChainKey, chainOrder, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
+import HeaderIcon from './HeaderIcon';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
 import LogoutButton from './LogoutButton';
@@ -23,7 +26,7 @@ export type PortfolioProps = {
 
 function truncateAddress(addr: string) {
   const v = addr.trim();
-  return `${v.slice(0, 5)}...${v.slice(-5)}`;
+  return `${v.slice(0, 8)}...${v.slice(-8)}`;
 }
 
 export default function Portfolio({ address, balances, wallet, onLogout }: PortfolioProps) {
@@ -43,6 +46,15 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
 
     // Navigate to EnterRecipientAddress screen
     navigation.navigate('EnterRecipientAddress');
+  };
+
+  const handleCopyAddress = async () => {
+    try {
+      await Clipboard.setStringAsync(address);
+      Alert.alert('Copied', 'Address copied to clipboard');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to copy address');
+    }
   };
 
 
@@ -168,9 +180,22 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
         <Header
           icon="wallet"
           text={
-            <Text style={[styles.addressText, { color: colors.text }]}>
-              {truncateAddress(address)}
-            </Text>
+            <View style={styles.addressContainer}>
+              <Text style={[styles.addressText, { color: colors.text }]}>
+                {truncateAddress(address)}
+              </Text>
+              <TouchableOpacity
+                onPress={handleCopyAddress}
+                style={styles.copyButton}
+                activeOpacity={0.7}
+              >
+                <FontAwesome6
+                  name="copy"
+                  size={12}
+                  color={colors.textSecondary}
+                />
+              </TouchableOpacity>
+            </View>
           }
         />
       </View>
@@ -245,10 +270,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     alignItems: 'center',
   },
+  addressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: spacing.xxl,
+  },
   addressText: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.medium,
-    marginTop: spacing.xxl,
+    marginRight: spacing.sm,
+  },
+  copyButton: {
+    padding: 0,
   },
   list: {
     flex: 1,
