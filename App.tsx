@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey, TokenKey } from './config/chain';
-import { fetchChainBalances, createInitialChainBalances, ChainBalances, fetchAllTokenBalances, AllTokenBalances } from './utils/balanceUtils';
+import { fetchChainBalances, createInitialChainBalances, createInitialAllTokenBalances, ChainBalances, fetchAllTokenBalances, AllTokenBalances } from './utils/balanceUtils';
 import { sendNativeTransaction, sendERC20Transaction, ERC20TransferParams, GasEstimate } from './utils/transactionUtils';
 import { NavigationType } from './types';
 import Landing from './components/Landing';
@@ -68,8 +68,7 @@ export default function App() {
       setWatchedAddress('');
       
       // Set initial loading state and navigate immediately
-      // For now, we'll create empty balances structure
-      const initialBalances: AllTokenBalances = {} as AllTokenBalances;
+      const initialBalances = createInitialAllTokenBalances();
       setBalances(initialBalances);
       
       // Fetch balances in the background with parallel execution
