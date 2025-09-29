@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme, spacing, typography, radius } from '../theme';
@@ -26,6 +26,14 @@ export default function TokenSelectionModal({
   currentToken 
 }: TokenSelectionModalProps) {
   const { colors } = useTheme();
+  const [localCurrentToken, setLocalCurrentToken] = useState(currentToken);
+
+  // Update local state when modal opens with the current token
+  useEffect(() => {
+    if (visible) {
+      setLocalCurrentToken(currentToken);
+    }
+  }, [visible, currentToken]);
 
   // Filter tokens with non-zero balances
   const availableTokens = useMemo(() => {
@@ -38,69 +46,94 @@ export default function TokenSelectionModal({
   };
 
   const isCurrentToken = (token: TokenItem) => {
-    return currentToken && 
-           currentToken.chainKey === token.chainKey && 
-           currentToken.tokenKey === token.tokenKey;
+    return localCurrentToken && 
+           localCurrentToken.chainKey === token.chainKey && 
+           localCurrentToken.tokenKey === token.tokenKey;
   };
 
   return (
     <Modal
       visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
+      animationType="fade"
+      transparent={true}
       onRequestClose={onClose}
     >
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.text }]}>
-            Select a token
-          </Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-            activeOpacity={0.7}
-          >
-            <MaterialIcons name="close" size={24} color={colors.textSecondary} />
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView style={styles.tokenList} showsVerticalScrollIndicator={false}>
-          {availableTokens.map((token) => (
+      <TouchableOpacity 
+        style={styles.overlay}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <TouchableOpacity 
+          style={[styles.modalContainer, { backgroundColor: colors.background }]}
+          activeOpacity={1}
+          onPress={(e) => e.stopPropagation()}
+        >
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: colors.text }]}>
+              Select a token
+            </Text>
             <TouchableOpacity
-              key={`${token.chainKey}-${token.tokenKey}`}
-              style={[
-                styles.tokenRow,
-                isCurrentToken(token) && { backgroundColor: colors.primaryLight }
-              ]}
-              onPress={() => handleTokenSelect(token)}
+              style={styles.closeButton}
+              onPress={onClose}
               activeOpacity={0.7}
             >
-              <View style={styles.tokenInfo}>
-                <TokenBalance
-                  balance={{ value: token.balance, state: 'loaded' }}
-                  tokenName={token.name}
-                  tokenSymbol={token.symbol}
-                  tokenIcon={token.tokenIcon}
-                />
-              </View>
-              {isCurrentToken(token) && (
-                <View style={[styles.selectedIndicator, { backgroundColor: colors.primary }]}>
-                  <Text style={[styles.selectedText, { color: colors.background }]}>
-                    ✓
-                  </Text>
-                </View>
-              )}
+              <MaterialIcons name="close" size={24} color={colors.textSecondary} />
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+          </View>
+
+          <ScrollView style={styles.tokenList} showsVerticalScrollIndicator={false}>
+            {availableTokens.map((token) => (
+              <TouchableOpacity
+                key={`${token.chainKey}-${token.tokenKey}`}
+                style={[
+                  styles.tokenRow,
+                  isCurrentToken(token) && { backgroundColor: colors.primaryLight }
+                ]}
+                onPress={() => handleTokenSelect(token)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.tokenInfo}>
+                  <TokenBalance
+                    balance={{ value: token.balance, state: 'loaded' }}
+                    tokenName={token.name}
+                    tokenSymbol={token.symbol}
+                    tokenIcon={token.tokenIcon}
+                  />
+                </View>
+                {isCurrentToken(token) && (
+                  <View style={[styles.selectedIndicator, { backgroundColor: colors.primary }]}>
+                    <Text style={[styles.selectedText, { color: colors.background }]}>
+                      ✓
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  overlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  modalContainer: {
+    width: '100%',
+    maxWidth: 400,
+    maxHeight: '70%',
+    borderRadius: radius.xl,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
   },
   header: {
     flexDirection: 'row',
@@ -120,7 +153,7 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
   },
   tokenList: {
-    flex: 1,
+    maxHeight: 300,
   },
   tokenRow: {
     paddingVertical: spacing.md,
