@@ -79,7 +79,7 @@ export default function Button({
       case 'secondary':
         return {
           ...baseTextStyle,
-          color: colors.text,
+          color: colors.inputText,
         };
       case 'disabled':
         return {

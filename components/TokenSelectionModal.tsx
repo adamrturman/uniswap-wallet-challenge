@@ -25,7 +25,7 @@ export default function TokenSelectionModal({
   balances, 
   currentToken 
 }: TokenSelectionModalProps) {
-  const { colors } = useTheme();
+  const { colors, themeMode } = useTheme();
   const [localCurrentToken, setLocalCurrentToken] = useState(currentToken);
 
   // Update local state when modal opens with the current token
@@ -59,16 +59,16 @@ export default function TokenSelectionModal({
       onRequestClose={onClose}
     >
       <TouchableOpacity 
-        style={styles.overlay}
+        style={[styles.overlay, { backgroundColor: themeMode === 'dark' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.5)' }]}
         activeOpacity={1}
         onPress={onClose}
       >
         <TouchableOpacity 
-          style={[styles.modalContainer, { backgroundColor: colors.background }]}
+          style={[styles.modalContainer, { backgroundColor: colors.background, shadowColor: colors.shadow }]}
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
         >
-          <View style={styles.header}>
+          <View style={[styles.header, { borderBottomColor: colors.border }]}>
             <Text style={[styles.title, { color: colors.text }]}>
               Select a token
             </Text>
@@ -87,7 +87,9 @@ export default function TokenSelectionModal({
                 key={`${token.chainKey}-${token.tokenKey}`}
                 style={[
                   styles.tokenRow,
-                  isCurrentToken(token) && { backgroundColor: colors.primaryLight }
+                  isCurrentToken(token) && { 
+                    backgroundColor: themeMode === 'dark' ? colors.backgroundSecondary : colors.primaryLight 
+                  }
                 ]}
                 onPress={() => handleTokenSelect(token)}
                 activeOpacity={0.7}
@@ -119,7 +121,6 @@ export default function TokenSelectionModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
@@ -129,7 +130,6 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     maxHeight: '70%',
     borderRadius: radius.xl,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl,
     paddingBottom: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
   },
   title: {
     fontSize: typography.sizes.lg,

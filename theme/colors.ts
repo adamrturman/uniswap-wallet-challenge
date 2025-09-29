@@ -8,6 +8,8 @@ export const lightTheme = {
   text: '#0a0a0a',
   textSecondary: '#9AA0A6',
   textInverse: '#ffffff',
+  inputText: '#0a0a0a',
+  placeholderText: '#9AA0A6',
   
   border: '#EAEAEA',
   error: '#FF3B30',
@@ -20,20 +22,23 @@ export const lightTheme = {
   
   ethBackground: '#5B8DEF',
   chainTokenBackground: '#627EEA',
+  tokenSelectorBackground: '#ffffff',
   
   shadow: '#000000',
 } as const;
 
 export const darkTheme = {
   primary: '#FC72FF',
-  primaryDisabled: '#FAD6FF',
+  primaryDisabled: '#666666',
   primaryLight: '#FEF4FF',
-  background: '#0a0a0a',
-  backgroundSecondary: '#1a1a1a',
+  background: '#131313',
+  backgroundSecondary: '#2A2A2A',
   
   text: '#ffffff',
   textSecondary: '#9AA0A6',
-  textInverse: '#0a0a0a',
+  textInverse: '#ffffff',
+  inputText: '#ffffff',
+  placeholderText: '#CCCCCC',
   
   border: '#333333',
   error: '#FF3B30',
@@ -46,6 +51,7 @@ export const darkTheme = {
   
   ethBackground: '#5B8DEF',
   chainTokenBackground: '#627EEA',
+  tokenSelectorBackground: '#131313',
   
   shadow: '#000000',
 } as const;

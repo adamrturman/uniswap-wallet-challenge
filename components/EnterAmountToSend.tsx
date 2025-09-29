@@ -43,7 +43,7 @@ export default function EnterAmountToSend({
   address,
   onTokenSelect
 }: EnterAmountToSendProps) {
-  const { colors } = useTheme();
+  const { colors, themeMode } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const { showTransactionModal, updateTransactionStatus, hideTransactionModal, setApproveTransaction } = useTransaction();
   const { getTokenUsdValueFormatted, priceState } = usePrice();
@@ -248,6 +248,7 @@ export default function EnterAmountToSend({
 
           <View style={styles.inputContainer}>
             <View style={[styles.amountInputContainer, { 
+          backgroundColor: colors.background,
           borderColor: showError 
             ? colors.error 
             : isFocused 
@@ -257,7 +258,7 @@ export default function EnterAmountToSend({
               
               <TextInput
                 style={[styles.amountInput, { 
-                  color: colors.text,
+                  color: colors.inputText,
                   borderWidth: 0,
                   borderColor: 'transparent'
                 }]}
@@ -266,19 +267,19 @@ export default function EnterAmountToSend({
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 placeholder="0"
-                placeholderTextColor={colors.textSecondary}
+                placeholderTextColor={colors.placeholderText}
                 keyboardType="numeric"
                 autoFocus
               />
               
               {/* Token selector positioned inside input */}
               <TouchableOpacity 
-                style={[styles.tokenSelector, { backgroundColor: '#ffffff', borderColor: colors.border, borderWidth: 1 }]}
+                style={[styles.tokenSelector, { backgroundColor: colors.tokenSelectorBackground, borderColor: colors.border, borderWidth: 1 }]}
                 onPress={() => setIsTokenModalVisible(true)}
                 activeOpacity={0.7}
               >
                 <EthIcon size="small" />
-                <Text style={[styles.tokenSymbol, { color: colors.text }]}>
+                <Text style={[styles.tokenSymbol, { color: colors.inputText }]}>
                   {selectedToken.symbol}
                 </Text>
               </TouchableOpacity>
@@ -308,7 +309,11 @@ export default function EnterAmountToSend({
                     {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
                   </Text>
                   <TouchableOpacity
-                    style={[styles.maxButton, { backgroundColor: colors.primaryLight }]}
+                    style={[styles.maxButton, { 
+                      backgroundColor: themeMode === 'dark' ? colors.background : colors.primaryLight,
+                      borderColor: colors.border,
+                      borderWidth: 1
+                    }]}
                     onPress={handleMaxAmount}
                     activeOpacity={0.8}
                   >
@@ -387,7 +392,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
     borderWidth: 1,
     borderRadius: radius.lg,
-    backgroundColor: '#ffffff',
     minHeight: 120,
   },
   amountInput: {
@@ -414,7 +418,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     borderRadius: radius.xl,
     gap: spacing.sm,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -453,8 +457,8 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.normal,
   },
   maxButton: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderRadius: radius.xl,
   },
   maxButtonText: {

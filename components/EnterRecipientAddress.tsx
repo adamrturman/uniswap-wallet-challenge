@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useNavigation } from '@react-navigation/native';
-import { Wallet } from 'ethers';
+import { Wallet, ethers } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, spacing, typography } from '../theme';
@@ -28,6 +28,7 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
   const [addressHistory, setAddressHistory] = useState<string[]>([]);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
+  const [isValidAddress, setIsValidAddress] = useState(false);
   const { resolveAddress } = useAddressResolution();
 
   // Load address history on component mount
@@ -71,8 +72,34 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
     }
   };
 
+  const validateAddress = (inputAddress: string) => {
+    if (!inputAddress.trim()) {
+      setIsValidAddress(false);
+      return;
+    }
+    
+    // Check if it's a valid Ethereum address
+    if (ethers.utils.isAddress(inputAddress)) {
+      setIsValidAddress(true);
+      return;
+    }
+    
+    // Check if it's a valid ENS name
+    if (inputAddress.includes('.eth') && !inputAddress.startsWith('0x')) {
+      setIsValidAddress(true);
+      return;
+    }
+    
+    setIsValidAddress(false);
+  };
+
+  const handleAddressChange = (newAddress: string) => {
+    setAddress(newAddress);
+    validateAddress(newAddress);
+  };
+
   const handleContinue = async () => {
-    if (!address.trim()) return;
+    if (!address.trim() || !isValidAddress) return;
 
     const trimmedInput = address.trim();
     setAddress(trimmedInput);
@@ -102,6 +129,7 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
 
   const handleAddressSelect = (selectedAddress: string) => {
     setAddress(selectedAddress);
+    validateAddress(selectedAddress);
   };
 
   const truncateAddress = (address: string) => {
@@ -144,7 +172,7 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
           <View style={styles.inputContainer}>
             <AddressInput
               value={address}
-              onChangeText={setAddress}
+              onChangeText={handleAddressChange}
               placeholder="Enter a wallet address or ENS name"
             />
             
@@ -230,8 +258,8 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
           <Button
             title="Continue"
             onPress={handleContinue}
-            variant={address.trim() ? 'primary' : 'disabled'}
-            disabled={!address.trim()}
+            variant={isValidAddress ? 'primary' : 'disabled'}
+            disabled={!isValidAddress}
             fullWidth
           />
         </View>

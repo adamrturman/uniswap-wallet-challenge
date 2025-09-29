@@ -87,7 +87,7 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
           style={styles.modalOverlay}
           onPress={() => setIsDropdownOpen(false)}
         >
-          <View style={[styles.dropdownContainer, { backgroundColor: colors.background }]}>
+          <View style={[styles.dropdownContainer, { backgroundColor: colors.background, shadowColor: colors.shadow }]}>
             <View style={styles.dropdownContent}>
               <ChainOption
                 label="All Chains"
@@ -238,7 +238,6 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
     minWidth: 280,
     maxWidth: 320,
-    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,

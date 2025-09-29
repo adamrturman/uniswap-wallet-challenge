@@ -124,7 +124,7 @@ export default function TransactionModal({
       statusBarTranslucent
     >
       <View style={styles.overlay}>
-        <View style={[styles.modal, { backgroundColor: colors.background }]}>
+        <View style={[styles.modal, { backgroundColor: colors.backgroundSecondary }]}>
           {/* Close button in top-left corner */}
           <TouchableOpacity
             style={styles.closeIcon}
@@ -143,7 +143,7 @@ export default function TransactionModal({
                 {getStatusIcon()}
               </View>
               
-              <Text style={[styles.title, { color: getStatusColor() }]}>
+              <Text style={[styles.title, { color: colors.text }]}>
                 {getStatusTitle()}
               </Text>
               
@@ -179,7 +179,7 @@ export default function TransactionModal({
                     }
                   }}
                 >
-                  <Text style={[styles.approveButtonText, { color: colors.background }]}>
+                  <Text style={[styles.approveButtonText, { color: colors.textInverse }]}>
                     Approve Transaction
                   </Text>
                 </TouchableOpacity>
@@ -190,7 +190,7 @@ export default function TransactionModal({
                   style={[styles.explorerButton, { backgroundColor: colors.primary }]}
                   onPress={handleViewExplorer}
                 >
-                  <Text style={[styles.explorerButtonText, { color: colors.background }]}>
+                  <Text style={[styles.explorerButtonText, { color: colors.textInverse }]}>
                     View transaction on explorer
                   </Text>
                 </TouchableOpacity>
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     maxHeight: screenHeight * 0.8,
     borderRadius: radius.xl,
     padding: spacing.xl,
-    shadowColor: '#000',
+    shadowColor: colors.shadow,
     shadowOffset: {
       width: 0,
       height: 4,
