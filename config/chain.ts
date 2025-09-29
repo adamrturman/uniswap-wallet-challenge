@@ -5,10 +5,11 @@ import polygonLogo from '../assets/polygon-logo.png';
 import tetherLogo from '../assets/tether-logo.png';
 import usdcLogo from '../assets/usdc-logo.png';
 import btcLogo from '../assets/btc-logo.png';
+import linkLogo from '../assets/link-logo.png';
 import EthIcon from '../components/EthIcon';
 
 export type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum' | 'sepolia';
-export type TokenKey = 'USDT' | 'USDC' | 'WBTC' | 'OP' | 'ARB';
+export type TokenKey = 'USDT' | 'USDC' | 'WBTC' | 'OP' | 'ARB' | 'LINK';
 
 export type TokenConfig = {
   symbol: string;
@@ -153,6 +154,15 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
       contractAddress: '0x29f2D40B0605204364af54EC677bD022dA425d03',
       icon: {
         baseIcon: btcLogo,
+      },
+    },
+    LINK: {
+      symbol: 'LINK',
+      name: 'Chainlink',
+      decimals: 18,
+      contractAddress: '0x779877A7B0D9E8603169DdbD7836e478b4624789',
+      icon: {
+        baseIcon: linkLogo,
       },
     },
   },

@@ -5,7 +5,7 @@ import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey, TokenKey } from './config/chain';
 import { fetchChainBalances, createInitialChainBalances, ChainBalances, fetchAllTokenBalances, AllTokenBalances } from './utils/balanceUtils';
-import { sendNativeTransaction } from './utils/transactionUtils';
+import { sendNativeTransaction, sendERC20Transaction, ERC20TransferParams } from './utils/transactionUtils';
 import { NavigationType } from './types';
 import Landing from './components/Landing';
 import EnterWatchAddress from './components/EnterWatchAddress';
@@ -115,20 +115,39 @@ export default function App() {
 
     try {
       const chainConfig = require('./config/chain').chainConfig;
+      const tokenConfig = require('./config/chain').tokenConfig;
       const config = chainConfig[selectedToken.chainKey];
       
-      // For now, only handle native token transactions
-      // TODO: Add ERC-20 token transaction support
-      if (selectedToken.tokenKey !== 'native') {
-        return { success: false, error: 'ERC-20 token transactions not yet supported' };
-      }
+      let result;
       
-      const result = await sendNativeTransaction(
-        wallet,
-        recipientAddress,
-        amount,
-        config.rpcUrl
-      );
+      // Handle native token transactions
+      if (selectedToken.tokenKey === 'native') {
+        result = await sendNativeTransaction(
+          wallet,
+          recipientAddress,
+          amount,
+          config.rpcUrl
+        );
+      } else {
+        // Handle ERC20 token transactions
+        const token = tokenConfig[selectedToken.chainKey][selectedToken.tokenKey];
+        if (!token) {
+          return { success: false, error: 'Token configuration not found' };
+        }
+        
+        const transferParams: ERC20TransferParams = {
+          tokenAddress: token.contractAddress,
+          toAddress: recipientAddress,
+          amount: amount,
+          decimals: token.decimals
+        };
+        
+        result = await sendERC20Transaction(
+          wallet,
+          transferParams,
+          config.rpcUrl
+        );
+      }
 
       if (result.success && result.hash) {
         setTransactionHash(result.hash);
