@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import { ChainKey, chainOrder, TokenKey } from '../config/chain';
@@ -12,6 +12,7 @@ import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
 import LogoutButton from './LogoutButton';
 import { AllTokenBalances } from '../utils/balanceUtils';
+import { usePrice } from '../context/PriceContext';
 
 export type PortfolioProps = {
   address: string;
@@ -28,7 +29,9 @@ function truncateAddress(addr: string) {
 export default function Portfolio({ address, balances, wallet, onLogout }: PortfolioProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
+  const { getTokenUsdValue } = usePrice();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
+  const [sortByUsd, setSortByUsd] = useState(false);
 
   // Removed automatic balance refetching on focus to prevent 429 errors
 
@@ -56,6 +59,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       balanceState: 'loading' | 'loaded' | 'error';
       chainIcon: any;
       tokenIcon: any;
+      usdValue?: number;
     }> = [];
 
     const keys = selected === 'all' ? orderedKeys : orderedKeys.filter((k) => k === selected);
@@ -69,15 +73,19 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       const config = chainConfig[chainKey];
 
       // Add native token (always show, regardless of balance)
+      const nativeBalance = chainBalances.native?.value || 0;
+      const nativeUsdValue = getTokenUsdValue(config.symbol, nativeBalance);
+      
       tokens.push({
         chainKey,
         tokenKey: config.symbol as TokenKey,
         name: config.nativeTokenDisplay,
         symbol: config.symbol,
-        balance: chainBalances.native?.value || 0,
+        balance: nativeBalance,
         balanceState: chainBalances.native?.state || 'loading',
         chainIcon: config.chainIcon,
         tokenIcon: config.nativeTokenIcon,
+        usdValue: nativeUsdValue || 0,
       });
 
       // Add ERC-20 tokens (show all, regardless of balance)
@@ -91,23 +99,32 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
           const tokenBalance = chainBalances.tokens[tokenKey];
           const token = tokenConfig[chainKey][tokenKey];
           if (token) {
+            const balance = tokenBalance?.value || 0;
+            const usdValue = getTokenUsdValue(token.symbol, balance);
+            
             tokens.push({
               chainKey,
               tokenKey,
               name: token.name,
               symbol: token.symbol,
-              balance: tokenBalance?.value || 0,
+              balance,
               balanceState: tokenBalance?.state || 'loading',
               chainIcon: chainConfig[chainKey].chainIcon,
               tokenIcon: token.icon,
+              usdValue: usdValue || 0,
             });
           }
         });
       }
     });
 
+    // Sort by USD value if enabled
+    if (sortByUsd) {
+      tokens.sort((a, b) => (b.usdValue || 0) - (a.usdValue || 0));
+    }
+
     return tokens;
-  }, [orderedKeys, selected, balances]);
+  }, [orderedKeys, selected, balances, sortByUsd, getTokenUsdValue]);
 
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
@@ -133,6 +150,21 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
         selected={selected}
         onSelectionChange={setSelected}
       />
+
+      <View style={styles.sortContainer}>
+        <TouchableOpacity
+          style={styles.sortButton}
+          onPress={() => setSortByUsd(!sortByUsd)}
+          activeOpacity={0.7}
+        >
+          <Text style={[
+            styles.sortButtonText,
+            { color: colors.textSecondary }
+          ]}>
+            {sortByUsd ? 'USD ↑' : 'USD ↓'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView style={styles.list}>
         {allTokens.map((token) => (
@@ -192,6 +224,21 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
     paddingHorizontal: spacing.xl,
+  },
+  sortContainer: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xs,
+    alignItems: 'flex-start',
+  },
+  sortButton: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sortButtonText: {
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.normal,
   },
   sendButtonContainer: {
     // Spacing will be applied via theme values
