@@ -5,8 +5,8 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
-import BackButton from './BackButton';
 import Header from './Header';
+import ScreenWrapper from './ScreenWrapper';
 
 type TransactionConfirmationProps = {
   transactionHash: string;
@@ -36,11 +36,7 @@ export default function TransactionConfirmation({
   };
 
   return (
-    <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <View style={styles.headerRow}>
-        <BackButton onPress={() => navigation.goBack()} />
-      </View>
-
+    <ScreenWrapper>
       <View style={styles.content}>
         <Header
           icon="check-circle"
@@ -104,21 +100,11 @@ export default function TransactionConfirmation({
           fullWidth
         />
       </View>
-    </View>
+    </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
   content: {
     flex: 1,
     paddingHorizontal: spacing.xl,

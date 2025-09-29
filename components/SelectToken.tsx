@@ -5,9 +5,8 @@ import { Wallet } from 'ethers';
 import { ChainKey, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
-import BackButton from './BackButton';
 import Header from './Header';
-import LogoutButton from './LogoutButton';
+import ScreenWrapper from './ScreenWrapper';
 import TokenBalance from './TokenBalance';
 import { AllTokenBalances, getTokensWithBalances, TokenItem } from '../utils/balanceUtils';
 
@@ -35,13 +34,10 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
   };
 
   return (
-    <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <View style={styles.headerRow}>
-        <BackButton onPress={() => navigation.goBack()} />
-        {wallet && onLogout && (
-          <LogoutButton onPress={onLogout} />
-        )}
-      </View>
+    <ScreenWrapper 
+      showLogoutButton={!!(wallet && onLogout)}
+      onLogout={onLogout}
+    >
 
       <View style={styles.content}>
         <Header
@@ -71,22 +67,11 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
           ))}
         </ScrollView>
       </View>
-    </View>
+    </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
   content: {
     flex: 1,
     paddingHorizontal: spacing.xl,

@@ -11,8 +11,8 @@ import { Wallet } from 'ethers';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
-import BackButton from './BackButton';
 import Header from './Header';
+import ScreenWrapper from './ScreenWrapper';
 import Input from './Input';
 
 type EnterRecoveryPhraseProps = {
@@ -53,12 +53,8 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
 
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <ScreenWrapper>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-      
-      <View style={styles.header}>
-        <BackButton onPress={() => navigation.goBack()} />
-      </View>
 
       <View style={styles.content}>
         <Header
@@ -103,7 +99,7 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
           fullWidth
         />
       </View>
-    </View>
+    </ScreenWrapper>
   );
 }
 

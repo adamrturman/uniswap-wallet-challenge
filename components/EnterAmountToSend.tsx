@@ -7,10 +7,9 @@ import { NavigationType } from '../types';
 import { useTransaction } from '../context/TransactionContext';
 import { usePrice } from '../context/PriceContext';
 import Button from './Button';
-import BackButton from './BackButton';
 import EthIcon from './EthIcon';
 import Header from './Header';
-import LogoutButton from './LogoutButton';
+import ScreenWrapper from './ScreenWrapper';
 import TokenSelectionModal from './TokenSelectionModal';
 import { ChainKey, TokenKey, chainConfig } from '../config/chain';
 import { GasEstimate } from '../utils/transactionUtils';
@@ -228,17 +227,14 @@ export default function EnterAmountToSend({
   };
 
   return (
-    <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
+    <ScreenWrapper 
+      showLogoutButton={!!(wallet && onLogout)}
+      onLogout={onLogout}
+    >
       <KeyboardAvoidingView
         style={[styles.container, { backgroundColor: colors.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={styles.headerRow}>
-          <BackButton onPress={() => navigation.goBack()} />
-          {wallet && onLogout && (
-            <LogoutButton onPress={onLogout} />
-          )}
-        </View>
 
         <View style={styles.content}>
           <Header
@@ -360,24 +356,13 @@ export default function EnterAmountToSend({
           }}
         />
       )}
-    </View>
+    </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
     flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xl,
   },
   content: {
     paddingHorizontal: spacing.xl,

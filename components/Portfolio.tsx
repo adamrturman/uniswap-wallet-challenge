@@ -10,12 +10,11 @@ import { ChainKey, chainOrder, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
-import BackButton from './BackButton';
 import Header from './Header';
 import HeaderIcon from './HeaderIcon';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
-import LogoutButton from './LogoutButton';
+import ScreenWrapper from './ScreenWrapper';
 import { AllTokenBalances, getTokensWithBalances } from '../utils/balanceUtils';
 import { usePrice } from '../context/PriceContext';
 
@@ -242,13 +241,10 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
   }, [orderedKeys, selected, balances, sortByUsd, getTokenUsdValue]);
 
   return (
-    <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <View style={styles.headerRow}>
-        <BackButton onPress={() => navigation.goBack()} />
-        {wallet && onLogout && (
-          <LogoutButton onPress={onLogout} />
-        )}
-      </View>
+    <ScreenWrapper 
+      showLogoutButton={!!(wallet && onLogout)}
+      onLogout={onLogout}
+    >
 
       <View style={styles.addressCard}>
         <Header
@@ -323,23 +319,12 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
           />
         </View>
       )}
-    </View>
+    </ScreenWrapper>
   );
 }
 
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
   addressCard: {
     marginTop: 0,
     marginHorizontal: spacing.xl,
