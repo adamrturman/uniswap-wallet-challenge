@@ -87,7 +87,7 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
           style={styles.modalOverlay}
           onPress={() => setIsDropdownOpen(false)}
         >
-          <View style={[styles.dropdownContainer, { backgroundColor: colors.background, shadowColor: colors.shadow }]}>
+          <View style={[styles.dropdownContainer, { backgroundColor: colors.backgroundSecondary, shadowColor: colors.shadow }]}>
             <View style={styles.dropdownContent}>
               <ChainOption
                 label="All Chains"
@@ -114,7 +114,7 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
                 onPress={() => handleSelection('active')}
                 renderIcon={() => (
                   <View style={styles.activeIcon}>
-                    <FontAwesome6 name="coins" size={16} color={colors.text} />
+                    <FontAwesome6 name="coins" size={16} color="#FAD6FF" />
                   </View>
                 )}
               />
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   selectorText: {
     fontSize: typography.sizes.base,
-    fontWeight: typography.weights.medium,
+    fontWeight: typography.weights.normal,
   },
   dropdownArrow: {
     fontSize: 12,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: typography.sizes.base,
-    fontWeight: typography.weights.medium,
+    fontWeight: '300',
   },
   optionIcon: {
     width: spacing.lg,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: 'normal',
   },
   activeIcon: {
     width: spacing.lg,

@@ -1,4 +1,5 @@
 import ethIcon from '../assets/eth-diamond-black.png';
+import ethColorIcon from '../assets/eth-color-icon.png';
 import arbitrumBadge from '../assets/arb-logo-official.png';
 import optimismBadge from '../assets/optimism.png';
 import polygonLogo from '../assets/polygon-logo.png';
@@ -72,7 +73,7 @@ export const chainConfig: Record<ChainKey, {
     nativeTokenDisplay: 'ETH',
     rpcUrl: 'https://eth.drpc.org',
     symbol: 'ETH',
-    chainIcon: ethIcon,
+    chainIcon: ethColorIcon,
     explorerUrl: 'https://etherscan.io/tx/',
     nativeTokenIcon: {
       baseIcon: EthIcon,
@@ -243,7 +244,7 @@ export const chainConfig: Record<ChainKey, {
     nativeTokenDisplay: 'SepoliaETH',
     rpcUrl: 'https://sepolia.drpc.org',
     symbol: 'ETH',
-    chainIcon: ethIcon,
+    chainIcon: ethColorIcon,
     explorerUrl: 'https://sepolia.etherscan.io/tx/',
     nativeTokenIcon: {
       baseIcon: ethIcon,
