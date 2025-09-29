@@ -2,15 +2,14 @@ import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Wallet } from 'ethers';
-import { chainConfig, ChainKey, chainOrder, TokenKey } from '../config/chain';
+import { ChainKey, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import BackButton from './BackButton';
 import Header from './Header';
 import LogoutButton from './LogoutButton';
 import TokenBalance from './TokenBalance';
-import { AllTokenBalances } from '../utils/balanceUtils';
-import { TokenIcon } from './types';
+import { AllTokenBalances, getTokensWithBalances, TokenItem } from '../utils/balanceUtils';
 
 export type SelectTokenProps = {
   address: string;
@@ -20,14 +19,6 @@ export type SelectTokenProps = {
   onLogout?: () => void;
 };
 
-type TokenItem = {
-  chainKey: ChainKey;
-  tokenKey: TokenKey;
-  name: string;
-  symbol: string;
-  balance: number;
-  tokenIcon: TokenIcon;
-};
 
 export default function SelectToken({ address, balances, wallet, onTokenSelect, onLogout }: SelectTokenProps) {
   const { colors } = useTheme();
@@ -35,56 +26,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
 
   // Filter tokens with non-zero balances
   const availableTokens = useMemo(() => {
-    const tokens: TokenItem[] = [];
-    
-    chainOrder.forEach((chainKey) => {
-      const chainBalances = balances[chainKey];
-      if (!chainBalances) return;
-
-      // Add native token if it has a balance
-      if (chainBalances.native && chainBalances.native.value > 0) {
-        const config = chainConfig[chainKey];
-        tokens.push({
-          chainKey,
-          tokenKey: config.symbol as TokenKey,
-          name: config.nativeTokenDisplay,
-          symbol: config.symbol,
-          balance: chainBalances.native.value,
-          tokenIcon: config.nativeTokenIcon,
-        });
-      }
-
-      // Add ERC-20 tokens if they have balances
-      if (chainBalances.tokens) {
-        const tokenConfig = require('../config/chain').tokenConfig;
-        // Get available tokens for this chain
-        const availableTokens = Object.keys(tokenConfig[chainKey]) as TokenKey[];
-        const tokenKeys: TokenKey[] = availableTokens;
-        
-        tokenKeys.forEach((tokenKey) => {
-          // Skip native token as it's handled separately
-          const nativeSymbol = chainConfig[chainKey].symbol;
-          if (tokenKey === nativeSymbol) return;
-          
-          const tokenBalance = chainBalances.tokens[tokenKey];
-          if (tokenBalance && tokenBalance.value > 0) {
-            const token = tokenConfig[chainKey][tokenKey];
-            if (token) {
-              tokens.push({
-                chainKey,
-                tokenKey,
-                name: token.name,
-                symbol: token.symbol,
-                balance: tokenBalance.value,
-                tokenIcon: token.icon,
-              });
-            }
-          }
-        });
-      }
-    });
-    
-    return tokens;
+    return getTokensWithBalances(balances);
   }, [balances]);
 
   const handleTokenSelect = (token: TokenItem) => {

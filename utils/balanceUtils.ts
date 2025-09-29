@@ -1,6 +1,6 @@
 import { providers, utils, BigNumber, BigNumberish, Contract } from 'ethers';
-import { ChainKey, TokenKey, tokenConfig } from '../config/chain';
-import { chainConfig } from '../config/chain';
+import { ChainKey, TokenKey, tokenConfig, chainConfig, chainOrder } from '../config/chain';
+import { TokenIcon } from '../components/types';
 
 export type BalanceLoadingState = 'loading' | 'loaded' | 'error';
 
@@ -22,6 +22,15 @@ export type AllTokenBalances = Record<ChainKey, {
   native: ChainBalance;
   tokens: ChainTokenBalances;
 }>;
+
+export type TokenItem = {
+  chainKey: ChainKey;
+  tokenKey: TokenKey;
+  name: string;
+  symbol: string;
+  balance: number;
+  tokenIcon: TokenIcon;
+};
 
 // ERC-20 ABI for balanceOf function
 const ERC20_ABI = [
@@ -251,13 +260,14 @@ export async function fetchAllTokenBalances(address: string): Promise<AllTokenBa
       allBalances[chainKey] = result.value.balances!;
     } else {
       // Create empty balances for failed chains
-      const emptyTokenBalances: ChainTokenBalances = {
-        USDT: { value: 0, state: 'error' },
-        USDC: { value: 0, state: 'error' },
-        WBTC: { value: 0, state: 'error' },
-        OP: { value: 0, state: 'error' },
-        ARB: { value: 0, state: 'error' },
-      };
+      const availableTokens = Object.keys(tokenConfig[chainKey]) as TokenKey[];
+      const emptyTokenBalances: ChainTokenBalances = Object.fromEntries(
+        availableTokens.map(tokenKey => [
+          tokenKey,
+          { value: 0, state: 'error' as const }
+        ])
+      ) as ChainTokenBalances;
+      
       allBalances[chainKey] = {
         native: { value: 0, state: 'error' },
         tokens: emptyTokenBalances,
@@ -269,4 +279,63 @@ export async function fetchAllTokenBalances(address: string): Promise<AllTokenBa
   tokenBalanceCache.set(address, { balances: allBalances, timestamp: Date.now() });
   
   return allBalances;
+}
+
+/**
+ * Filters tokens with non-zero balances from the provided balances object.
+ * Returns an array of TokenItem objects sorted by chain order.
+ * 
+ * @param balances - The token balances object containing native and ERC-20 token balances
+ * @returns Array of tokens that have non-zero balances
+ */
+export function getTokensWithBalances(balances: AllTokenBalances): TokenItem[] {
+  const tokens: TokenItem[] = [];
+  
+  chainOrder.forEach((chainKey) => {
+    const chainBalances = balances[chainKey];
+    if (!chainBalances) return;
+
+    // Add native token if it has a balance
+    if (chainBalances.native && chainBalances.native.value > 0) {
+      const config = chainConfig[chainKey];
+      tokens.push({
+        chainKey,
+        tokenKey: config.symbol as TokenKey,
+        name: config.nativeTokenDisplay,
+        symbol: config.symbol,
+        balance: chainBalances.native.value,
+        tokenIcon: config.nativeTokenIcon,
+      });
+    }
+
+    // Add ERC-20 tokens if they have balances
+    if (chainBalances.tokens) {
+      // Get available tokens for this chain
+      const availableTokens = Object.keys(tokenConfig[chainKey]) as TokenKey[];
+      const tokenKeys: TokenKey[] = availableTokens;
+      
+      tokenKeys.forEach((tokenKey) => {
+        // Skip native token as it's handled separately
+        const nativeSymbol = chainConfig[chainKey].symbol;
+        if (tokenKey === nativeSymbol) return;
+        
+        const tokenBalance = chainBalances.tokens[tokenKey];
+        if (tokenBalance && tokenBalance.value > 0) {
+          const token = tokenConfig[chainKey][tokenKey];
+          if (token) {
+            tokens.push({
+              chainKey,
+              tokenKey,
+              name: token.name,
+              symbol: token.symbol,
+              balance: tokenBalance.value,
+              tokenIcon: token.icon,
+            });
+          }
+        }
+      });
+    }
+  });
+  
+  return tokens;
 }
