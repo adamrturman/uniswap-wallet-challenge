@@ -107,30 +107,8 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     }
   };
 
-  const handleAddressSelect = async (selectedAddress: string) => {
+  const handleAddressSelect = (selectedAddress: string) => {
     setAddress(selectedAddress);
-    
-    try {
-      // Resolve address (handles ENS names)
-      const finalAddress = await resolveAddress(selectedAddress);
-      if (!finalAddress) {
-        console.log('Failed to resolve address');
-        return;
-      }
-      
-      // Save address to history (move to top)
-      await saveAddressToHistory(selectedAddress);
-      
-      // Set initial loading state and navigate immediately
-      const initialBalances = createInitialAllTokenBalances();
-      onContinue?.(finalAddress, initialBalances);
-      navigation.navigate('Portfolio');
-      
-      // Clear the input field for when user comes back
-      setAddress('');
-    } catch (error) {
-      console.log('Failed to resolve address:', error);
-    }
   };
 
   const truncateAddress = (address: string) => {
@@ -299,7 +277,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     borderWidth: 1,
     borderRadius: 8,
-    maxHeight: 200,
+    maxHeight: 300,
     overflow: 'hidden',
   },
   historyHeader: {
@@ -321,7 +299,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing.xs,
   },
   historyList: {
-    maxHeight: 150,
+    maxHeight: 250,
   },
   historyItem: {
     flexDirection: 'row',
