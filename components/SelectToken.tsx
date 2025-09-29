@@ -10,6 +10,7 @@ import Header from './Header';
 import LogoutButton from './LogoutButton';
 import TokenBalance from './TokenBalance';
 import { AllTokenBalances } from '../utils/balanceUtils';
+import { TokenIcon } from './types';
 
 export type SelectTokenProps = {
   address: string;
@@ -25,8 +26,7 @@ type TokenItem = {
   name: string;
   symbol: string;
   balance: number;
-  chainIcon: any;
-  tokenIcon: any;
+  tokenIcon: TokenIcon;
 };
 
 export default function SelectToken({ address, balances, wallet, onTokenSelect, onLogout }: SelectTokenProps) {
@@ -50,7 +50,6 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
           name: config.nativeTokenDisplay,
           symbol: config.symbol,
           balance: chainBalances.native.value,
-          chainIcon: config.chainIcon,
           tokenIcon: config.nativeTokenIcon,
         });
       }
@@ -71,14 +70,12 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
           if (tokenBalance && tokenBalance.value > 0) {
             const token = tokenConfig[chainKey][tokenKey];
             if (token) {
-              const chainConfigData = chainConfig[chainKey];
               tokens.push({
                 chainKey,
                 tokenKey,
                 name: token.name,
                 symbol: token.symbol,
                 balance: tokenBalance.value,
-                chainIcon: chainConfigData.chainIcon,
                 tokenIcon: token.icon,
               });
             }

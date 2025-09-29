@@ -4,12 +4,13 @@ import { useTheme, spacing, typography } from '../theme';
 import ChainTokenIcon from './ChainTokenIcon';
 import Skeleton from './Skeleton';
 import { ChainBalance } from '../utils/balanceUtils';
+import { TokenIcon } from './types';
 
 export type TokenBalanceProps = {
   balance: ChainBalance;
   tokenName: string;
   tokenSymbol: string;
-  tokenIcon: any;
+  tokenIcon: TokenIcon;
 };
 
 export default function TokenBalance({ 
@@ -20,10 +21,8 @@ export default function TokenBalance({
 }: TokenBalanceProps) {
   const { colors } = useTheme();
   
-  // Handle both old format (direct icon) and new format (combo icon)
-  const { baseIcon, overlayIcon } = tokenIcon && typeof tokenIcon === 'object' && 'baseIcon' in tokenIcon 
-    ? tokenIcon 
-    : { baseIcon: tokenIcon, overlayIcon: undefined };
+  // Extract baseIcon and overlayIcon from the tokenIcon object
+  const { baseIcon, overlayIcon } = tokenIcon;
 
   const renderIcon = () => {
     // If there's an overlay, use ChainTokenIcon

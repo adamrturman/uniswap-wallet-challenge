@@ -1,12 +1,13 @@
 import React from 'react';
-import { StyleSheet, View, ViewStyle, Image, ImageSourcePropType } from 'react-native';
+import { StyleSheet, View, ViewStyle, Image } from 'react-native';
 import ethIcon from '../assets/eth-diamond-black.png';
 import { useTheme } from '../theme';
+import { IconComponent, IconSource } from './types';
 
 export type ChainTokenIconProps = {
   style?: ViewStyle;
-  baseIcon?: any;
-  overlayIcon?: ImageSourcePropType;
+  baseIcon: IconComponent | IconSource;
+  overlayIcon?: IconSource;
 };
 
 
@@ -64,18 +65,16 @@ export default function ChainTokenIcon({
   ) : null;
 
   const renderBaseIcon = () => {
-    const iconToUse = baseIcon || ethIcon;
-    
     // If baseIcon is a component (like EthIcon)
-    if (typeof iconToUse === 'function') {
-      const Component = iconToUse;
+    if (typeof baseIcon === 'function') {
+      const Component = baseIcon;
       return <Component style={[styles.ethIcon, { width: 36, height: 36 }]} />;
     }
     
     // If baseIcon is an image source
     return (
       <Image
-        source={iconToUse}
+        source={baseIcon}
         style={[
           styles.ethIcon,
           {

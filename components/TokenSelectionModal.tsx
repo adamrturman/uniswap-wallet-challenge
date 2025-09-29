@@ -5,12 +5,12 @@ import { useTheme, spacing, typography, radius } from '../theme';
 import TokenBalance from './TokenBalance';
 import { AllTokenBalances } from '../utils/balanceUtils';
 import { chainConfig, ChainKey, chainOrder, TokenKey } from '../config/chain';
+import { TokenIcon } from './types';
 
 export type TokenSelectionModalProps = {
   visible: boolean;
   onClose: () => void;
   onTokenSelect: (chainKey: ChainKey, tokenKey: TokenKey, balance: number, symbol: string) => void;
-  address: string;
   balances: AllTokenBalances;
   currentToken?: {
     chainKey: ChainKey;
@@ -24,15 +24,13 @@ type TokenItem = {
   name: string;
   symbol: string;
   balance: number;
-  chainIcon: any;
-  tokenIcon: any;
+  tokenIcon: TokenIcon;
 };
 
 export default function TokenSelectionModal({ 
   visible, 
   onClose, 
   onTokenSelect, 
-  address, 
   balances, 
   currentToken 
 }: TokenSelectionModalProps) {
@@ -55,7 +53,6 @@ export default function TokenSelectionModal({
           name: config.nativeTokenDisplay,
           symbol: config.symbol,
           balance: chainBalances.native.value,
-          chainIcon: config.chainIcon,
           tokenIcon: config.nativeTokenIcon,
         });
       }
@@ -76,14 +73,12 @@ export default function TokenSelectionModal({
           if (tokenBalance && tokenBalance.value > 0) {
             const token = tokenConfig[chainKey][tokenKey];
             if (token) {
-              const chainConfigData = chainConfig[chainKey];
               tokens.push({
                 chainKey,
                 tokenKey,
                 name: token.name,
                 symbol: token.symbol,
                 balance: tokenBalance.value,
-                chainIcon: chainConfigData.chainIcon,
                 tokenIcon: token.icon,
               });
             }
