@@ -5,6 +5,8 @@ import ChainTokenIcon from './ChainTokenIcon';
 import Skeleton from './Skeleton';
 import { ChainBalance } from '../utils/balanceUtils';
 import { TokenIcon } from './types';
+import { usePrice } from '../context/PriceContext';
+import { formatTokenAmount } from '../utils/priceUtils';
 
 export type TokenBalanceProps = {
   balance: ChainBalance;
@@ -20,6 +22,7 @@ export default function TokenBalance({
   tokenIcon 
 }: TokenBalanceProps) {
   const { colors } = useTheme();
+  const { getTokenPrice, getTokenPriceFormatted, getTokenUsdValueFormatted } = usePrice();
   
   // Extract baseIcon and overlayIcon from the tokenIcon object
   const { baseIcon, overlayIcon } = tokenIcon;
@@ -53,22 +56,42 @@ export default function TokenBalance({
       );
     }
     
+    const balanceValue = Number(balance.value);
+    const tokenPrice = getTokenPrice(tokenSymbol);
+    const usdValue = tokenPrice ? balanceValue * tokenPrice : null;
+    
     return (
-      <Text style={[styles.chainBalance, { 
-        color: Number(balance.value) === 0 ? colors.textSecondary : colors.text 
-      }]}>
-        {Number(balance.value).toFixed(8)} {tokenSymbol}
-      </Text>
+      <View style={styles.balanceContainer}>
+        <Text style={[styles.chainBalance, { 
+          color: balanceValue === 0 ? colors.textSecondary : colors.text 
+        }]}>
+          {formatTokenAmount(balanceValue)} {tokenSymbol}
+        </Text>
+        {usdValue !== null && balanceValue > 0 && (
+          <Text style={[styles.usdValue, { color: colors.textSecondary }]}>
+            {getTokenUsdValueFormatted(tokenSymbol, balanceValue)}
+          </Text>
+        )}
+      </View>
     );
   };
+
+  const tokenPrice = getTokenPrice(tokenSymbol);
 
   return (
     <View style={styles.row}>
       <View style={styles.rowLeft}>
         {renderIcon()}
-        <Text style={[styles.chainName, { color: colors.text }]}>
-          {tokenName}
-        </Text>
+        <View style={styles.tokenInfo}>
+          <Text style={[styles.chainName, { color: colors.text }]}>
+            {tokenName}
+          </Text>
+          {tokenPrice !== null && (
+            <Text style={[styles.usdValue, { color: colors.textSecondary }]}>
+              {getTokenPriceFormatted(tokenSymbol)}
+            </Text>
+          )}
+        </View>
       </View>
       {renderBalance()}
     </View>
@@ -87,12 +110,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
   },
+  tokenInfo: {
+    flex: 1,
+  },
+  balanceContainer: {
+    alignItems: 'flex-end',
+  },
   chainName: {
     fontSize: typography.sizes.base,
   },
   chainBalance: {
     fontSize: typography.sizes.base,
     fontWeight: typography.weights.normal,
+  },
+  usdValue: {
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.normal,
+    marginTop: 2,
   },
   tokenIcon: {
     width: spacing.xxl,

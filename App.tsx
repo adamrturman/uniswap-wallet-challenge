@@ -17,6 +17,7 @@ import Portfolio from './components/Portfolio';
 import TransactionConfirmation from './components/TransactionConfirmation';
 import { ThemeProvider } from './theme';
 import { TransactionProvider } from './context/TransactionContext';
+import { PriceProvider } from './context/PriceContext';
 import TransactionModalWrapper from './components/TransactionModalWrapper';
 
 const Stack = createNativeStackNavigator();
@@ -174,8 +175,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <TransactionProvider>
-          <NavigationContainer>
+        <PriceProvider>
+          <TransactionProvider>
+            <NavigationContainer>
             <Stack.Navigator
               initialRouteName="Landing"
               screenOptions={{ headerShown: false }}
@@ -252,7 +254,8 @@ export default function App() {
             <TransactionModalWrapper />
           </NavigationContainer>
         </TransactionProvider>
-      </ThemeProvider>
-    </SafeAreaProvider>
-  );
+      </PriceProvider>
+    </ThemeProvider>
+  </SafeAreaProvider>
+);
 }

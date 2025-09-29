@@ -24,7 +24,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
   const [addressHistory, setAddressHistory] = useState<string[]>([]);
-  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const { resolveAddress } = useAddressResolution();
 
   // Load address history on component mount
