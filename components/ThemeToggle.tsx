@@ -1,5 +1,5 @@
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import React, { memo, useMemo, useCallback } from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../theme';
 
@@ -7,15 +7,32 @@ type ThemeToggleProps = {
   onPress?: () => void;
 };
 
-export default function ThemeToggle({ onPress }: ThemeToggleProps) {
+const ThemeToggle = memo(function ThemeToggle({ onPress }: ThemeToggleProps) {
   const { colors, themeMode, toggleTheme } = useTheme();
 
-  const handlePress = () => {
+  const iconName = useMemo(() => {
+    return themeMode === 'light' ? 'weather-night' : 'weather-sunny';
+  }, [themeMode]);
+
+  // Memoize the press handler to prevent unnecessary re-renders
+  const handlePress = useCallback(() => {
     if (onPress) {
       onPress();
     }
     toggleTheme();
-  };
+  }, [onPress, toggleTheme]);
+
+  // Show empty div if icon name is not available
+  if (!iconName) {
+    return (
+      <TouchableOpacity
+        onPress={handlePress}
+        activeOpacity={0.7}
+      >
+        <View style={{ width: 24, height: 24 }} />
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <TouchableOpacity
@@ -23,10 +40,12 @@ export default function ThemeToggle({ onPress }: ThemeToggleProps) {
       activeOpacity={0.7}
     >
       <MaterialCommunityIcons 
-        name={themeMode === 'light' ? 'weather-night' : 'weather-sunny'} 
+        name={iconName} 
         size={24} 
         color={colors.primary} 
       />
     </TouchableOpacity>
   );
-}
+});
+
+export default ThemeToggle;

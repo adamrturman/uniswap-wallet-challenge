@@ -28,10 +28,10 @@ export default function AppHeader({
       </View>
       
       <View style={styles.rightSection}>
-        <ThemeToggle />
         {showLogoutButton && onLogout && (
           <LogoutButton onPress={onLogout} />
         )}
+        <ThemeToggle />
       </View>
     </View>
   );
