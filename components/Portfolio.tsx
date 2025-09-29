@@ -11,7 +11,7 @@ import Header from './Header';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
 import LogoutButton from './LogoutButton';
-import { AllTokenBalances } from '../utils/balanceUtils';
+import { AllTokenBalances, getTokensWithBalances } from '../utils/balanceUtils';
 import { usePrice } from '../context/PriceContext';
 
 export type PortfolioProps = {
@@ -30,7 +30,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const { getTokenUsdValue } = usePrice();
-  const [selected, setSelected] = useState<'all' | ChainKey>('all');
+  const [selected, setSelected] = useState<'all' | 'active' | ChainKey>('all');
   const [sortByUsd, setSortByUsd] = useState(false);
 
   // Removed automatic balance refetching on focus to prevent 429 errors
@@ -61,6 +61,28 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       tokenIcon: any;
       usdValue?: number;
     }> = [];
+
+    // Handle active balances filtering
+    if (selected === 'active') {
+      const activeTokens = getTokensWithBalances(balances);
+      const chainConfig = require('../config/chain').chainConfig;
+      const tokenConfig = require('../config/chain').tokenConfig;
+      
+      return activeTokens.map(token => {
+        const usdValue = getTokenUsdValue(token.symbol, token.balance);
+        return {
+          chainKey: token.chainKey,
+          tokenKey: token.tokenKey,
+          name: token.name,
+          symbol: token.symbol,
+          balance: token.balance,
+          balanceState: 'loaded' as const,
+          chainIcon: chainConfig[token.chainKey].chainIcon,
+          tokenIcon: token.tokenIcon,
+          usdValue: usdValue || 0,
+        };
+      });
+    }
 
     const keys = selected === 'all' ? orderedKeys : orderedKeys.filter((k) => k === selected);
     
@@ -124,7 +146,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
     }
 
     return tokens;
-  }, [orderedKeys, selected, balances, sortByUsd]);
+  }, [orderedKeys, selected, balances, sortByUsd, getTokenUsdValue]);
 
   return (
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>

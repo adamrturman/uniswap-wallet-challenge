@@ -1,79 +1,143 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image, Modal, Pressable } from 'react-native';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { chainConfig, ChainKey, chainOrder } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 
 export type ChainSelectorGroupProps = {
-  selected: 'all' | ChainKey;
-  onSelectionChange: (selection: 'all' | ChainKey) => void;
+  selected: 'all' | 'active' | ChainKey;
+  onSelectionChange: (selection: 'all' | 'active' | ChainKey) => void;
 };
 
 export default function ChainSelectorGroup({ selected, onSelectionChange }: ChainSelectorGroupProps) {
   const { colors } = useTheme();
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+
+  const getSelectedDisplay = () => {
+    if (selected === 'all') {
+      return {
+        label: 'All Chains',
+        icon: null,
+        isAll: true
+      };
+    }
+    if (selected === 'active') {
+      return {
+        label: 'Active Balances',
+        icon: null,
+        isActive: true
+      };
+    }
+    return {
+      label: chainConfig[selected].name,
+      icon: chainConfig[selected].chainIcon,
+      isAll: false
+    };
+  };
+
+  const selectedDisplay = getSelectedDisplay();
+
+  const handleSelection = (selection: 'all' | 'active' | ChainKey) => {
+    onSelectionChange(selection);
+    setIsDropdownOpen(false);
+  };
 
   return (
-    <View style={styles.filtersContainer}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filtersContent}
-        style={styles.filtersScrollView}
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={[styles.selectorButton, { backgroundColor: colors.pillBackground }]}
+        onPress={() => setIsDropdownOpen(true)}
+        activeOpacity={0.7}
       >
-        <AllButton
-          isSelected={selected === 'all'}
-          onPress={() => onSelectionChange('all')}
-        />
-        {chainOrder.map((key) => (
-          <FilterPill
-            key={key}
-            label={chainConfig[key].name}
-            isSelected={selected === key}
-            onPress={() => onSelectionChange(key)}
-            renderIcon={() => (
-              <View>
-                <Image source={chainConfig[key].chainIcon} style={styles.filterIcon} />
+        <View style={styles.selectorContent}>
+          {selectedDisplay.isAll ? (
+            <View style={styles.allChainsIcon}>
+              <View style={styles.chainGrid}>
+                <View style={styles.gridRow}>
+                  <Image source={chainConfig.ethereum.chainIcon} style={styles.gridIcon} />
+                  <Image source={chainConfig.optimism.chainIcon} style={styles.gridIcon} />
+                </View>
+                <View style={styles.gridRow}>
+                  <Image source={chainConfig.arbitrum.chainIcon} style={styles.gridIcon} />
+                  <Image source={chainConfig.polygon.chainIcon} style={styles.gridIcon} />
+                </View>
               </View>
-            )}
-          />
-        ))}
-      </ScrollView>
+            </View>
+          ) : selectedDisplay.isActive ? (
+            <View style={styles.activeIcon}>
+              <FontAwesome6 name="coins" size={16} color={colors.text} />
+            </View>
+          ) : (
+            <Image source={selectedDisplay.icon} style={styles.chainIcon} />
+          )}
+          <Text style={[styles.selectorText, { color: colors.text }]}>
+            {selectedDisplay.label}
+          </Text>
+        </View>
+        <Text style={[styles.dropdownArrow, { color: colors.textSecondary }]}>▼</Text>
+      </TouchableOpacity>
+
+      <Modal
+        visible={isDropdownOpen}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsDropdownOpen(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setIsDropdownOpen(false)}
+        >
+          <View style={[styles.dropdownContainer, { backgroundColor: colors.background }]}>
+            <View style={styles.dropdownContent}>
+              <ChainOption
+                label="All Chains"
+                isSelected={selected === 'all'}
+                onPress={() => handleSelection('all')}
+                renderIcon={() => (
+                  <View style={styles.allChainsIcon}>
+                    <View style={styles.chainGrid}>
+                      <View style={styles.gridRow}>
+                        <Image source={chainConfig.ethereum.chainIcon} style={styles.gridIcon} />
+                        <Image source={chainConfig.optimism.chainIcon} style={styles.gridIcon} />
+                      </View>
+                      <View style={styles.gridRow}>
+                        <Image source={chainConfig.arbitrum.chainIcon} style={styles.gridIcon} />
+                        <Image source={chainConfig.polygon.chainIcon} style={styles.gridIcon} />
+                      </View>
+                    </View>
+                  </View>
+                )}
+              />
+              <ChainOption
+                label="Active Balances"
+                isSelected={selected === 'active'}
+                onPress={() => handleSelection('active')}
+                renderIcon={() => (
+                  <View style={styles.activeIcon}>
+                    <FontAwesome6 name="coins" size={16} color={colors.text} />
+                  </View>
+                )}
+              />
+              {chainOrder.map((key) => (
+                <ChainOption
+                  key={key}
+                  label={chainConfig[key].name}
+                  isSelected={selected === key}
+                  onPress={() => handleSelection(key)}
+                  renderIcon={() => (
+                    <Image source={chainConfig[key].chainIcon} style={styles.optionIcon} />
+                  )}
+                />
+              ))}
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
 
-function AllButton({ isSelected, onPress }: { isSelected: boolean; onPress: () => void }) {
-  const { colors } = useTheme();
-  
-  return (
-    <TouchableOpacity 
-      onPress={onPress} 
-      activeOpacity={0.85} 
-      style={[
-        styles.pill, 
-        { backgroundColor: isSelected ? colors.pillSelectedBackground : colors.pillBackground }
-      ]}
-    >
-      <View style={styles.allButtonContent}>
-        <View style={styles.chainGrid}>
-          <View style={styles.gridRow}>
-            <Image source={chainConfig.ethereum.chainIcon} style={styles.gridIcon} />
-            <Image source={chainConfig.optimism.chainIcon} style={styles.gridIcon} />
-          </View>
-          <View style={styles.gridRow}>
-            <Image source={chainConfig.arbitrum.chainIcon} style={styles.gridIcon} />
-            <Image source={chainConfig.polygon.chainIcon} style={styles.gridIcon} />
-          </View>
-        </View>
-        <Text style={[
-          styles.pillText, 
-          { color: isSelected ? colors.pillSelectedText : colors.text }
-        ]}>All</Text>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
-function FilterPill({ label, isSelected, onPress, renderIcon }: { 
+function ChainOption({ label, isSelected, onPress, renderIcon }: { 
   label: string; 
   isSelected: boolean; 
   onPress: () => void; 
@@ -84,68 +148,70 @@ function FilterPill({ label, isSelected, onPress, renderIcon }: {
   return (
     <TouchableOpacity 
       onPress={onPress} 
-      activeOpacity={0.85} 
+      activeOpacity={0.7} 
       style={[
-        styles.pill, 
-        { backgroundColor: isSelected ? colors.pillSelectedBackground : colors.pillBackground }
+        styles.optionItem, 
+        { backgroundColor: isSelected ? colors.pillSelectedBackground : 'transparent' }
       ]}
     >
-      <View style={styles.pillContent}>
+      <View style={styles.optionContent}>
         {renderIcon && renderIcon()}
         <Text style={[
-          styles.pillText, 
+          styles.optionText, 
           { color: isSelected ? colors.pillSelectedText : colors.text }
         ]}>{label}</Text>
       </View>
+      {isSelected && (
+        <Text style={[styles.checkmark, { color: colors.pillSelectedText }]}>✓</Text>
+      )}
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  filtersContainer: {
+  container: {
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
-  },
-  filtersScrollView: {
-    maxHeight: spacing.xxxl
-  },
-  filtersContent: {
-    gap: spacing.sm,
-    alignItems: 'center',
-    minHeight: spacing.xxxl,
     paddingHorizontal: spacing.xl,
-    justifyContent: 'center',
-    flexGrow: 1,
   },
-  pill: {
-    borderRadius: 999,
-    paddingHorizontal: spacing.md,
-    height: spacing.xxl - spacing.xs,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pillContent: {
+  selectorButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm - 2,
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
   },
-  pillText: {
-    fontSize: typography.sizes.sm,
+  selectorContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flex: 1,
+  },
+  selectorText: {
+    fontSize: typography.sizes.base,
     fontWeight: typography.weights.medium,
   },
-  filterIcon: {
+  dropdownArrow: {
+    fontSize: 12,
+    marginLeft: spacing.sm,
+  },
+  chainIcon: {
     width: spacing.lg,
     height: spacing.lg,
     resizeMode: 'contain',
   },
-  allButtonContent: {
-    flexDirection: 'row',
+  allChainsIcon: {
+    width: spacing.lg,
+    height: spacing.lg,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: spacing.sm,
   },
   chainGrid: {
-    width: spacing.lg + spacing.xs,
-    height: spacing.lg + spacing.xs,
+    width: spacing.lg,
+    height: spacing.lg,
     justifyContent: 'space-between',
     padding: spacing.xs,
   },
@@ -159,5 +225,62 @@ const styles = StyleSheet.create({
     width: spacing.sm,
     height: spacing.sm,
     resizeMode: 'contain',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.xl,
+  },
+  dropdownContainer: {
+    borderRadius: 16,
+    padding: spacing.sm,
+    minWidth: 280,
+    maxWidth: 320,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  dropdownContent: {
+    gap: spacing.xs,
+  },
+  optionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: 8,
+  },
+  optionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flex: 1,
+  },
+  optionText: {
+    fontSize: typography.sizes.base,
+    fontWeight: typography.weights.medium,
+  },
+  optionIcon: {
+    width: spacing.lg,
+    height: spacing.lg,
+    resizeMode: 'contain',
+  },
+  checkmark: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  activeIcon: {
+    width: spacing.lg,
+    height: spacing.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
