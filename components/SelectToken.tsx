@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome6 } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
-import { chainConfig, ChainKey, chainOrder, TokenKey, tokenConfig } from '../config/chain';
-import { useTheme, spacing, typography, radius } from '../theme';
+import { chainConfig, ChainKey, chainOrder, TokenKey } from '../config/chain';
+import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import BackButton from './BackButton';
 import Header from './Header';
 import LogoutButton from './LogoutButton';
-import { ChainBalances, AllTokenBalances } from '../utils/balanceUtils';
+import TokenBalance from './TokenBalance';
+import { AllTokenBalances } from '../utils/balanceUtils';
 
 export type SelectTokenProps = {
   address: string;
@@ -114,35 +114,18 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
           {availableTokens.map((token) => (
             <TouchableOpacity
               key={`${token.chainKey}-${token.tokenKey}`}
-              style={[styles.tokenRow, { borderBottomColor: colors.border }]}
+              style={styles.tokenRow}
               onPress={() => handleTokenSelect(token)}
               activeOpacity={0.7}
             >
-              <View style={styles.tokenLeft}>
-                <Image 
-                  source={token.tokenIcon} 
-                  style={styles.tokenIcon} 
-                />
-                <View style={styles.tokenInfo}>
-                  <Text style={[styles.tokenName, { color: colors.text }]}>
-                    {token.name}
-                  </Text>
-                  {(token.chainKey !== 'ethereum' || token.tokenKey !== 'native') && (
-                    <Text style={[styles.chainName, { color: colors.textSecondary }]}>
-                      {token.chainKey === 'optimism' ? 'Optimism' : 
-                       token.chainKey === 'arbitrum' ? 'Arbitrum' : 
-                       token.chainKey === 'polygon' ? 'Polygon' : 
-                       token.chainKey === 'sepolia' ? 'Sepolia' :
-                       token.chainKey}
-                    </Text>
-                  )}
-                </View>
-              </View>
-              <View style={styles.tokenRight}>
-                <Text style={[styles.tokenBalance, { color: colors.text }]}>
-                  {token.balance.toFixed(4)} {token.symbol}
-                </Text>
-              </View>
+              <TokenBalance
+                chainKey={token.chainKey}
+                balance={{ value: token.balance, state: 'loaded' }}
+                tokenKey={token.tokenKey}
+                tokenName={token.name}
+                tokenSymbol={token.symbol}
+                tokenIcon={token.tokenIcon}
+              />
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -179,39 +162,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tokenRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.lg,
-    borderBottomWidth: 1,
-  },
-  tokenLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  tokenIcon: {
-    width: spacing.xxl,
-    height: spacing.xxl,
-    resizeMode: 'contain',
-  },
-  tokenInfo: {
-    flex: 1,
-  },
-  tokenName: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.medium,
-  },
-  chainName: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.normal,
-    marginTop: 2,
-  },
-  tokenRight: {
-    alignItems: 'flex-end',
-  },
-  tokenBalance: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
+    paddingVertical: spacing.md,
   },
 });

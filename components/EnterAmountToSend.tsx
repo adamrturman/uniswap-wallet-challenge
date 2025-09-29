@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Wallet, ethers } from 'ethers';
@@ -11,7 +11,7 @@ import EthIcon from './EthIcon';
 import Header from './Header';
 import LogoutButton from './LogoutButton';
 import { ChainKey, chainConfig } from '../config/chain';
-import { estimateGasForTransaction, estimateGasForERC20Transfer, GasEstimate } from '../utils/transactionUtils';
+import { GasEstimate } from '../utils/transactionUtils';
 
 type EnterAmountToSendProps = {
   selectedToken: {
@@ -41,115 +41,23 @@ export default function EnterAmountToSend({
   const [amount, setAmount] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [gasEstimate, setGasEstimate] = useState<GasEstimate | null>(null);
-  const [isEstimatingGas, setIsEstimatingGas] = useState(false);
 
   const isValidAmount = useMemo(() => {
     const numAmount = parseFloat(amount);
     if (numAmount <= 0 || isNaN(numAmount)) return false;
     
-    // If we don't have gas fee data, use simple balance check
-    if (!gasEstimate) {
-      return numAmount <= selectedToken.balance;
-    }
-    
-    // Check if amount + gas fees exceeds balance
-    const totalCost = numAmount + parseFloat(gasEstimate.networkFee);
-    return totalCost <= selectedToken.balance;
-  }, [amount, selectedToken.balance, gasEstimate]);
+    return numAmount <= selectedToken.balance;
+  }, [amount, selectedToken.balance]);
 
   const showError = useMemo(() => {
     const numAmount = parseFloat(amount);
     if (amount.trim().length === 0 || numAmount <= 0 || isNaN(numAmount)) return false;
     
-    // Show error if amount exceeds balance
-    if (!gasEstimate) {
-      return numAmount > selectedToken.balance;
-    }
-    
-    // Check if amount + gas fees exceeds balance
-    const totalCost = numAmount + parseFloat(gasEstimate.networkFee);
-    return totalCost > selectedToken.balance;
-  }, [amount, selectedToken.balance, gasEstimate]);
+    return numAmount > selectedToken.balance;
+  }, [amount, selectedToken.balance]);
 
-  const shouldShowTransactionDetails = useMemo(() => {
-    const numAmount = parseFloat(amount);
-    return recipientAddress && amount && numAmount > 0 && !isNaN(numAmount);
-  }, [recipientAddress, amount]);
 
-  // Gas estimation function
-  const estimateGas = useCallback(async () => {
-    if (!wallet || !recipientAddress || !amount || parseFloat(amount) <= 0) {
-      setGasEstimate(null);
-      return;
-    }
-
-    setIsEstimatingGas(true);
-    try {
-      const chain = chainConfig[selectedToken.chainKey];
-      const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
-      
-      let gasEstimate;
-      
-      // Handle native token gas estimation
-      if (selectedToken.tokenKey === 'native') {
-        gasEstimate = await estimateGasForTransaction(
-          provider,
-          wallet.address,
-          recipientAddress,
-          amount
-        );
-      } else {
-        // Handle ERC20 token gas estimation
-        const tokenConfig = require('../config/chain').tokenConfig;
-        const token = tokenConfig[selectedToken.chainKey][selectedToken.tokenKey];
-        
-        if (!token) {
-          throw new Error('Token configuration not found');
-        }
-        
-        gasEstimate = await estimateGasForERC20Transfer(
-          provider,
-          token.contractAddress,
-          wallet.address,
-          recipientAddress,
-          amount,
-          token.decimals
-        );
-      }
-      
-      setGasEstimate(gasEstimate);
-    } catch (error) {
-      console.error('Gas estimation failed:', error);
-      setGasEstimate(null);
-    } finally {
-      setIsEstimatingGas(false);
-    }
-  }, [wallet, recipientAddress, amount, selectedToken.chainKey, selectedToken.tokenKey]);
-
-  // Estimate gas when amount or recipient changes
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      estimateGas();
-    }, 500); // Debounce the estimation
-
-    return () => clearTimeout(timeoutId);
-  }, [estimateGas]);
-
-  // Periodic gas price updates every 30 seconds
-  useEffect(() => {
-    if (!wallet || !recipientAddress || !amount || parseFloat(amount) <= 0) {
-      return;
-    }
-
-    const intervalId = setInterval(() => {
-      estimateGas();
-    }, 30000); // Update every 30 seconds
-
-    return () => clearInterval(intervalId);
-  }, [wallet, recipientAddress, amount, estimateGas]);
-
-  const handleApproveTransaction = async () => {
+  const handleApproveTransaction = async (gasEstimate?: GasEstimate) => {
     setIsExecuting(true);
     
     // Close the review modal
@@ -171,7 +79,8 @@ export default function EnterAmountToSend({
       if (!onTransactionExecute) {
         throw new Error('Transaction execution function not available');
       }
-      const result = await onTransactionExecute(amount, gasEstimate || undefined);
+      
+      const result = await onTransactionExecute(amount, gasEstimate);
       
       if (result.success && result.hash) {
         // Update modal to show success
@@ -212,6 +121,43 @@ export default function EnterAmountToSend({
 
     // Check if we have a wallet to execute transaction
     if (wallet && onTransactionExecute) {
+      // Calculate gas estimate now when user clicks Send
+      let gasEstimate: GasEstimate | undefined;
+      if (wallet && recipientAddress) {
+        try {
+          const chain = chainConfig[selectedToken.chainKey];
+          const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
+          
+          if (selectedToken.tokenKey === 'native') {
+            const { estimateGasForTransaction } = await import('../utils/transactionUtils');
+            gasEstimate = await estimateGasForTransaction(
+              provider,
+              wallet.address,
+              recipientAddress,
+              amount
+            );
+          } else {
+            const { estimateGasForERC20Transfer } = await import('../utils/transactionUtils');
+            const tokenConfig = require('../config/chain').tokenConfig;
+            const token = tokenConfig[selectedToken.chainKey][selectedToken.tokenKey];
+            
+            if (token) {
+              gasEstimate = await estimateGasForERC20Transfer(
+                provider,
+                token.contractAddress,
+                wallet.address,
+                recipientAddress,
+                amount,
+                token.decimals
+              );
+            }
+          }
+        } catch (gasError) {
+          console.error('Gas estimation failed:', gasError);
+          // Continue without gas estimate - the transaction execution will handle it
+        }
+      }
+
       // Create transaction data object for review
       const transactionData = {
         from: wallet.address,
@@ -226,7 +172,7 @@ export default function EnterAmountToSend({
       };
 
       // Set the approve transaction function - this should only be called when user clicks approve
-      setApproveTransaction(handleApproveTransaction);
+      setApproveTransaction(() => handleApproveTransaction(gasEstimate));
       
       // Show review modal - this should NOT execute the transaction automatically
       showTransactionModal({ 
@@ -240,38 +186,9 @@ export default function EnterAmountToSend({
     }
   };
 
-  const handleMaxAmount = async () => {
-    if (!wallet || !recipientAddress) {
-      // If no wallet or recipient, just use the full balance
-      setAmount(selectedToken.balance.toString());
-      return;
-    }
-
-    try {
-      const chain = chainConfig[selectedToken.chainKey];
-      const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
-      
-      // Estimate gas for a transaction with the full balance
-      const gasEstimate = await estimateGasForTransaction(
-        provider,
-        wallet.address,
-        recipientAddress,
-        selectedToken.balance.toString()
-      );
-      
-      // Calculate max amount by subtracting gas cost from balance
-      const gasCostInEth = parseFloat(gasEstimate.networkFee);
-      const maxAmount = Math.max(0, selectedToken.balance - gasCostInEth);
-      
-      // Set the amount to the calculated max (with some buffer for safety)
-      const safeMaxAmount = Math.max(0, maxAmount - 0.0001); // Small buffer to ensure transaction succeeds
-      setAmount(safeMaxAmount.toFixed(8));
-      
-    } catch (error) {
-      console.error('Error calculating max amount with gas:', error);
-      // Fallback to full balance if gas calculation fails
-      setAmount(selectedToken.balance.toString());
-    }
+  const handleMaxAmount = () => {
+    // Simply use the full balance without gas calculation
+    setAmount(selectedToken.balance.toString());
   };
 
   const handleAmountChange = (text: string) => {
@@ -359,67 +276,8 @@ export default function EnterAmountToSend({
           
           {showError && (
             <Text style={[styles.errorText, { color: colors.error }]}>
-              Total cost exceeds your balance of {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
+              Amount exceeds your balance of {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
             </Text>
-          )}
-
-          {/* Transaction Details Section */}
-          {shouldShowTransactionDetails && (
-            <View style={[styles.transactionDetails, { backgroundColor: colors.backgroundSecondary, borderColor: colors.border }]}>
-              <View style={styles.detailRow}>
-                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>To</Text>
-                <Text style={[styles.detailValue, { color: colors.textSecondary }]}>
-                  {recipientAddress?.slice(0, 6)}...{recipientAddress?.slice(-4)}
-                </Text>
-              </View>
-              
-              <View style={styles.detailRow}>
-                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Amount</Text>
-                <Text style={[styles.detailValue, { color: colors.text }]}>
-                  {parseFloat(amount).toFixed(8)} {selectedToken.symbol}
-                </Text>
-              </View>
-              
-              {gasEstimate && isValidAmount && (
-                <>
-                  <View style={styles.detailRow}>
-                    <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Network Fee</Text>
-                    <Text style={[styles.detailValue, { color: colors.textSecondary }]}>
-                      {parseFloat(gasEstimate.networkFee).toFixed(8)} ETH ({chainConfig[selectedToken.chainKey].name})
-                    </Text>
-                  </View>
-                  
-                  <View style={styles.detailRow}>
-                    <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Gas</Text>
-                    <Text style={[styles.detailValue, { color: colors.textSecondary }]}>
-                      {parseInt(gasEstimate.gasLimit).toLocaleString()} × {parseFloat(gasEstimate.gasPrice).toFixed(2)} gwei
-                    </Text>
-                  </View>
-                  
-                  {gasEstimate.maxFeePerGas && gasEstimate.maxPriorityFeePerGas && (
-                    <View style={styles.detailRow}>
-                      <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Max Fee</Text>
-                      <Text style={[styles.detailValue, { color: colors.textSecondary }]}>
-                        {parseFloat(ethers.utils.formatUnits(gasEstimate.maxFeePerGas, 'gwei')).toFixed(2)} gwei
-                      </Text>
-                    </View>
-                  )}
-                  
-                  <View style={[styles.detailRow, styles.totalRow]}>
-                    <Text style={[styles.detailLabel, styles.totalLabel, { color: colors.text }]}>Total</Text>
-                    <Text style={[styles.detailValue, styles.totalValue, { color: colors.text }]}>
-                      {(parseFloat(amount) + parseFloat(gasEstimate.networkFee)).toFixed(8)} {selectedToken.symbol}
-                    </Text>
-                  </View>
-                </>
-              )}
-              
-              {isEstimatingGas && (
-                <View style={styles.detailRow}>
-                  <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Estimating gas...</Text>
-                </View>
-              )}
-            </View>
           )}
         </View>
 
@@ -547,42 +405,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     paddingHorizontal: spacing.xs,
     textAlign: 'center',
-  },
-  transactionDetails: {
-    marginTop: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    width: '100%',
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  detailLabel: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium,
-  },
-  detailValue: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium,
-  },
-  totalRow: {
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    paddingTop: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  totalLabel: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
-  },
-  totalValue: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
   },
   footer: {
     marginTop: 'auto',
