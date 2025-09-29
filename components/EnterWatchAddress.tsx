@@ -26,6 +26,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
   const [addressHistory, setAddressHistory] = useState<string[]>([]);
   const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
+  const [isValidAddress, setIsValidAddress] = useState(false);
   const { resolveAddress } = useAddressResolution();
 
   // Load address history on component mount
@@ -79,8 +80,16 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
   };
 
 
+  const handleAddressChange = (newAddress: string) => {
+    setAddress(newAddress);
+  };
+
+  const handleValidationChange = (isValid: boolean) => {
+    setIsValidAddress(isValid);
+  };
+
   const handleContinue = async () => {
-    if (!address.trim()) return;
+    if (!address.trim() || !isValidAddress) return;
 
     const trimmedInput = address.trim();
     setAddress(trimmedInput);
@@ -150,8 +159,9 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
           <View style={styles.inputContainer}>
             <AddressInput
               value={address}
-              onChangeText={setAddress}
+              onChangeText={handleAddressChange}
               placeholder="Enter a wallet address or ENS name"
+              onValidationChange={handleValidationChange}
             />
             
             {addressHistory.length > 0 && (
@@ -236,8 +246,8 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
           <Button
             title="Continue"
             onPress={handleContinue}
-            variant={address.trim() ? 'primary' : 'disabled'}
-            disabled={!address.trim()}
+            variant={isValidAddress ? 'primary' : 'disabled'}
+            disabled={!isValidAddress}
             fullWidth
           />
         </View>

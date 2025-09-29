@@ -1,8 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { ethers } from 'ethers';
-import { useTheme, spacing, typography } from '../theme';
-import { chainConfig } from '../config/chain';
 import Input from './Input';
 
 type AddressInputProps = {
@@ -10,17 +8,33 @@ type AddressInputProps = {
   onChangeText: (text: string) => void;
   placeholder?: string;
   errorMessage?: string;
+  onValidationChange?: (isValid: boolean) => void;
 };
 
 export default function AddressInput({ 
   value, 
   onChangeText, 
   placeholder = "Enter a wallet address or ENS name",
-  errorMessage = "Invalid wallet address or ENS name. Please check and try again."
+  errorMessage = "Invalid wallet address or ENS name. Please check and try again.",
+  onValidationChange
 }: AddressInputProps) {
-  const { colors } = useTheme();
-  const [isResolvingENS, setIsResolvingENS] = useState(false);
-  const [resolvedAddress, setResolvedAddress] = useState<string | null>(null);
+
+  // Enhanced ENS name validation using ethers.js
+  const isValidENSName = (name: string): boolean => {
+    if (!name.includes('.eth')) return false;
+    if (name.startsWith('0x')) return false;
+    
+    try {
+      // Use ethers.js to validate name format, but ensure it ends with .eth
+      // and is not a valid address, and doesn't start with 0x
+      return ethers.utils.isValidName(name) && 
+             name.endsWith('.eth') && 
+             !ethers.utils.isAddress(name) &&
+             !name.toLowerCase().startsWith('0x');
+    } catch (error) {
+      return false;
+    }
+  };
 
   // Check if input is a valid address or ENS name
   const isValid = useMemo(() => {
@@ -29,43 +43,18 @@ export default function AddressInput({
     // If it's a valid address, return true
     if (ethers.utils.isAddress(value)) return true;
     
-    // If it's a valid ENS name (contains .eth and doesn't start with 0x)
-    if (value.includes('.eth') && !value.startsWith('0x')) {
+    // If it's a valid ENS name format
+    if (isValidENSName(value)) {
       return true;
     }
     
     return false;
   }, [value]);
 
-  // Check if the current input is an ENS name
-  const isENSName = useMemo(() => {
-    return value.includes('.eth') && !value.startsWith('0x') && !ethers.utils.isAddress(value);
-  }, [value]);
-
-  // Resolve ENS name to address
-  const resolveENS = async (ensName: string): Promise<string | null> => {
-    try {
-      setIsResolvingENS(true);
-      const provider = new ethers.providers.JsonRpcProvider(chainConfig.ethereum.rpcUrl);
-      const resolvedAddress = await provider.resolveName(ensName);
-      setResolvedAddress(resolvedAddress);
-      return resolvedAddress;
-    } catch (error) {
-      console.log('Failed to resolve ENS name:', error);
-      setResolvedAddress(null);
-      return null;
-    } finally {
-      setIsResolvingENS(false);
-    }
-  };
-
-  // Expose resolution function for parent components
-  const resolveAddress = async (inputValue: string): Promise<string | null> => {
-    if (inputValue.includes('.eth') && !inputValue.startsWith('0x')) {
-      return await resolveENS(inputValue);
-    }
-    return inputValue;
-  };
+  // Notify parent component of validation changes
+  React.useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
   return (
     <View style={styles.container}>
@@ -76,23 +65,6 @@ export default function AddressInput({
         isValid={isValid}
         errorMessage={errorMessage}
       />
-      
-      {/* ENS Resolution Status */}
-      {isResolvingENS && (
-        <View style={styles.ensStatus}>
-          <Text style={[styles.ensStatusText, { color: colors.textSecondary }]}>
-            Resolving ENS name...
-          </Text>
-        </View>
-      )}
-      
-      {resolvedAddress && (
-        <View style={styles.ensStatus}>
-          <Text style={[styles.ensStatusText, { color: colors.success }]}>
-            Resolved to: {resolvedAddress}
-          </Text>
-        </View>
-      )}
     </View>
   );
 }
@@ -101,6 +73,8 @@ export default function AddressInput({
 export const useAddressResolution = () => {
   const resolveENS = async (ensName: string): Promise<string | null> => {
     try {
+      const { ethers } = require('ethers');
+      const { chainConfig } = require('../config/chain');
       const provider = new ethers.providers.JsonRpcProvider(chainConfig.ethereum.rpcUrl);
       return await provider.resolveName(ensName);
     } catch (error) {
@@ -122,13 +96,5 @@ export const useAddressResolution = () => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-  },
-  ensStatus: {
-    marginTop: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  ensStatusText: {
-    fontSize: typography.sizes.sm,
-    textAlign: 'center',
   },
 });

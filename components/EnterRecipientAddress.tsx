@@ -72,30 +72,12 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
     }
   };
 
-  const validateAddress = (inputAddress: string) => {
-    if (!inputAddress.trim()) {
-      setIsValidAddress(false);
-      return;
-    }
-    
-    // Check if it's a valid Ethereum address
-    if (ethers.utils.isAddress(inputAddress)) {
-      setIsValidAddress(true);
-      return;
-    }
-    
-    // Check if it's a valid ENS name
-    if (inputAddress.includes('.eth') && !inputAddress.startsWith('0x')) {
-      setIsValidAddress(true);
-      return;
-    }
-    
-    setIsValidAddress(false);
-  };
-
   const handleAddressChange = (newAddress: string) => {
     setAddress(newAddress);
-    validateAddress(newAddress);
+  };
+
+  const handleValidationChange = (isValid: boolean) => {
+    setIsValidAddress(isValid);
   };
 
   const handleContinue = async () => {
@@ -129,7 +111,6 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
 
   const handleAddressSelect = (selectedAddress: string) => {
     setAddress(selectedAddress);
-    validateAddress(selectedAddress);
   };
 
   const truncateAddress = (address: string) => {
@@ -174,6 +155,7 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
               value={address}
               onChangeText={handleAddressChange}
               placeholder="Enter a wallet address or ENS name"
+              onValidationChange={handleValidationChange}
             />
             
             {addressHistory.length > 0 && (
