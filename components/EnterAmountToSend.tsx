@@ -5,6 +5,7 @@ import { Wallet, ethers } from 'ethers';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import { useTransaction } from '../context/TransactionContext';
+import { usePrice } from '../context/PriceContext';
 import Button from './Button';
 import BackButton from './BackButton';
 import EthIcon from './EthIcon';
@@ -46,6 +47,7 @@ export default function EnterAmountToSend({
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const { showTransactionModal, updateTransactionStatus, hideTransactionModal, setApproveTransaction } = useTransaction();
+  const { getTokenUsdValueFormatted, priceState } = usePrice();
   const [amount, setAmount] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -64,6 +66,14 @@ export default function EnterAmountToSend({
     
     return numAmount > selectedToken.balance;
   }, [amount, selectedToken.balance]);
+
+  // Calculate USD value of the entered amount
+  const usdValue = useMemo(() => {
+    const numAmount = parseFloat(amount);
+    if (!amount.trim() || numAmount <= 0 || isNaN(numAmount)) return null;
+    
+    return getTokenUsdValueFormatted(selectedToken.symbol, numAmount);
+  }, [amount, selectedToken.symbol, getTokenUsdValueFormatted]);
 
 
   const handleApproveTransaction = async (gasEstimate?: GasEstimate) => {
@@ -245,6 +255,7 @@ export default function EnterAmountToSend({
               ? colors.primary 
               : colors.border 
         }]}>
+              
               <TextInput
                 style={[styles.amountInput, { 
                   color: colors.text,
@@ -275,18 +286,38 @@ export default function EnterAmountToSend({
               
               {/* Balance and Max button positioned inside input */}
               <View style={styles.balanceRow}>
-                <Text style={[styles.balanceText, { color: colors.textSecondary }]}>
-                  {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
-                </Text>
-                <TouchableOpacity
-                  style={[styles.maxButton, { backgroundColor: colors.primaryLight }]}
-                  onPress={handleMaxAmount}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.maxButtonText, { color: colors.primary }]}>
-                    Max
+                {/* Left side: Show USD value only when amount is entered */}
+                <View style={styles.leftSection}>
+                  {amount.trim() && (
+                    <Text style={[styles.usdValueText, { color: colors.textSecondary }]}>
+                      {priceState.isLoading ? (
+                        'Loading...'
+                      ) : priceState.error ? (
+                        'Price unavailable'
+                      ) : usdValue ? (
+                        usdValue
+                      ) : (
+                        'Price unavailable'
+                      )}
+                    </Text>
+                  )}
+                </View>
+                
+                {/* Right side: Balance helper and Max button */}
+                <View style={styles.balanceMaxSection}>
+                  <Text style={[styles.balanceText, { color: colors.textSecondary }]}>
+                    {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
                   </Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.maxButton, { backgroundColor: colors.primaryLight }]}
+                    onPress={handleMaxAmount}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={[styles.maxButtonText, { color: colors.primary }]}>
+                      Max
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
@@ -314,12 +345,11 @@ export default function EnterAmountToSend({
       </KeyboardAvoidingView>
       
       {/* Token Selection Modal */}
-      {balances && address && (
+      {balances && (
         <TokenSelectionModal
           visible={isTokenModalVisible}
           onClose={() => setIsTokenModalVisible(false)}
           onTokenSelect={handleTokenSelect}
-          address={address}
           balances={balances}
           currentToken={{
             chainKey: selectedToken.chainKey,
@@ -416,7 +446,21 @@ const styles = StyleSheet.create({
     right: spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+  },
+  leftSection: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  balanceLeftSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  balanceMaxSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.sm,
   },
   balanceText: {
@@ -431,6 +475,10 @@ const styles = StyleSheet.create({
   maxButtonText: {
     fontSize: typography.sizes.sm,
     fontWeight: typography.weights.medium,
+  },
+  usdValueText: {
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.normal,
   },
   errorText: {
     fontSize: typography.sizes.sm,
