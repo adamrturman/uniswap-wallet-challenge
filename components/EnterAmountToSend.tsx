@@ -241,11 +241,14 @@ export default function EnterAmountToSend({
         </View>
 
         <View style={styles.content}>
-          <View style={styles.headerContainer}>
-            <Text style={[styles.title, { color: colors.text }]}>
-              Enter amount to send
-            </Text>
-          </View>
+          <Header
+            icon="coins"
+            text={
+              <Text style={[styles.title, { color: colors.text }]}>
+                Enter amount to send
+              </Text>
+            }
+          />
 
           <View style={styles.inputContainer}>
             <View style={[styles.amountInputContainer, { 
@@ -381,15 +384,12 @@ const styles = StyleSheet.create({
     marginTop: 0,
     alignItems: 'center',
   },
-  headerContainer: {
-    alignItems: 'center',
-    marginTop: spacing.xxl,
-    marginBottom: spacing.xxl,
-  },
   title: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.medium,
     textAlign: 'center',
+    marginTop: spacing.xxl,
+    marginBottom: spacing.xxl,
     lineHeight: typography.lineHeights.xl,
   },
   inputContainer: {
