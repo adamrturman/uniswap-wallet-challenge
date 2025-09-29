@@ -140,9 +140,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
         {allTokens.map((token) => (
           <TokenBalance
             key={`${token.chainKey}-${token.tokenKey}`}
-            chainKey={token.chainKey}
             balance={{ value: token.balance, state: 'loaded' }}
-            tokenKey={token.tokenKey}
             tokenName={token.name}
             tokenSymbol={token.symbol}
             tokenIcon={token.tokenIcon}

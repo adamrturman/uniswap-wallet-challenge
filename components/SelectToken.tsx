@@ -123,9 +123,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
               activeOpacity={0.7}
             >
               <TokenBalance
-                chainKey={token.chainKey}
                 balance={{ value: token.balance, state: 'loaded' }}
-                tokenKey={token.tokenKey}
                 tokenName={token.name}
                 tokenSymbol={token.symbol}
                 tokenIcon={token.tokenIcon}

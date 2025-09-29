@@ -1,24 +1,19 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { chainConfig, ChainKey, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import ChainTokenIcon from './ChainTokenIcon';
 import Skeleton from './Skeleton';
 import { ChainBalance } from '../utils/balanceUtils';
 
 export type TokenBalanceProps = {
-  chainKey: ChainKey;
   balance: ChainBalance;
-  tokenKey: TokenKey;
   tokenName: string;
   tokenSymbol: string;
   tokenIcon: any;
 };
 
 export default function TokenBalance({ 
-  chainKey, 
   balance, 
-  tokenKey, 
   tokenName, 
   tokenSymbol, 
   tokenIcon 
