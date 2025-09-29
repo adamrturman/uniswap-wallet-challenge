@@ -166,11 +166,91 @@ export default function TransactionModal({
                   <Text style={[styles.transactionDataTitle, { color: colors.text }]}>
                     Transaction Details:
                   </Text>
-                  <ScrollView style={styles.transactionDataScroll}>
-                    <Text style={[styles.transactionDataText, { color: colors.textSecondary }]}>
-                      {JSON.stringify(transactionData, null, 2)}
-                    </Text>
-                  </ScrollView>
+                  <View style={styles.transactionDetails}>
+                    {transactionData.from && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>From</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.from}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.to && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>To</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.to}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.amount && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>Amount</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.amount} {transactionData.token?.symbol || 'ETH'}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.token?.chainKey && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>Network</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.token.chainKey.charAt(0).toUpperCase() + transactionData.token.chainKey.slice(1)}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.token?.chainKey && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>Chain ID</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {(() => {
+                            const chainConfig = require('../config/chain').chainConfig;
+                            return chainConfig[transactionData.token.chainKey]?.chainId || 'Unknown';
+                          })()}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.gasEstimate?.gasLimit && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>Gas Limit</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.gasEstimate.gasLimit}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.gasEstimate?.gasPrice && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>Gas Price</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.gasEstimate.gasPrice} Gwei
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.gasEstimate?.maxFeePerGas && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>Max Fee Per Gas</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.gasEstimate.maxFeePerGas} Gwei
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.gasEstimate?.maxPriorityFeePerGas && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>Max Priority Fee</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.gasEstimate.maxPriorityFeePerGas} Gwei
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData.gasEstimate?.estimatedCost && (
+                      <View style={styles.transactionRow}>
+                        <Text style={[styles.transactionLabel, { color: colors.textSecondary }]}>Estimated Cost</Text>
+                        <Text style={[styles.transactionValue, { color: colors.text }]}>
+                          {transactionData.gasEstimate.estimatedCost} ETH
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
               )}
 
@@ -287,12 +367,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: spacing.sm,
   },
-  transactionDataScroll: {
-    maxHeight: 200,
+  transactionDetails: {
+    width: '100%',
   },
-  transactionDataText: {
+  transactionRow: {
+    flexDirection: 'column',
+    paddingVertical: spacing.sm,
+  },
+  transactionLabel: {
     fontSize: typography.sizes.xs,
-    fontFamily: 'monospace',
+    fontWeight: typography.weights.medium,
+    marginBottom: spacing.xs,
+  },
+  transactionValue: {
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.normal,
     lineHeight: 16,
   },
   approveButton: {

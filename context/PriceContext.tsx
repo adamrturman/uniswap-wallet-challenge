@@ -27,13 +27,13 @@ const PriceContext = createContext<PriceContextType | undefined>(undefined);
 
 // CoinGecko API mapping for tokens
 const COINGECKO_IDS: Record<string, string> = {
-  'ETH': 'ethereum',
+  'ETH': 'Ethereum',
   'POL': 'matic-network',
   'USDT': 'tether',
   'USDC': 'usd-coin',
   'WBTC': 'wrapped-bitcoin',
-  'OP': 'optimism',
-  'ARB': 'arbitrum',
+  'OP': 'Optimism',
+  'ARB': 'Arbitrum',
   'LINK': 'chainlink',
 };
 

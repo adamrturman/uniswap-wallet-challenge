@@ -5,18 +5,20 @@ import { useTheme, typography, spacing } from '../theme';
 type BackButtonProps = {
   onPress?: () => void;
   style?: any;
+  disabled?: boolean;
 };
 
-export default function BackButton({ onPress, style }: BackButtonProps) {
+export default function BackButton({ onPress, style, disabled = false }: BackButtonProps) {
   const { colors } = useTheme();
 
   return (
     <TouchableOpacity 
-      style={[styles.backButton, style]} 
-      onPress={onPress}
-      activeOpacity={0.7}
+      style={[styles.backButton, style, disabled && styles.disabled]} 
+      onPress={disabled ? undefined : onPress}
+      activeOpacity={disabled ? 1 : 0.7}
+      disabled={disabled}
     >
-      <Text style={[styles.backArrow, { color: colors.text }]}>←</Text>
+      <Text style={[styles.backArrow, { color: disabled ? colors.textSecondary : colors.text }]}>←</Text>
     </TouchableOpacity>
   );
 }
@@ -27,6 +29,9 @@ const styles = StyleSheet.create({
     height: spacing.xxl,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  disabled: {
+    opacity: 0.5,
   },
   backArrow: {
     fontSize: typography.sizes.xxl,

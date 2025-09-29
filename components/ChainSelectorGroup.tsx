@@ -54,12 +54,12 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
             <View style={styles.allChainsIcon}>
               <View style={styles.chainGrid}>
                 <View style={styles.gridRow}>
-                  <Image source={chainConfig.ethereum.chainIcon} style={styles.gridIcon} />
-                  <Image source={chainConfig.optimism.chainIcon} style={styles.gridIcon} />
+                  <Image source={chainConfig.Ethereum.chainIcon} style={styles.gridIcon} />
+                  <Image source={chainConfig.Optimism.chainIcon} style={styles.gridIcon} />
                 </View>
                 <View style={styles.gridRow}>
-                  <Image source={chainConfig.arbitrum.chainIcon} style={styles.gridIcon} />
-                  <Image source={chainConfig.polygon.chainIcon} style={styles.gridIcon} />
+                  <Image source={chainConfig.Arbitrum.chainIcon} style={styles.gridIcon} />
+                  <Image source={chainConfig.Polygon.chainIcon} style={styles.gridIcon} />
                 </View>
               </View>
             </View>
@@ -97,12 +97,12 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
                   <View style={styles.allChainsIcon}>
                     <View style={styles.chainGrid}>
                       <View style={styles.gridRow}>
-                        <Image source={chainConfig.ethereum.chainIcon} style={styles.gridIcon} />
-                        <Image source={chainConfig.optimism.chainIcon} style={styles.gridIcon} />
+                        <Image source={chainConfig.Ethereum.chainIcon} style={styles.gridIcon} />
+                        <Image source={chainConfig.Optimism.chainIcon} style={styles.gridIcon} />
                       </View>
                       <View style={styles.gridRow}>
-                        <Image source={chainConfig.arbitrum.chainIcon} style={styles.gridIcon} />
-                        <Image source={chainConfig.polygon.chainIcon} style={styles.gridIcon} />
+                        <Image source={chainConfig.Arbitrum.chainIcon} style={styles.gridIcon} />
+                        <Image source={chainConfig.Polygon.chainIcon} style={styles.gridIcon} />
                       </View>
                     </View>
                   </View>

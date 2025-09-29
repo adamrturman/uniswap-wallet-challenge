@@ -14,7 +14,7 @@ export default function Landing({}: LandingProps) {
   const navigation = useNavigation<NavigationType>();
   
   return (
-    <ScreenWrapper>
+    <ScreenWrapper disableBackButton={true}>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.content}>
           <View style={styles.logoWrapper}>

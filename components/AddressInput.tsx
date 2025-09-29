@@ -48,7 +48,7 @@ export const useAddressResolution = () => {
     try {
       const { ethers } = require('ethers');
       const { chainConfig } = require('../config/chain');
-      const provider = new ethers.providers.JsonRpcProvider(chainConfig.ethereum.rpcUrl);
+      const provider = new ethers.providers.JsonRpcProvider(chainConfig.Ethereum.rpcUrl);
       return await provider.resolveName(ensName);
     } catch (error) {
       console.log('Failed to resolve ENS name:', error);

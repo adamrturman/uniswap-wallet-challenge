@@ -6,12 +6,16 @@ import AppHeader from './AppHeader';
 type ScreenWrapperProps = {
   children: React.ReactNode;
   showLogoutButton?: boolean;
+  showBackButton?: boolean;
+  disableBackButton?: boolean;
   onLogout?: () => void;
 };
 
 export default function ScreenWrapper({ 
   children, 
   showLogoutButton = false, 
+  showBackButton = true,
+  disableBackButton = false,
   onLogout 
 }: ScreenWrapperProps) {
   const { colors } = useTheme();
@@ -20,6 +24,8 @@ export default function ScreenWrapper({
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <AppHeader 
         showLogoutButton={showLogoutButton}
+        showBackButton={showBackButton}
+        disableBackButton={disableBackButton}
         onLogout={onLogout}
       />
       <View style={styles.content}>

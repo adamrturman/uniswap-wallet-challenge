@@ -9,7 +9,7 @@ import btcLogo from '../assets/btc-logo.png';
 import linkLogo from '../assets/link-logo.png';
 import EthIcon from '../components/EthIcon';
 
-export type ChainKey = 'ethereum' | 'polygon' | 'optimism' | 'arbitrum' | 'sepolia';
+export type ChainKey = 'Ethereum' | 'Polygon' | 'Optimism' | 'Arbitrum' | 'Sepolia';
 
 // Union type for all possible token identifiers (native + ERC20 symbols)
 export type TokenKey = 'ETH' | 'POL' | 'USDT' | 'USDC' | 'WBTC' | 'OP' | 'ARB' | 'LINK';
@@ -62,19 +62,21 @@ export const chainConfig: Record<ChainKey, {
   symbol: string; 
   chainIcon: any; 
   explorerUrl: string;
+  chainId: number;
   nativeTokenIcon: {
     baseIcon: any;
     overlayIcon?: any;
   };
   supportedErc20s: TokenConfig[];
 }> = {
-  ethereum: {
+  Ethereum: {
     name: 'Ethereum',
     nativeTokenDisplay: 'ETH',
     rpcUrl: 'https://eth.drpc.org',
     symbol: 'ETH',
     chainIcon: ethColorIcon,
     explorerUrl: 'https://etherscan.io/tx/',
+    chainId: 1,
     nativeTokenIcon: {
       baseIcon: EthIcon,
     },
@@ -108,13 +110,14 @@ export const chainConfig: Record<ChainKey, {
       },
     ],
   },
-  polygon: {
+  Polygon: {
     name: 'Polygon',
     nativeTokenDisplay: 'POL',
     rpcUrl: 'https://polygon.drpc.org',
     symbol: 'POL',
     chainIcon: polygonLogo,
     explorerUrl: 'https://polygonscan.com/tx/',
+    chainId: 137,
     nativeTokenIcon: {
       baseIcon: polygonLogo,
     },
@@ -141,13 +144,14 @@ export const chainConfig: Record<ChainKey, {
       },
     ],
   },
-  optimism: {
+  Optimism: {
     name: 'Optimism',
     nativeTokenDisplay: 'ETH (Optimism)',
     rpcUrl: 'https://optimism-rpc.publicnode.com',
     symbol: 'ETH',
     chainIcon: optimismBadge,
     explorerUrl: 'https://optimistic.etherscan.io/tx/',
+    chainId: 10,
     nativeTokenIcon: {
       baseIcon: ethIcon,
       overlayIcon: optimismBadge,
@@ -185,13 +189,14 @@ export const chainConfig: Record<ChainKey, {
       },
     ],
   },
-  arbitrum: {
+  Arbitrum: {
     name: 'Arbitrum',
     nativeTokenDisplay: 'ETH (Arbitrum)',
     rpcUrl: 'https://arbitrum.drpc.org',
     symbol: 'ETH',
     chainIcon: arbitrumBadge,
     explorerUrl: 'https://arbiscan.io/tx/',
+    chainId: 42161,
     nativeTokenIcon: {
       baseIcon: ethIcon,
       overlayIcon: arbitrumBadge,
@@ -239,13 +244,14 @@ export const chainConfig: Record<ChainKey, {
       },
     ],
   },
-  sepolia: {
+  Sepolia: {
     name: 'Sepolia',
     nativeTokenDisplay: 'SepoliaETH',
     rpcUrl: 'https://sepolia.drpc.org',
     symbol: 'ETH',
     chainIcon: ethColorIcon,
     explorerUrl: 'https://sepolia.etherscan.io/tx/',
+    chainId: 11155111,
     nativeTokenIcon: {
       baseIcon: ethIcon,
     },
@@ -290,11 +296,11 @@ export const chainConfig: Record<ChainKey, {
   },
 };
 
-export const chainOrder: ChainKey[] = ['ethereum', 'optimism', 'arbitrum', 'polygon', 'sepolia'];
+export const chainOrder: ChainKey[] = ['Ethereum', 'Optimism', 'Arbitrum', 'Polygon', 'Sepolia'];
 
 // Token configurations for each chain
 export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
-  ethereum: {
+  Ethereum: {
     USDT: {
       symbol: 'USDT',
       name: 'Tether USD',
@@ -323,7 +329,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
       },
     },
   },
-  sepolia: {
+  Sepolia: {
     USDT: {
       symbol: 'USDT',
       name: 'Tether USD',
@@ -361,7 +367,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
       },
     },
   },
-  arbitrum: {
+  Arbitrum: {
     ARB: {
       symbol: 'ARB',
       name: 'Arbitrum',
@@ -403,7 +409,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
       },
     },
   },
-  optimism: {
+  Optimism: {
     OP: {
       symbol: 'OP',
       name: 'Optimism',
@@ -435,7 +441,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
       },
     },
   },
-  polygon: {
+  Polygon: {
     USDC: {
       symbol: 'USDC',
       name: 'USD Coin',

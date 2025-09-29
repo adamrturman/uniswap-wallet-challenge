@@ -9,11 +9,15 @@ import ThemeToggle from './ThemeToggle';
 
 type AppHeaderProps = {
   showLogoutButton?: boolean;
+  showBackButton?: boolean;
+  disableBackButton?: boolean;
   onLogout?: () => void;
 };
 
 export default function AppHeader({ 
   showLogoutButton = false, 
+  showBackButton = true,
+  disableBackButton = false,
   onLogout 
 }: AppHeaderProps) {
   const { colors } = useTheme();
@@ -22,9 +26,12 @@ export default function AppHeader({
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.leftSection}>
-        <BackButton 
-          onPress={() => navigation.goBack()} 
-        />
+        {showBackButton && (
+          <BackButton 
+            onPress={() => navigation.goBack()} 
+            disabled={disableBackButton}
+          />
+        )}
       </View>
       
       <View style={styles.rightSection}>

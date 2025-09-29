@@ -47,7 +47,7 @@ export const mockChainConfig = {
   },
 };
 
-export const mockChainOrder = ['ethereum', 'polygon', 'optimism', 'arbitrum', 'sepolia'];
+export const mockChainOrder = ['Ethereum', 'Polygon', 'Optimism', 'Arbitrum', 'Sepolia'];
 
 // Mock the entire chain config module
 jest.mock('../../config/chain', () => ({

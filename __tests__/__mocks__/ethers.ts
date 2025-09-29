@@ -34,7 +34,7 @@ export const setupDelayedBalanceMock = (balanceWei: string = '150000000000000000
 
 export const setupMixedResultsMock = (successfulChainIndices: number[], errorChainIndices: number[], delay: number = 0) => {
   let callCount = 0;
-  const chainKeys = ['ethereum', 'polygon', 'optimism', 'arbitrum', 'sepolia'];
+  const chainKeys = ['Ethereum', 'Polygon', 'Optimism', 'Arbitrum', 'Sepolia'];
 
   mockGetBalance.mockImplementation(() => {
     const currentChainIndex = callCount;

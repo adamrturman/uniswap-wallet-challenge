@@ -36,7 +36,7 @@ export default function App() {
   // Dev mode: Set up mock data for testing
   const handleDevNavigation = () => {
     setSelectedToken({
-      chainKey: 'sepolia',
+      chainKey: 'Sepolia',
       balance: 0.399,
       symbol: 'ETH',
     });
