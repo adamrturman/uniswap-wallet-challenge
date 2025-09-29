@@ -253,7 +253,7 @@ export const chainConfig: Record<ChainKey, {
     explorerUrl: 'https://sepolia.etherscan.io/tx/',
     chainId: 11155111,
     nativeTokenIcon: {
-      baseIcon: ethIcon,
+      baseIcon: EthIcon,
     },
     supportedErc20s: [
       {
