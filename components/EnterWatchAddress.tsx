@@ -181,7 +181,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
                       { 
                         color: colors.textSecondary
                       }
-                    ]}>View Recent Addresses</Text>
+                    ]}>Recent Addresses</Text>
                     <Ionicons 
                       name={isHistoryExpanded ? "chevron-up" : "chevron-down"} 
                       size={16} 
