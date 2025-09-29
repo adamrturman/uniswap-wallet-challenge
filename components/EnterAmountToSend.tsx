@@ -11,16 +11,17 @@ import EthIcon from './EthIcon';
 import Header from './Header';
 import LogoutButton from './LogoutButton';
 import { ChainKey, chainConfig } from '../config/chain';
-import { estimateGasForTransaction, GasEstimate } from '../utils/transactionUtils';
+import { estimateGasForTransaction, estimateGasForERC20Transfer, GasEstimate } from '../utils/transactionUtils';
 
 type EnterAmountToSendProps = {
   selectedToken: {
     chainKey: ChainKey;
+    tokenKey: string;
     balance: number;
     symbol: string;
   };
   onContinue?: (amount: string) => void;
-  onTransactionExecute?: (amount: string) => Promise<{ success: boolean; hash?: string; error?: string }>;
+  onTransactionExecute?: (amount: string, gasEstimate?: GasEstimate) => Promise<{ success: boolean; hash?: string; error?: string }>;
   wallet?: Wallet | null;
   recipientAddress?: string;
   onLogout?: () => void;
@@ -88,12 +89,34 @@ export default function EnterAmountToSend({
       const chain = chainConfig[selectedToken.chainKey];
       const provider = new ethers.providers.JsonRpcProvider(chain.rpcUrl);
       
-      const gasEstimate = await estimateGasForTransaction(
-        provider,
-        wallet.address,
-        recipientAddress,
-        amount
-      );
+      let gasEstimate;
+      
+      // Handle native token gas estimation
+      if (selectedToken.tokenKey === 'native') {
+        gasEstimate = await estimateGasForTransaction(
+          provider,
+          wallet.address,
+          recipientAddress,
+          amount
+        );
+      } else {
+        // Handle ERC20 token gas estimation
+        const tokenConfig = require('../config/chain').tokenConfig;
+        const token = tokenConfig[selectedToken.chainKey][selectedToken.tokenKey];
+        
+        if (!token) {
+          throw new Error('Token configuration not found');
+        }
+        
+        gasEstimate = await estimateGasForERC20Transfer(
+          provider,
+          token.contractAddress,
+          wallet.address,
+          recipientAddress,
+          amount,
+          token.decimals
+        );
+      }
       
       setGasEstimate(gasEstimate);
     } catch (error) {
@@ -102,7 +125,7 @@ export default function EnterAmountToSend({
     } finally {
       setIsEstimatingGas(false);
     }
-  }, [wallet, recipientAddress, amount, selectedToken.chainKey]);
+  }, [wallet, recipientAddress, amount, selectedToken.chainKey, selectedToken.tokenKey]);
 
   // Estimate gas when amount or recipient changes
   useEffect(() => {
@@ -148,7 +171,7 @@ export default function EnterAmountToSend({
       if (!onTransactionExecute) {
         throw new Error('Transaction execution function not available');
       }
-      const result = await onTransactionExecute(amount);
+      const result = await onTransactionExecute(amount, gasEstimate || undefined);
       
       if (result.success && result.hash) {
         // Update modal to show success

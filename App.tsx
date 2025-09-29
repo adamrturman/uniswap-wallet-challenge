@@ -5,7 +5,7 @@ import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey, TokenKey } from './config/chain';
 import { fetchChainBalances, createInitialChainBalances, ChainBalances, fetchAllTokenBalances, AllTokenBalances } from './utils/balanceUtils';
-import { sendNativeTransaction, sendERC20Transaction, ERC20TransferParams } from './utils/transactionUtils';
+import { sendNativeTransaction, sendERC20Transaction, ERC20TransferParams, GasEstimate } from './utils/transactionUtils';
 import { NavigationType } from './types';
 import Landing from './components/Landing';
 import EnterWatchAddress from './components/EnterWatchAddress';
@@ -107,7 +107,7 @@ export default function App() {
     // TODO: Navigate to transaction confirmation screen
   };
 
-  const handleTransactionExecute = async (amount: string): Promise<{ success: boolean; hash?: string; error?: string }> => {
+  const handleTransactionExecute = async (amount: string, gasEstimate?: GasEstimate): Promise<{ success: boolean; hash?: string; error?: string }> => {
     if (!wallet || !selectedToken || !recipientAddress) {
       console.error('Missing required transaction data');
       return { success: false, error: 'Missing required transaction data' };
@@ -126,7 +126,8 @@ export default function App() {
           wallet,
           recipientAddress,
           amount,
-          config.rpcUrl
+          config.rpcUrl,
+          gasEstimate
         );
       } else {
         // Handle ERC20 token transactions
@@ -145,7 +146,8 @@ export default function App() {
         result = await sendERC20Transaction(
           wallet,
           transferParams,
-          config.rpcUrl
+          config.rpcUrl,
+          gasEstimate
         );
       }
 

@@ -253,7 +253,8 @@ export async function approveERC20Token(
 export async function sendERC20Transaction(
   wallet: ethers.Wallet,
   transferParams: ERC20TransferParams,
-  rpcUrl: string
+  rpcUrl: string,
+  gasEstimate?: GasEstimate
 ): Promise<TransactionResult> {
   try {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
@@ -268,7 +269,23 @@ export async function sendERC20Transaction(
     
     const amountInWei = ethers.utils.parseUnits(transferParams.amount, tokenDecimals);
     
-    const tx = await tokenContract.transfer(transferParams.toAddress, amountInWei);
+    // Prepare transaction options with gas settings
+    const txOptions: any = {};
+    
+    if (gasEstimate) {
+      txOptions.gasLimit = gasEstimate.gasLimit;
+      
+      // Use EIP-1559 if available
+      if (gasEstimate.maxFeePerGas && gasEstimate.maxPriorityFeePerGas) {
+        txOptions.maxFeePerGas = gasEstimate.maxFeePerGas;
+        txOptions.maxPriorityFeePerGas = gasEstimate.maxPriorityFeePerGas;
+        txOptions.type = 2; // EIP-1559 transaction type
+      } else if (gasEstimate.gasPrice) {
+        txOptions.gasPrice = ethers.utils.parseUnits(gasEstimate.gasPrice, 'gwei');
+      }
+    }
+    
+    const tx = await tokenContract.transfer(transferParams.toAddress, amountInWei, txOptions);
     const receipt = await tx.wait();
     
     return {
