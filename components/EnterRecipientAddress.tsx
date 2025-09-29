@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList, Clipboard } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { useNavigation } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -26,7 +27,7 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
   const [addressHistory, setAddressHistory] = useState<string[]>([]);
-  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(true);
   const { resolveAddress } = useAddressResolution();
 
   // Load address history on component mount
@@ -77,7 +78,6 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
     setAddress(trimmedInput);
 
     try {
-      // Resolve address (handles ENS names)
       const finalAddress = await resolveAddress(trimmedInput);
       if (!finalAddress) {
         console.log('Failed to resolve address');

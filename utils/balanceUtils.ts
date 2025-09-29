@@ -58,13 +58,11 @@ export function createInitialChainBalances(): ChainBalances {
 }
 
 
-export async function fetchChainBalances(address: string, forceRefresh: boolean = false): Promise<ChainBalances> {
+export async function fetchChainBalances(address: string): Promise<ChainBalances> {
   // Check cache first
-  if (!forceRefresh) {
-    const cached = balanceCache.get(address);
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-      return cached.balances;
-    }
+  const cached = balanceCache.get(address);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.balances;
   }
 
   // Start all RPC calls in parallel

@@ -128,17 +128,6 @@ export default function App() {
     }
   };
 
-  const handleRefetchBalances = async (forceRefresh: boolean = false) => {
-    const addressToRefetch = wallet?.address || watchedAddress;
-    if (!addressToRefetch) return;
-    
-    try {
-      const fetchedBalances = await fetchChainBalances(addressToRefetch, forceRefresh);
-      setBalances(fetchedBalances);
-    } catch (error) {
-      console.error('Failed to refetch balances:', error);
-    }
-  };
 
   const handleLogout = (navigation: NavigationType) => {
     // Clear wallet state
@@ -203,7 +192,6 @@ export default function App() {
                     address={wallet?.address || watchedAddress}
                     balances={balances}
                     wallet={wallet}
-                    onRefetchBalances={handleRefetchBalances}
                     onLogout={() => handleLogout(navigation)}
                   />
                 ) : null}
@@ -224,7 +212,6 @@ export default function App() {
                       tokenSymbol={selectedToken.symbol}
                       recipientAddress={recipientAddress}
                       fromAddress={watchedAddress}
-                      onRefetchBalances={handleRefetchBalances}
                     />
                   ) : null;
                 }}

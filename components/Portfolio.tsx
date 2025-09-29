@@ -1,8 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Wallet } from 'ethers';
-import { Ionicons } from '@expo/vector-icons';
 import { ChainKey, chainOrder } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
@@ -18,7 +17,6 @@ export type PortfolioProps = {
   address: string;
   balances: ChainBalances;
   wallet?: Wallet | null;
-  onRefetchBalances?: (forceRefresh?: boolean) => Promise<void>;
   onLogout?: () => void;
 };
 
@@ -27,13 +25,12 @@ function truncateAddress(addr: string) {
   return `${v.slice(0, 5)}...${v.slice(-5)}`;
 }
 
-export default function Portfolio({ address, balances, wallet, onRefetchBalances, onLogout }: PortfolioProps) {
+export default function Portfolio({ address, balances, wallet, onLogout }: PortfolioProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [selected, setSelected] = useState<'all' | ChainKey>('all');
 
   // Removed automatic balance refetching on focus to prevent 429 errors
-  // Users can manually refresh using the refresh button if needed
 
   const handleSendTransaction = () => {
     if (!wallet) {
@@ -63,19 +60,9 @@ export default function Portfolio({ address, balances, wallet, onRefetchBalances
     <View style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <View style={styles.headerRow}>
         <BackButton onPress={() => navigation.goBack()} />
-        <View style={styles.headerActions}>
-          {onRefetchBalances && (
-            <TouchableOpacity
-              style={[styles.refreshButton, { backgroundColor: colors.backgroundSecondary }]}
-              onPress={() => onRefetchBalances(true)}
-            >
-              <Ionicons name="refresh" size={20} color={colors.text} />
-            </TouchableOpacity>
-          )}
-          {wallet && onLogout && (
-            <LogoutButton onPress={onLogout} />
-          )}
-        </View>
+        {wallet && onLogout && (
+          <LogoutButton onPress={onLogout} />
+        )}
       </View>
 
       <View style={styles.addressCard}>
@@ -135,16 +122,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.sm,
     paddingBottom: spacing.xl,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  refreshButton: {
-    padding: spacing.sm,
-    borderRadius: 8,
-    marginRight: spacing.sm,
   },
   addressCard: {
     marginTop: 0,
