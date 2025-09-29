@@ -7,6 +7,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { ChainKey, chainOrder, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
+import { truncateAddress } from '../utils/addressUtils';
 import Button from './Button';
 import Header from './Header';
 import HeaderIcon from './HeaderIcon';
@@ -23,10 +24,6 @@ export type PortfolioProps = {
   onLogout?: () => void;
 };
 
-function truncateAddress(addr: string) {
-  const v = addr.trim();
-  return `${v.slice(0, 8)}...${v.slice(-8)}`;
-}
 
 export default function Portfolio({ address, balances, wallet, onLogout }: PortfolioProps) {
   const { colors } = useTheme();

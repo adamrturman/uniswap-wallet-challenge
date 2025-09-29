@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
+import { truncateAddress } from '../utils/addressUtils';
 import Button from './Button';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
@@ -121,10 +122,6 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     setAddress(selectedAddress);
   };
 
-  const truncateAddress = (address: string) => {
-    if (address.length <= 30) return address;
-    return `${address.slice(0, 12)}...${address.slice(-10)}`;
-  };
 
   const copyAddressToClipboard = async (address: string) => {
     try {
