@@ -3,8 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ChainKey } from './config/chain';
-import { fetchChainBalances, createInitialChainBalances, ChainBalances } from './utils/balanceUtils';
+import { ChainKey, TokenKey } from './config/chain';
+import { fetchChainBalances, createInitialChainBalances, ChainBalances, fetchAllTokenBalances, AllTokenBalances } from './utils/balanceUtils';
 import { sendNativeTransaction } from './utils/transactionUtils';
 import { NavigationType } from './types';
 import Landing from './components/Landing';
@@ -24,10 +24,11 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [watchedAddress, setWatchedAddress] = useState<string>('');
-  const [balances, setBalances] = useState<ChainBalances | null>(null);
+  const [balances, setBalances] = useState<AllTokenBalances | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [selectedToken, setSelectedToken] = useState<{
     chainKey: ChainKey;
+    tokenKey: TokenKey | 'native';
     balance: number;
     symbol: string;
   } | null>(null);
@@ -38,19 +39,20 @@ export default function App() {
   const handleDevNavigation = () => {
     setSelectedToken({
       chainKey: 'sepolia',
+      tokenKey: 'native',
       balance: 0.399,
       symbol: 'ETH',
     });
   };
 
-  const handleWatchAddressContinue = async (address: string, watchedAddressBalances: ChainBalances) => {
+  const handleWatchAddressContinue = async (address: string, watchedAddressBalances: AllTokenBalances) => {
     setWatchedAddress(address);
     setBalances(watchedAddressBalances);
     // Clear wallet state when entering watch mode
     setWallet(null);
     
     try {
-      const fetchedBalances = await fetchChainBalances(address);
+      const fetchedBalances = await fetchAllTokenBalances(address);
       setBalances(fetchedBalances);
     } catch (error) {
       console.error('Failed to fetch balances for watched address:', error);
@@ -65,11 +67,12 @@ export default function App() {
       setWatchedAddress('');
       
       // Set initial loading state and navigate immediately
-      const initialBalances = createInitialChainBalances();
+      // For now, we'll create empty balances structure
+      const initialBalances: AllTokenBalances = {} as AllTokenBalances;
       setBalances(initialBalances);
       
       // Fetch balances in the background with parallel execution
-      const fetchedBalances = await fetchChainBalances(walletFromPhrase.address);
+      const fetchedBalances = await fetchAllTokenBalances(walletFromPhrase.address);
       setBalances(fetchedBalances);
     } catch (error) {
       console.error('Error creating wallet from recovery phrase:', error);
@@ -80,14 +83,22 @@ export default function App() {
     setRecipientAddress(address);
   };
 
-  const handleTokenSelect = (chainKey: ChainKey, balance: number) => {
+  const handleTokenSelect = (chainKey: ChainKey, tokenKey: TokenKey | 'native', balance: number) => {
     const chainConfig = require('./config/chain').chainConfig;
-    const config = chainConfig[chainKey];
+    const tokenConfig = require('./config/chain').tokenConfig;
+    
+    let symbol: string;
+    if (tokenKey === 'native') {
+      symbol = chainConfig[chainKey].symbol;
+    } else {
+      symbol = tokenConfig[chainKey][tokenKey].symbol;
+    }
     
     setSelectedToken({
       chainKey,
+      tokenKey,
       balance,
-      symbol: config.symbol,
+      symbol,
     });
   };
 
@@ -105,6 +116,12 @@ export default function App() {
     try {
       const chainConfig = require('./config/chain').chainConfig;
       const config = chainConfig[selectedToken.chainKey];
+      
+      // For now, only handle native token transactions
+      // TODO: Add ERC-20 token transaction support
+      if (selectedToken.tokenKey !== 'native') {
+        return { success: false, error: 'ERC-20 token transactions not yet supported' };
+      }
       
       const result = await sendNativeTransaction(
         wallet,

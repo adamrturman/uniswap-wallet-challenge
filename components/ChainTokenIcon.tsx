@@ -5,6 +5,7 @@ import { useTheme } from '../theme';
 
 export type ChainTokenIconProps = {
   style?: ViewStyle;
+  baseIcon?: any;
   overlayIcon?: ImageSourcePropType;
 };
 
@@ -29,6 +30,7 @@ const styles = StyleSheet.create({
 
 export default function ChainTokenIcon({ 
   style,
+  baseIcon,
   overlayIcon
 }: ChainTokenIconProps) {
   const { colors } = useTheme();
@@ -61,11 +63,19 @@ export default function ChainTokenIcon({
     </View>
   ) : null;
 
-  return (
-    <View style={[styles.container, containerStyle, style]}>
-      {/* Ethereum icon as background */}
+  const renderBaseIcon = () => {
+    const iconToUse = baseIcon || ethIcon;
+    
+    // If baseIcon is a component (like EthIcon)
+    if (typeof iconToUse === 'function') {
+      const Component = iconToUse;
+      return <Component style={[styles.ethIcon, { width: 36, height: 36 }]} />;
+    }
+    
+    // If baseIcon is an image source
+    return (
       <Image
-        source={ethIcon}
+        source={iconToUse}
         style={[
           styles.ethIcon,
           {
@@ -75,8 +85,15 @@ export default function ChainTokenIcon({
         ]}
         resizeMode="contain"
       />
+    );
+  };
+
+  return (
+    <View style={[styles.container, containerStyle, style]}>
+      {/* Base icon (token icon) */}
+      {renderBaseIcon()}
       
-      {/* Overlay icon */}
+      {/* Overlay icon (chain icon) */}
       {overlayComponent}
     </View>
   );

@@ -10,10 +10,10 @@ import Button from './Button';
 import BackButton from './BackButton';
 import Header from './Header';
 import AddressInput, { useAddressResolution } from './AddressInput';
-import { ChainBalances, createInitialChainBalances } from '../utils/balanceUtils';
+import { AllTokenBalances, createInitialAllTokenBalances } from '../utils/balanceUtils';
 
 type EnterWatchAddressProps = {
-  onContinue?: (address: string, balances: ChainBalances) => void;
+  onContinue?: (address: string, balances: AllTokenBalances) => void;
 };
 
 const ADDRESS_HISTORY_KEY = 'wallet_address_history';
@@ -96,7 +96,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
       await saveAddressToHistory(trimmedInput);
       
       // Set initial loading state and navigate immediately
-      const initialBalances = createInitialChainBalances();
+      const initialBalances = createInitialAllTokenBalances();
       onContinue?.(finalAddress, initialBalances);
       navigation.navigate('Portfolio');
       
@@ -122,7 +122,7 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
       await saveAddressToHistory(selectedAddress);
       
       // Set initial loading state and navigate immediately
-      const initialBalances = createInitialChainBalances();
+      const initialBalances = createInitialAllTokenBalances();
       onContinue?.(finalAddress, initialBalances);
       navigation.navigate('Portfolio');
       

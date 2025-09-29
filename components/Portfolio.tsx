@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Wallet } from 'ethers';
-import { ChainKey, chainOrder } from '../config/chain';
+import { ChainKey, chainOrder, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
@@ -11,11 +11,11 @@ import Header from './Header';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
 import LogoutButton from './LogoutButton';
-import { ChainBalances } from '../utils/balanceUtils';
+import { AllTokenBalances } from '../utils/balanceUtils';
 
 export type PortfolioProps = {
   address: string;
-  balances: ChainBalances;
+  balances: AllTokenBalances;
   wallet?: Wallet | null;
   onLogout?: () => void;
 };
@@ -45,15 +45,70 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
 
   const orderedKeys = useMemo(() => chainOrder, []);
 
-  const visibleKeys = useMemo(() => {
+  // Create a list of all tokens (native + ERC-20) with non-zero balances
+  const allTokens = useMemo(() => {
+    const tokens: Array<{
+      chainKey: ChainKey;
+      tokenKey: TokenKey | 'native';
+      name: string;
+      symbol: string;
+      balance: number;
+      chainIcon: any;
+      tokenIcon: any;
+    }> = [];
+
     const keys = selected === 'all' ? orderedKeys : orderedKeys.filter((k) => k === selected);
     
-    // Sort by balance value (greatest to least)
-    return keys.sort((a, b) => {
-      const balanceA = balances[a]?.value || 0;
-      const balanceB = balances[b]?.value || 0;
-      return balanceB - balanceA; // Descending order (greatest first)
+    
+    keys.forEach((chainKey) => {
+      const chainBalances = balances[chainKey];
+      if (!chainBalances) return;
+
+      // Add native token if it has a balance
+      if (chainBalances.native && chainBalances.native.value > 0) {
+        const chainConfig = require('../config/chain').chainConfig;
+        const config = chainConfig[chainKey];
+        tokens.push({
+          chainKey,
+          tokenKey: 'native',
+          name: config.nativeTokenDisplay,
+          symbol: config.symbol,
+          balance: chainBalances.native.value,
+          chainIcon: config.chainIcon,
+          tokenIcon: config.nativeTokenIcon,
+        });
+      }
+
+      // Add ERC-20 tokens (show all for testing, even with zero balances)
+      if (chainBalances.tokens) {
+        const tokenConfig = require('../config/chain').tokenConfig;
+        const chainConfig = require('../config/chain').chainConfig;
+        // Get available tokens for this chain
+        const availableTokens = Object.keys(tokenConfig[chainKey]) as TokenKey[];
+        const tokenKeys: TokenKey[] = availableTokens;
+        
+        tokenKeys.forEach((tokenKey) => {
+          const tokenBalance = chainBalances.tokens[tokenKey];
+          if (tokenBalance) {
+            const token = tokenConfig[chainKey][tokenKey];
+            if (token) {
+              tokens.push({
+                chainKey,
+                tokenKey,
+                name: token.name,
+                symbol: token.symbol,
+                balance: tokenBalance.value,
+                chainIcon: chainConfig[chainKey].chainIcon,
+                tokenIcon: token.icon,
+              });
+            }
+          }
+        });
+      }
     });
+
+    // Sort by balance value (greatest to least)
+    return tokens.sort((a, b) => b.balance - a.balance);
   }, [orderedKeys, selected, balances]);
 
   return (
@@ -82,11 +137,15 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       />
 
       <ScrollView style={styles.list}>
-        {visibleKeys.map((key) => (
+        {allTokens.map((token) => (
           <TokenBalance
-            key={key}
-            chainKey={key}
-            balance={balances[key]}
+            key={`${token.chainKey}-${token.tokenKey}`}
+            chainKey={token.chainKey}
+            balance={{ value: token.balance, state: 'loaded' }}
+            tokenKey={token.tokenKey}
+            tokenName={token.name}
+            tokenSymbol={token.symbol}
+            tokenIcon={token.tokenIcon}
           />
         ))}
       </ScrollView>

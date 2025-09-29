@@ -3,24 +3,25 @@ import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'rea
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
-import { chainConfig, ChainKey, chainOrder } from '../config/chain';
+import { chainConfig, ChainKey, chainOrder, TokenKey, tokenConfig } from '../config/chain';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import BackButton from './BackButton';
 import Header from './Header';
 import LogoutButton from './LogoutButton';
-import { ChainBalances } from '../utils/balanceUtils';
+import { ChainBalances, AllTokenBalances } from '../utils/balanceUtils';
 
 export type SelectTokenProps = {
   address: string;
-  balances: ChainBalances;
+  balances: AllTokenBalances;
   wallet?: Wallet | null;
-  onTokenSelect?: (chainKey: ChainKey, balance: number) => void;
+  onTokenSelect?: (chainKey: ChainKey, tokenKey: TokenKey | 'native', balance: number) => void;
   onLogout?: () => void;
 };
 
 type TokenItem = {
   chainKey: ChainKey;
+  tokenKey: TokenKey | 'native';
   name: string;
   symbol: string;
   balance: number;
@@ -37,16 +38,47 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
     const tokens: TokenItem[] = [];
     
     chainOrder.forEach((chainKey) => {
-      const balanceData = balances[chainKey];
-      if (balanceData && balanceData.value > 0) {
+      const chainBalances = balances[chainKey];
+      if (!chainBalances) return;
+
+      // Add native token if it has a balance
+      if (chainBalances.native && chainBalances.native.value > 0) {
         const config = chainConfig[chainKey];
         tokens.push({
           chainKey,
+          tokenKey: 'native',
           name: config.nativeTokenDisplay,
           symbol: config.symbol,
-          balance: balanceData.value,
+          balance: chainBalances.native.value,
           chainIcon: config.chainIcon,
           tokenIcon: config.nativeTokenIcon,
+        });
+      }
+
+      // Add ERC-20 tokens if they have balances
+      if (chainBalances.tokens) {
+        const tokenConfig = require('../config/chain').tokenConfig;
+        // Get available tokens for this chain
+        const availableTokens = Object.keys(tokenConfig[chainKey]) as TokenKey[];
+        const tokenKeys: TokenKey[] = availableTokens;
+        
+        tokenKeys.forEach((tokenKey) => {
+          const tokenBalance = chainBalances.tokens[tokenKey];
+          if (tokenBalance && tokenBalance.value > 0) {
+            const token = tokenConfig[chainKey][tokenKey];
+            if (token) {
+              const chainConfigData = chainConfig[chainKey];
+              tokens.push({
+                chainKey,
+                tokenKey,
+                name: token.name,
+                symbol: token.symbol,
+                balance: tokenBalance.value,
+                chainIcon: chainConfigData.chainIcon,
+                tokenIcon: token.icon,
+              });
+            }
+          }
         });
       }
     });
@@ -55,7 +87,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
   }, [balances]);
 
   const handleTokenSelect = (token: TokenItem) => {
-    onTokenSelect?.(token.chainKey, token.balance);
+    onTokenSelect?.(token.chainKey, token.tokenKey, token.balance);
     navigation.navigate('EnterAmountToSend');
   };
 
@@ -81,7 +113,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
         <ScrollView style={styles.tokenList} showsVerticalScrollIndicator={false}>
           {availableTokens.map((token) => (
             <TouchableOpacity
-              key={token.chainKey}
+              key={`${token.chainKey}-${token.tokenKey}`}
               style={[styles.tokenRow, { borderBottomColor: colors.border }]}
               onPress={() => handleTokenSelect(token)}
               activeOpacity={0.7}
@@ -95,7 +127,7 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
                   <Text style={[styles.tokenName, { color: colors.text }]}>
                     {token.name}
                   </Text>
-                  {token.chainKey !== 'ethereum' && (
+                  {(token.chainKey !== 'ethereum' || token.tokenKey !== 'native') && (
                     <Text style={[styles.chainName, { color: colors.textSecondary }]}>
                       {token.chainKey === 'optimism' ? 'Optimism' : 
                        token.chainKey === 'arbitrum' ? 'Arbitrum' : 

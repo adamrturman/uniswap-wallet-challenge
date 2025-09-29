@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
-import { chainConfig, ChainKey } from '../config/chain';
+import { chainConfig, ChainKey, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
 import ChainTokenIcon from './ChainTokenIcon';
 import Skeleton from './Skeleton';
@@ -9,17 +9,37 @@ import { ChainBalance } from '../utils/balanceUtils';
 export type TokenBalanceProps = {
   chainKey: ChainKey;
   balance: ChainBalance;
+  tokenKey?: TokenKey | 'native';
+  tokenName?: string;
+  tokenSymbol?: string;
+  tokenIcon?: any;
 };
 
-export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
+export default function TokenBalance({ 
+  chainKey, 
+  balance, 
+  tokenKey = 'native', 
+  tokenName, 
+  tokenSymbol, 
+  tokenIcon 
+}: TokenBalanceProps) {
   const { colors } = useTheme();
   const chain = chainConfig[chainKey];
-  const { baseIcon, overlayIcon } = chain.nativeTokenIcon;
+  
+  // Use provided token info or fall back to native token
+  const displayName = tokenName || chain.nativeTokenDisplay;
+  const displaySymbol = tokenSymbol || chain.symbol;
+  const iconToUse = tokenIcon || chain.nativeTokenIcon;
+  
+  // Handle both old format (direct icon) and new format (combo icon)
+  const { baseIcon, overlayIcon } = iconToUse && typeof iconToUse === 'object' && 'baseIcon' in iconToUse 
+    ? iconToUse 
+    : { baseIcon: iconToUse, overlayIcon: undefined };
 
   const renderIcon = () => {
     // If there's an overlay, use ChainTokenIcon
     if (overlayIcon) {
-      return <ChainTokenIcon overlayIcon={overlayIcon} style={styles.tokenIcon} />;
+      return <ChainTokenIcon baseIcon={baseIcon} overlayIcon={overlayIcon} style={styles.tokenIcon} />;
     }
     
     // If baseIcon is a component (like EthIcon)
@@ -49,7 +69,7 @@ export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
       <Text style={[styles.chainBalance, { 
         color: Number(balance.value) === 0 ? colors.textSecondary : colors.text 
       }]}>
-        {Number(balance.value).toFixed(8)}
+        {Number(balance.value).toFixed(8)} {displaySymbol}
       </Text>
     );
   };
@@ -59,7 +79,7 @@ export default function TokenBalance({ chainKey, balance }: TokenBalanceProps) {
       <View style={styles.rowLeft}>
         {renderIcon()}
         <Text style={[styles.chainName, { color: colors.text }]}>
-          {chain.nativeTokenDisplay}
+          {displayName}
         </Text>
       </View>
       {renderBalance()}
