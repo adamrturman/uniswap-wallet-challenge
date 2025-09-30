@@ -13,6 +13,7 @@ import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import { openExplorer } from '../utils/explorerUtils';
 import { ChainKey } from '../config/chain';
+import { GasEstimate } from '../utils/transactionUtils';
 import Button from './Button';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
@@ -24,6 +25,7 @@ type TransactionConfirmationProps = {
   recipientAddress: string;
   fromAddress: string;
   chainKey: ChainKey;
+  gasEstimate?: GasEstimate | null;
 };
 
 export default function TransactionConfirmation({
@@ -33,6 +35,7 @@ export default function TransactionConfirmation({
   recipientAddress,
   fromAddress,
   chainKey,
+  gasEstimate,
 }: TransactionConfirmationProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
@@ -122,6 +125,65 @@ export default function TransactionConfirmation({
                 />
               </TouchableOpacity>
             </View>
+
+            {gasEstimate && (
+              <>
+                {gasEstimate.gasLimit && (
+                  <View style={styles.transactionRow}>
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                      Gas Limit
+                    </Text>
+                    <Text style={[styles.value, { color: colors.text }]}>
+                      {gasEstimate.gasLimit}
+                    </Text>
+                  </View>
+                )}
+
+                {gasEstimate.gasPrice && (
+                  <View style={styles.transactionRow}>
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                      Gas Price
+                    </Text>
+                    <Text style={[styles.value, { color: colors.text }]}>
+                      {gasEstimate.gasPrice} Gwei
+                    </Text>
+                  </View>
+                )}
+
+                {gasEstimate.maxFeePerGas && (
+                  <View style={styles.transactionRow}>
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                      Max Fee Per Gas
+                    </Text>
+                    <Text style={[styles.value, { color: colors.text }]}>
+                      {gasEstimate.maxFeePerGas} Gwei
+                    </Text>
+                  </View>
+                )}
+
+                {gasEstimate.maxPriorityFeePerGas && (
+                  <View style={styles.transactionRow}>
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                      Max Priority Fee
+                    </Text>
+                    <Text style={[styles.value, { color: colors.text }]}>
+                      {gasEstimate.maxPriorityFeePerGas} Gwei
+                    </Text>
+                  </View>
+                )}
+
+                {gasEstimate.networkFee && (
+                  <View style={styles.transactionRow}>
+                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                      Network Fee
+                    </Text>
+                    <Text style={[styles.value, { color: colors.text }]}>
+                      {gasEstimate.networkFee} ETH
+                    </Text>
+                  </View>
+                )}
+              </>
+            )}
           </View>
 
           <View style={styles.successMessage}>

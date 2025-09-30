@@ -30,6 +30,7 @@ interface AppContextType {
   } | null;
   transactionAmount: string;
   transactionHash: string;
+  transactionGasEstimate: GasEstimate | null;
 
   // Setters
   setWallet: (wallet: Wallet | null) => void;
@@ -44,6 +45,7 @@ interface AppContextType {
   } | null) => void;
   setTransactionAmount: (amount: string) => void;
   setTransactionHash: (hash: string) => void;
+  setTransactionGasEstimate: (gasEstimate: GasEstimate | null) => void;
 
   // Event Handlers
   handleWatchAddressContinue: (
@@ -94,6 +96,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   } | null>(null);
   const [transactionAmount, setTransactionAmount] = useState<string>('');
   const [transactionHash, setTransactionHash] = useState<string>('');
+  const [transactionGasEstimate, setTransactionGasEstimate] = useState<GasEstimate | null>(null);
 
   const handleWatchAddressContinue = async (
     address: string,
@@ -205,6 +208,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
       if (result.success && result.hash) {
         setTransactionHash(result.hash);
+        // Store the gas estimate for the confirmation screen
+        if (gasEstimate) {
+          setTransactionGasEstimate(gasEstimate);
+        }
         // Navigate to success screen or show success toast
         return { success: true, hash: result.hash };
       } else {
@@ -241,6 +248,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSelectedToken(null);
     setTransactionAmount('');
     setTransactionHash('');
+    setTransactionGasEstimate(null);
 
     // Navigate back to landing page
     navigation.navigate('Landing');
@@ -255,6 +263,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     selectedToken,
     transactionAmount,
     transactionHash,
+    transactionGasEstimate,
 
     // Setters
     setWallet,
@@ -264,6 +273,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSelectedToken,
     setTransactionAmount,
     setTransactionHash,
+    setTransactionGasEstimate,
 
     // Event Handlers
     handleWatchAddressContinue,

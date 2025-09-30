@@ -27,6 +27,7 @@ function App() {
     selectedToken,
     transactionAmount,
     transactionHash,
+    transactionGasEstimate,
     handleWatchAddressContinue,
     handleRecoveryPhraseContinue,
     handleRecipientAddressContinue,
@@ -123,6 +124,7 @@ function App() {
                 recipientAddress={recipientAddress}
                 fromAddress={watchedAddress}
                 chainKey={selectedToken.chainKey}
+                gasEstimate={transactionGasEstimate}
               />
             ) : null;
           }}
