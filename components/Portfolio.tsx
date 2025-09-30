@@ -54,8 +54,7 @@ export default function Portfolio({
   const [sortByUsd, setSortByUsd] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [showGradient, setShowGradient] = useState(true);
-
-  // Removed automatic balance refetching on focus to prevent 429 errors
+  const [showTopGradient, setShowTopGradient] = useState(false);
 
   const handleSendTransaction = () => {
     if (!wallet) {
@@ -63,7 +62,6 @@ export default function Portfolio({
       return;
     }
 
-    // Navigate to EnterRecipientAddress screen
     navigation.navigate('EnterRecipientAddress');
   };
 
@@ -83,7 +81,9 @@ export default function Portfolio({
     const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
     const isAtBottom =
       contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
+    const isAtTop = contentOffset.y <= 5;
     setShowGradient(!isAtBottom);
+    setShowTopGradient(!isAtTop);
   };
 
   const orderedKeys = useMemo(() => chainOrder, []);
@@ -243,6 +243,13 @@ export default function Portfolio({
       </View>
 
       <View style={styles.scrollContainer}>
+        {showTopGradient && (
+          <LinearGradient
+            colors={[colors.background, 'transparent']}
+            style={styles.topGradient}
+            pointerEvents="none"
+          />
+        )}
         <ScrollView
           style={styles.list}
           showsVerticalScrollIndicator={false}
@@ -317,6 +324,14 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
     paddingHorizontal: spacing.xl,
+  },
+  topGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 30,
+    zIndex: 1,
   },
   bottomGradient: {
     position: 'absolute',
