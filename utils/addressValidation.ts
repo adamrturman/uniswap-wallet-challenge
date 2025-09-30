@@ -4,10 +4,14 @@ import { ethers } from 'ethers';
  * ENS name validation using ethers.js
  */
 export const isValidENSName = (name: string): boolean => {
-  if (!name.includes('.eth') || name.startsWith('0x')) return false;
+  const trimmedName = name.trim();
+
+  // Must end with .eth and not start with 0x
+  if (!trimmedName.endsWith('.eth') || trimmedName.startsWith('0x'))
+    return false;
 
   try {
-    return ethers.utils.isValidName(name);
+    return ethers.utils.isValidName(trimmedName);
   } catch (error) {
     return false;
   }

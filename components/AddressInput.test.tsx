@@ -160,6 +160,10 @@ describe('AddressInput', () => {
         'vitalik.eth ', // Trailing space
         ' vitalik.eth', // Leading space
         'vitalik .eth', // Space in name
+        'eric.ethererw', // Bug case: contains .eth but invalid
+        'test--name.eth', // Double hyphen
+        '-test.eth', // Starts with hyphen
+        'test-.eth', // Ends with hyphen
       ];
 
       for (const invalidName of invalidENS) {

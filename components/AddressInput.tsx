@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Input from './Input';
 import { isValidAddressOrENS } from '../utils/addressValidation';
@@ -20,7 +20,7 @@ export default function AddressInput({
   }, [value]);
 
   // Notify parent component of validation changes
-  React.useEffect(() => {
+  useEffect(() => {
     onValidationChange?.(isValid);
   }, [isValid, onValidationChange]);
 
