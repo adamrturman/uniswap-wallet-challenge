@@ -6,7 +6,7 @@ import Skeleton from './Skeleton';
 import { ChainBalance } from '../utils/balanceUtils';
 import { TokenIcon } from './types';
 import { usePrice } from '../context/PriceContext';
-import { formatTokenAmount } from '../utils/priceUtils';
+import { formatTokenAmount } from '../utils/balanceUtils';
 
 export type TokenBalanceProps = {
   balance: ChainBalance;

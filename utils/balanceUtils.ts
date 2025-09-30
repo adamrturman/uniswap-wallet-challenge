@@ -385,3 +385,14 @@ export function getTokensWithBalances(balances: AllTokenBalances): TokenItem[] {
 
   return tokens;
 }
+
+export const formatTokenAmount = (amount: number): string => {
+  if (amount === 0) {
+    return '0.00';
+  } else {
+    return amount.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 4,
+    });
+  }
+};

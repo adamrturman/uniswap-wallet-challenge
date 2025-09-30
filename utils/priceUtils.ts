@@ -17,13 +17,3 @@ export const formatUsdValue = (usdValue: number): string => {
   return `$${usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
-export const formatTokenAmount = (amount: number): string => {
-  if (amount === 0) {
-    return '0.00';
-  } else {
-    return amount.toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 6,
-    });
-  }
-};

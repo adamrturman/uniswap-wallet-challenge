@@ -14,7 +14,7 @@ import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import { useTransaction } from '../context/TransactionContext';
 import { usePrice } from '../context/PriceContext';
-import { formatTokenAmount } from '../utils/priceUtils';
+import { formatTokenAmount } from '../utils/balanceUtils';
 import Button from './Button';
 import EthIcon from './EthIcon';
 import Header from './Header';
