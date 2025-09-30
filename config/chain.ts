@@ -118,7 +118,7 @@ export const chainConfig: Record<
     supportedErc20s: [
       {
         symbol: 'USDT',
-        name: 'Tether USD',
+        name: 'Tether',
         decimals: 6,
         contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
         icon: {
@@ -127,7 +127,7 @@ export const chainConfig: Record<
       },
       {
         symbol: 'USDC',
-        name: 'USD Coin',
+        name: 'USDC',
         decimals: 6,
         contractAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
         icon: {
@@ -147,7 +147,7 @@ export const chainConfig: Record<
   },
   Polygon: {
     name: 'Polygon',
-    nativeTokenDisplay: 'POL',
+    nativeTokenDisplay: 'Polygon POL',
     rpcUrl: 'https://polygon.drpc.org',
     symbol: 'POL',
     chainIcon: polygonLogo,
@@ -159,7 +159,7 @@ export const chainConfig: Record<
     supportedErc20s: [
       {
         symbol: 'USDC',
-        name: 'USD Coin',
+        name: 'USDC',
         decimals: 6,
         contractAddress: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
         icon: {
@@ -169,7 +169,7 @@ export const chainConfig: Record<
       },
       {
         symbol: 'USDT',
-        name: 'Tether USD',
+        name: 'USDT',
         decimals: 6,
         contractAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
         icon: {
@@ -181,7 +181,7 @@ export const chainConfig: Record<
   },
   Optimism: {
     name: 'Optimism',
-    nativeTokenDisplay: 'ETH (Optimism)',
+    nativeTokenDisplay: 'Optimistic ETH',
     rpcUrl: 'https://optimism-rpc.publicnode.com',
     symbol: 'ETH',
     chainIcon: optimismBadge,
@@ -198,13 +198,12 @@ export const chainConfig: Record<
         decimals: 18,
         contractAddress: '0x4200000000000000000000000000000000000042',
         icon: {
-          baseIcon: EthIcon,
-          overlayIcon: optimismBadge,
+          baseIcon: optimismBadge,
         },
       },
       {
         symbol: 'USDC',
-        name: 'USD Coin',
+        name: 'USDC',
         decimals: 6,
         contractAddress: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
         icon: {
@@ -214,7 +213,7 @@ export const chainConfig: Record<
       },
       {
         symbol: 'USDT',
-        name: 'Tether USD',
+        name: 'Bridged USDT',
         decimals: 6,
         contractAddress: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
         icon: {
@@ -226,7 +225,7 @@ export const chainConfig: Record<
   },
   Arbitrum: {
     name: 'Arbitrum',
-    nativeTokenDisplay: 'ETH (Arbitrum)',
+    nativeTokenDisplay: 'Arbitrum ETH',
     rpcUrl: 'https://arbitrum.drpc.org',
     symbol: 'ETH',
     chainIcon: arbitrumBadge,
@@ -243,8 +242,7 @@ export const chainConfig: Record<
         decimals: 18,
         contractAddress: '0x912CE59144191C1204E64559FE8253a0e49E6548',
         icon: {
-          baseIcon: EthIcon,
-          overlayIcon: arbitrumBadge,
+          baseIcon: arbitrumBadge,
         },
       },
       {
@@ -259,7 +257,7 @@ export const chainConfig: Record<
       },
       {
         symbol: 'USDT',
-        name: 'Tether USD',
+        name: 'USDT',
         decimals: 6,
         contractAddress: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
         icon: {
@@ -269,7 +267,7 @@ export const chainConfig: Record<
       },
       {
         symbol: 'WBTC',
-        name: 'Wrapped Bitcoin',
+        name: 'Arbitrum Bridged WBTC',
         decimals: 8,
         contractAddress: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
         icon: {
@@ -281,7 +279,7 @@ export const chainConfig: Record<
   },
   Sepolia: {
     name: 'Sepolia',
-    nativeTokenDisplay: 'SepoliaETH',
+    nativeTokenDisplay: 'Sepolia ETH',
     rpcUrl: 'https://sepolia.drpc.org',
     symbol: 'ETH',
     chainIcon: ethColorIcon,
@@ -293,7 +291,7 @@ export const chainConfig: Record<
     supportedErc20s: [
       {
         symbol: 'USDT',
-        name: 'Tether USD',
+        name: 'USDT',
         decimals: 6,
         contractAddress: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
         icon: {
@@ -302,7 +300,7 @@ export const chainConfig: Record<
       },
       {
         symbol: 'USDC',
-        name: 'USD Coin',
+        name: 'USDC',
         decimals: 6,
         contractAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
         icon: {
@@ -320,7 +318,7 @@ export const chainConfig: Record<
       },
       {
         symbol: 'LINK',
-        name: 'Chainlink',
+        name: 'ChainLink Token',
         decimals: 18,
         contractAddress: '0x779877A7B0D9E8603169DdbD7836e478b4624789',
         icon: {
@@ -344,7 +342,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
   Ethereum: {
     USDT: {
       symbol: 'USDT',
-      name: 'Tether USD',
+      name: 'Tether',
       decimals: 6,
       contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
       icon: {
@@ -353,7 +351,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
     },
     USDC: {
       symbol: 'USDC',
-      name: 'USD Coin',
+      name: 'USDC',
       decimals: 6,
       contractAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
       icon: {
@@ -373,7 +371,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
   Sepolia: {
     USDT: {
       symbol: 'USDT',
-      name: 'Tether USD',
+      name: 'USDT',
       decimals: 6,
       contractAddress: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
       icon: {
@@ -382,7 +380,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
     },
     USDC: {
       symbol: 'USDC',
-      name: 'USD Coin',
+      name: 'USDC',
       decimals: 6,
       contractAddress: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
       icon: {
@@ -400,7 +398,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
     },
     LINK: {
       symbol: 'LINK',
-      name: 'Chainlink',
+      name: 'ChainLink Token',
       decimals: 18,
       contractAddress: '0x779877A7B0D9E8603169DdbD7836e478b4624789',
       icon: {
@@ -415,8 +413,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
       decimals: 18,
       contractAddress: '0x912CE59144191C1204E64559FE8253a0e49E6548',
       icon: {
-        baseIcon: EthIcon,
-        overlayIcon: arbitrumBadge,
+        baseIcon: arbitrumBadge,
       },
     },
     USDC: {
@@ -431,7 +428,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
     },
     USDT: {
       symbol: 'USDT',
-      name: 'Tether USD',
+      name: 'USDT',
       decimals: 6,
       contractAddress: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
       icon: {
@@ -441,7 +438,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
     },
     WBTC: {
       symbol: 'WBTC',
-      name: 'Wrapped Bitcoin',
+      name: 'Arbitrum Bridged WBTC',
       decimals: 8,
       contractAddress: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
       icon: {
@@ -457,13 +454,12 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
       decimals: 18,
       contractAddress: '0x4200000000000000000000000000000000000042',
       icon: {
-        baseIcon: EthIcon,
-        overlayIcon: optimismBadge,
+        baseIcon: optimismBadge,
       },
     },
     USDC: {
       symbol: 'USDC',
-      name: 'USD Coin',
+      name: 'USDC',
       decimals: 6,
       contractAddress: '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85',
       icon: {
@@ -473,7 +469,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
     },
     USDT: {
       symbol: 'USDT',
-      name: 'Tether USD',
+      name: 'Bridged USDT',
       decimals: 6,
       contractAddress: '0x94b008aA00579c1307B0EF2c499aD98a8ce58e58',
       icon: {
@@ -485,7 +481,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
   Polygon: {
     USDC: {
       symbol: 'USDC',
-      name: 'USD Coin',
+      name: 'USDC',
       decimals: 6,
       contractAddress: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
       icon: {
@@ -495,7 +491,7 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
     },
     USDT: {
       symbol: 'USDT',
-      name: 'Tether USD',
+      name: 'USDT',
       decimals: 6,
       contractAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
       icon: {
