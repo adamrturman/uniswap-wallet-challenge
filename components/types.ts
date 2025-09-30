@@ -2,6 +2,7 @@
 export {
   IconComponent,
   IconSource,
+  IconType,
   TokenIcon,
   ChainIcon,
   TransactionData,

@@ -3,14 +3,14 @@ import { Wallet } from 'ethers';
 import {
   ChainKey,
   TokenKey,
-  AllTokenBalances,
+  TokenBalances,
   GasEstimate,
   ERC20TransferParams,
   NavigationType,
   AppContextType,
 } from '../types';
 import {
-  createInitialAllTokenBalances,
+  createInitialTokenBalances,
   fetchAllTokenBalances,
   clearBalanceCache,
 } from '../utils/balanceUtils';
@@ -37,7 +37,7 @@ interface AppProviderProps {
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [watchedAddress, setWatchedAddress] = useState<string>('');
-  const [balances, setBalances] = useState<AllTokenBalances | null>(null);
+  const [balances, setBalances] = useState<TokenBalances | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>('');
   const [selectedToken, setSelectedToken] = useState<{
     chainKey: ChainKey;
@@ -52,7 +52,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const handleWatchAddressContinue = async (
     address: string,
-    watchedAddressBalances: AllTokenBalances,
+    watchedAddressBalances: TokenBalances,
   ) => {
     setWatchedAddress(address);
     setBalances(watchedAddressBalances);
@@ -75,7 +75,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       setWatchedAddress('');
 
       // Set initial loading state and navigate immediately
-      const initialBalances = createInitialAllTokenBalances();
+      const initialBalances = createInitialTokenBalances();
       setBalances(initialBalances);
 
       // Fetch balances in the background with parallel execution

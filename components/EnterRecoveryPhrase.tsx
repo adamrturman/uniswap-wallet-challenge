@@ -10,7 +10,7 @@ import ScreenWrapper from './ScreenWrapper';
 import Input from './Input';
 
 type EnterRecoveryPhraseProps = {
-  onContinue?: (phrase: string) => void;
+  onContinue: (phrase: string) => void;
 };
 
 export default function EnterRecoveryPhrase({

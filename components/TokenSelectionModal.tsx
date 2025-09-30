@@ -10,12 +10,8 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme, spacing, typography, radius } from '../theme';
 import TokenBalance from './TokenBalance';
-import {
-  AllTokenBalances,
-  getTokensWithBalances,
-  TokenItem,
-} from '../utils/balanceUtils';
-import { ChainKey, TokenKey } from '../config/chain';
+import { getTokensWithBalances } from '../utils/balanceUtils';
+import { TokenBalances, TokenItem, ChainKey, TokenKey } from '../types';
 
 export type TokenSelectionModalProps = {
   visible: boolean;
@@ -26,7 +22,7 @@ export type TokenSelectionModalProps = {
     balance: number,
     symbol: string,
   ) => void;
-  balances: AllTokenBalances;
+  balances: TokenBalances;
   currentToken?: {
     chainKey: ChainKey;
     tokenKey: TokenKey;

@@ -12,13 +12,8 @@ import { Wallet } from 'ethers';
 import * as Clipboard from 'expo-clipboard';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  ChainKey,
-  chainOrder,
-  TokenKey,
-  chainConfig,
-  tokenConfig,
-} from '../config/chain';
+import { chainOrder, chainConfig, tokenConfig } from '../config/chain';
+import { ChainKey, TokenKey } from '../types';
 import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import { truncateAddress } from '../utils/addressUtils';
@@ -27,16 +22,13 @@ import Header from './Header';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
 import ScreenWrapper from './ScreenWrapper';
-import {
-  AllTokenBalances,
-  getTokensWithBalances,
-  BalanceLoadingState,
-} from '../utils/balanceUtils';
+import { getTokensWithBalances } from '../utils/balanceUtils';
+import { TokenBalances, BalanceLoadingState } from '../types';
 import { usePrice } from '../context/PriceContext';
 
 export type PortfolioProps = {
   address: string;
-  balances: AllTokenBalances;
+  balances: TokenBalances;
   wallet?: Wallet | null;
   onLogout?: () => void;
 };

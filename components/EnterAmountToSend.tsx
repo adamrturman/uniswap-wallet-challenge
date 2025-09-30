@@ -20,9 +20,8 @@ import EthIcon from './EthIcon';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
 import TokenSelectionModal from './TokenSelectionModal';
-import { ChainKey, TokenKey, chainConfig, tokenConfig } from '../config/chain';
-import { GasEstimate } from '../utils/transactionUtils';
-import { AllTokenBalances } from '../utils/balanceUtils';
+import { chainConfig, tokenConfig } from '../config/chain';
+import { ChainKey, TokenKey, GasEstimate, TokenBalances } from '../types';
 
 type EnterAmountToSendProps = {
   selectedToken: {
@@ -39,7 +38,7 @@ type EnterAmountToSendProps = {
   wallet?: Wallet | null;
   recipientAddress?: string;
   onLogout?: () => void;
-  balances?: AllTokenBalances | null;
+  balances?: TokenBalances | null;
   address?: string;
   onTokenSelect?: (
     chainKey: ChainKey,
@@ -208,7 +207,7 @@ export default function EnterAmountToSend({
       // Create transaction data object for review
       const transactionData = {
         from: wallet.address,
-        to: recipientAddress,
+        to: recipientAddress || '',
         amount: amount,
         token: {
           symbol: selectedToken.symbol,

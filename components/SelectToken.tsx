@@ -8,21 +8,22 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Wallet } from 'ethers';
-import { ChainKey, TokenKey } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
-import { NavigationType } from '../types';
+import {
+  NavigationType,
+  ChainKey,
+  TokenKey,
+  TokenBalances,
+  TokenItem,
+} from '../types';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
 import TokenBalance from './TokenBalance';
-import {
-  AllTokenBalances,
-  getTokensWithBalances,
-  TokenItem,
-} from '../utils/balanceUtils';
+import { getTokensWithBalances } from '../utils/balanceUtils';
 
 export type SelectTokenProps = {
   address: string;
-  balances: AllTokenBalances;
+  balances: TokenBalances;
   wallet?: Wallet | null;
   onTokenSelect?: (
     chainKey: ChainKey,

@@ -3,8 +3,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { useTheme, spacing, typography } from '../theme';
 import ChainTokenIcon from './ChainTokenIcon';
 import Skeleton from './Skeleton';
-import { ChainBalance } from '../utils/balanceUtils';
-import { TokenIcon } from './types';
+import { ChainBalance, TokenIcon } from '../types';
 import { usePrice } from '../context/PriceContext';
 import { formatTokenAmount } from '../utils/balanceUtils';
 
@@ -33,8 +32,8 @@ export default function TokenBalance({
     if (overlayIcon) {
       return (
         <ChainTokenIcon
-          baseIcon={baseIcon}
-          overlayIcon={overlayIcon}
+          baseIcon={baseIcon as any}
+          overlayIcon={overlayIcon as any}
           style={styles.tokenIcon}
         />
       );

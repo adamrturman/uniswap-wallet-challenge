@@ -55,7 +55,7 @@ export default function ChainTokenIcon({
   const overlayComponent = overlayIcon ? (
     <View style={styles.overlayContainer}>
       <Image
-        source={overlayIcon}
+        source={overlayIcon as any}
         style={styles.overlayIcon}
         resizeMode="contain"
       />

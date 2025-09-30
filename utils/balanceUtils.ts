@@ -5,9 +5,8 @@ import {
   ChainBalance,
   ChainBalances,
   ChainTokenBalances,
-  AllTokenBalances,
+  TokenBalances,
   TokenItem,
-  TokenIcon,
 } from '../types';
 import { chainConfig, tokenConfig, chainOrder } from '../config/chain';
 
@@ -29,7 +28,7 @@ const balanceCache = new Map<
 >();
 const tokenBalanceCache = new Map<
   string,
-  { balances: AllTokenBalances; timestamp: number }
+  { balances: TokenBalances; timestamp: number }
 >();
 const CACHE_DURATION = 30000; // 30 seconds cache duration
 
@@ -39,7 +38,7 @@ export function clearBalanceCache(address: string) {
   tokenBalanceCache.delete(address);
 }
 
-export function createInitialAllTokenBalances(): AllTokenBalances {
+export function createInitialTokenBalances(): TokenBalances {
   const chainKeys = Object.keys(chainConfig) as ChainKey[];
 
   return Object.fromEntries(
@@ -60,13 +59,13 @@ export function createInitialAllTokenBalances(): AllTokenBalances {
         },
       ];
     }),
-  ) as AllTokenBalances;
+  ) as TokenBalances;
 }
 
 // Function to fetch all token balances across all chains
 export async function fetchAllTokenBalances(
   address: string,
-): Promise<AllTokenBalances> {
+): Promise<TokenBalances> {
   // Check cache first
   const cached = tokenBalanceCache.get(address);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
@@ -144,7 +143,7 @@ export async function fetchAllTokenBalances(
   });
 
   const results = await Promise.allSettled(promises);
-  const allBalances: AllTokenBalances = {} as AllTokenBalances;
+  const allBalances: TokenBalances = {} as TokenBalances;
 
   results.forEach((result, index) => {
     const chainKey = chainKeys[index];
@@ -183,7 +182,7 @@ export async function fetchAllTokenBalances(
  * @param balances - The token balances object containing native and ERC-20 token balances
  * @returns Array of tokens that have non-zero balances
  */
-export function getTokensWithBalances(balances: AllTokenBalances): TokenItem[] {
+export function getTokensWithBalances(balances: TokenBalances): TokenItem[] {
   const tokens: TokenItem[] = [];
 
   chainOrder.forEach((chainKey) => {

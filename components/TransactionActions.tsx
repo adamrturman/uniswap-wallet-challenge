@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useTheme, spacing } from '../theme';
 import Button from './Button';
-import { TransactionStatus } from './TransactionModal';
+import { TransactionStatus } from '../types';
 
 type TransactionActionsProps = {
   status: TransactionStatus;

@@ -49,8 +49,8 @@ export type IconSource = ImageSourcePropType;
 export type IconType = ImageSourcePropType | React.ComponentType<any>;
 
 export type TokenIcon = {
-  baseIcon: IconComponent | IconSource;
-  overlayIcon?: IconSource;
+  baseIcon: IconType;
+  overlayIcon?: IconType;
 };
 
 export type ChainIcon = IconSource;
@@ -107,7 +107,7 @@ export type TokenBalance = {
 
 export type ChainTokenBalances = Record<TokenKey, TokenBalance>;
 
-export type AllTokenBalances = Record<
+export type TokenBalances = Record<
   ChainKey,
   {
     native: ChainBalance;
@@ -188,7 +188,7 @@ export interface AppContextType {
   // State
   wallet: any; // ethers.Wallet
   watchedAddress: string;
-  balances: AllTokenBalances | null;
+  balances: TokenBalances | null;
   recipientAddress: string;
   selectedToken: {
     chainKey: ChainKey;
@@ -203,7 +203,7 @@ export interface AppContextType {
   // Setters
   setWallet: (wallet: any) => void;
   setWatchedAddress: (address: string) => void;
-  setBalances: (balances: AllTokenBalances | null) => void;
+  setBalances: (balances: TokenBalances | null) => void;
   setRecipientAddress: (address: string) => void;
   setSelectedToken: (
     token: {
@@ -220,7 +220,7 @@ export interface AppContextType {
   // Event Handlers
   handleWatchAddressContinue: (
     address: string,
-    watchedAddressBalances: AllTokenBalances,
+    watchedAddressBalances: TokenBalances,
   ) => Promise<void>;
   handleRecoveryPhraseContinue: (phrase: string) => Promise<void>;
   handleRecipientAddressContinue: (address: string) => void;
@@ -243,6 +243,16 @@ export interface TransactionContextType {
   isModalVisible: boolean;
   transactionStatus: TransactionStatus;
   transactionData?: TransactionData;
+  selectedToken: {
+    chainKey: ChainKey;
+    tokenKey: TokenKey;
+    balance: number;
+    symbol: string;
+  } | null;
+  recipientAddress: string;
+  transactionAmount: string;
+  transactionHash: string;
+  transactionGasEstimate: GasEstimate | null;
   showTransactionModal: (params: {
     status: TransactionStatus;
     transactionData?: TransactionData;
@@ -252,6 +262,17 @@ export interface TransactionContextType {
     status: TransactionStatus;
     transactionData?: TransactionData;
   }) => void;
+  handleTokenSelect: (
+    chainKey: ChainKey,
+    tokenKey: TokenKey,
+    balance: number,
+    symbol: string,
+  ) => void;
+  handleAmountContinue: (amount: string) => void;
+  handleTransactionExecute: (
+    amount: string,
+    gasEstimate?: GasEstimate,
+  ) => Promise<{ success: boolean; hash?: string; error?: string }>;
   approveTransaction?: () => Promise<void>;
   setApproveTransaction: (callback: (() => Promise<void>) | undefined) => void;
 }
@@ -339,18 +360,4 @@ export interface InputProps {
 // RE-EXPORTS FOR BACKWARD COMPATIBILITY
 // ============================================================================
 
-// Re-export commonly used types for easy importing
-export type {
-  ChainKey,
-  TokenKey,
-  ScreenName,
-  NavigationType,
-  TransactionStatus,
-  TransactionData,
-  GasEstimate,
-  AllTokenBalances,
-  TokenItem,
-  AppContextType,
-  TransactionContextType,
-  PriceContextType,
-} from './index';
+// All types are already exported above, no need for re-exports

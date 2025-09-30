@@ -15,6 +15,7 @@ import {
   IconType,
   Token,
 } from '../types';
+import { ImageSourcePropType } from 'react-native';
 
 // Helper functions to determine token type
 export const isNativeAsset = (
@@ -72,7 +73,7 @@ export const chainConfig: Record<
     nativeTokenDisplay: string;
     rpcUrl: string;
     symbol: string;
-    chainIcon: IconType;
+    chainIcon: ImageSourcePropType;
     explorerUrl: string;
     chainId: number;
     nativeTokenIcon: {
@@ -166,7 +167,7 @@ export const chainConfig: Record<
     explorerUrl: 'https://optimistic.etherscan.io/tx/',
     chainId: 10,
     nativeTokenIcon: {
-      baseIcon: ethIcon,
+      baseIcon: EthIcon,
       overlayIcon: optimismBadge,
     },
     supportedErc20s: [
@@ -210,7 +211,7 @@ export const chainConfig: Record<
     explorerUrl: 'https://arbiscan.io/tx/',
     chainId: 42161,
     nativeTokenIcon: {
-      baseIcon: ethIcon,
+      baseIcon: EthIcon,
       overlayIcon: arbitrumBadge,
     },
     supportedErc20s: [

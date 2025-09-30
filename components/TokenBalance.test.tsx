@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import TokenBalance, { TokenBalanceProps } from './TokenBalance';
-import { ChainBalance } from '../utils/balanceUtils';
+import { ChainBalance } from '../types';
 import { TokenIcon } from './types';
 import ethIcon from '../assets/eth-color-icon.png';
 // Mock AsyncStorage

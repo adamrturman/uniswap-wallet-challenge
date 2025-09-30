@@ -3,7 +3,7 @@ import { ActivityIndicator } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from '../theme';
-import { TransactionStatus } from './TransactionModal';
+import { TransactionStatus } from '../types';
 
 type TransactionStatusIconProps = {
   status: TransactionStatus;

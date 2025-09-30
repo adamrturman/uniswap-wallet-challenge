@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { useTheme, spacing, typography } from '../theme';
-import { TransactionStatus } from './TransactionModal';
+import { TransactionStatus } from '../types';
 
 type TransactionStatusContentProps = {
   status: TransactionStatus;

@@ -16,14 +16,12 @@ import ScreenWrapper from './ScreenWrapper';
 import AddressInput from './AddressInput';
 import AddressHistory from './AddressHistory';
 import { resolveAddress } from '../utils/addressUtils';
-import {
-  AllTokenBalances,
-  createInitialAllTokenBalances,
-} from '../utils/balanceUtils';
+import { createInitialTokenBalances } from '../utils/balanceUtils';
+import { TokenBalances } from '../types';
 import { useAddressHistory } from '../hooks/useAddressHistory';
 
 type EnterWatchAddressProps = {
-  onContinue?: (address: string, balances: AllTokenBalances) => void;
+  onContinue?: (address: string, balances: TokenBalances) => void;
 };
 
 export default function EnterWatchAddress({
@@ -60,7 +58,7 @@ export default function EnterWatchAddress({
       await saveAddressToHistory(trimmedInput);
 
       // Set initial loading state and navigate immediately
-      const initialBalances = createInitialAllTokenBalances();
+      const initialBalances = createInitialTokenBalances();
       onContinue?.(finalAddress, initialBalances);
       navigation.navigate('Portfolio');
 

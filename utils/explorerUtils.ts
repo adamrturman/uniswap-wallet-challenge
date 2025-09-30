@@ -1,5 +1,6 @@
 import { Linking } from 'react-native';
-import { chainConfig, ChainKey } from '../config/chain';
+import { chainConfig } from '../config/chain';
+import { ChainKey } from '../types';
 
 /**
  * Opens a blockchain explorer URL for a given transaction hash and chain

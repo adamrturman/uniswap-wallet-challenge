@@ -8,7 +8,8 @@ import {
   Image,
 } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { chainConfig, ChainKey, chainOrder } from '../config/chain';
+import { chainConfig, chainOrder } from '../config/chain';
+import { ChainKey } from '../types';
 import { useTheme, spacing, typography } from '../theme';
 
 export type ChainSelectorGroupProps = {
