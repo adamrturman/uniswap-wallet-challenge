@@ -161,6 +161,7 @@ export interface TransactionData {
   };
   gasEstimate?: GasEstimate;
   timestamp: string;
+  transactionHash?: string;
 }
 
 // ============================================================================
@@ -269,10 +270,6 @@ export interface TransactionContextType {
     symbol: string,
   ) => void;
   handleAmountContinue: (amount: string) => void;
-  handleTransactionExecute: (
-    amount: string,
-    gasEstimate?: GasEstimate,
-  ) => Promise<{ success: boolean; hash?: string; error?: string }>;
   approveTransaction?: () => Promise<void>;
   setApproveTransaction: (callback: (() => Promise<void>) | undefined) => void;
 }

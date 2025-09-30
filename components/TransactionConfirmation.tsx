@@ -225,7 +225,20 @@ export default function TransactionConfirmation({
           },
         ]}
       >
-        <Button title="Done" onPress={handleDone} variant="primary" fullWidth />
+        <View style={styles.buttonContainer}>
+          <Button
+            title="View on Explorer"
+            onPress={handleViewOnExplorer}
+            variant="secondary"
+            style={styles.explorerButton}
+          />
+          <Button
+            title="Done"
+            onPress={handleDone}
+            variant="primary"
+            style={styles.doneButton}
+          />
+        </View>
       </View>
     </ScreenWrapper>
   );
@@ -297,5 +310,15 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginTop: 'auto',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  explorerButton: {
+    flex: 1,
+  },
+  doneButton: {
+    flex: 1,
   },
 });

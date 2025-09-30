@@ -42,10 +42,6 @@ interface TransactionContextType {
     symbol: string,
   ) => void;
   handleAmountContinue: (amount: string) => void;
-  handleTransactionExecute: (
-    amount: string,
-    gasEstimate?: GasEstimate,
-  ) => Promise<{ success: boolean; hash?: string; error?: string }>;
   approveTransaction?: () => Promise<void>;
   setApproveTransaction: (callback: (() => Promise<void>) | undefined) => void;
 }
@@ -107,6 +103,11 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   }: TransactionParams) => {
     setTransactionStatus(status);
     if (transactionData) setTransactionData(transactionData);
+
+    // If status is success and we have transaction data, set the hash
+    if (status === 'success' && transactionData?.transactionHash) {
+      setTransactionHash(transactionData.transactionHash);
+    }
     // Don't set modal visible here - it should already be visible
   };
 
@@ -129,15 +130,6 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     setTransactionAmount(amount);
   };
 
-  const handleTransactionExecute = async (
-    amount: string,
-    gasEstimate?: GasEstimate,
-  ): Promise<{ success: boolean; hash?: string; error?: string }> => {
-    // This would be implemented with actual transaction logic
-    // For now, return a mock response
-    return { success: true, hash: '0x123...' };
-  };
-
   return (
     <TransactionContext.Provider
       value={{
@@ -154,7 +146,6 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
         updateTransactionStatus,
         handleTokenSelect,
         handleAmountContinue,
-        handleTransactionExecute,
         approveTransaction: approveTransactionRef.current,
         setApproveTransaction,
       }}

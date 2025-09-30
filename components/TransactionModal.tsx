@@ -14,6 +14,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { chainConfig } from '../config/chain';
 import { ChainKey, TransactionStatus } from '../types';
+import { openExplorer } from '../utils/explorerUtils';
 
 export interface TransactionModalProps {
   visible: boolean;
@@ -33,6 +34,25 @@ export default function TransactionModal({
   onExecuteTransaction,
 }: TransactionModalProps) {
   const { colors } = useTheme();
+
+  const handleViewOnExplorer = async () => {
+    console.log('Explorer button clicked:', { transactionData, status });
+    if (transactionData?.transactionHash && transactionData?.token?.chainKey) {
+      try {
+        await openExplorer(
+          transactionData.transactionHash,
+          transactionData.token.chainKey,
+        );
+      } catch (error) {
+        console.error('Failed to open explorer:', error);
+      }
+    } else {
+      console.log('Missing data for explorer:', {
+        transactionHash: transactionData?.transactionHash,
+        chainKey: transactionData?.token?.chainKey,
+      });
+    }
+  };
 
   const getStatusIcon = () => {
     switch (status) {
@@ -127,6 +147,130 @@ export default function TransactionModal({
               <Text style={[styles.message, { color: colors.text }]}>
                 {getStatusMessage()}
               </Text>
+
+              {status === 'success' && (
+                <View
+                  style={[
+                    styles.transactionDataContainer,
+                    { backgroundColor: colors.backgroundSecondary },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.transactionDataTitle,
+                      { color: colors.text },
+                    ]}
+                  >
+                    Transaction Details:
+                  </Text>
+                  <View style={styles.transactionDetails}>
+                    {transactionData?.from && (
+                      <View style={styles.transactionRow}>
+                        <Text
+                          style={[
+                            styles.transactionLabel,
+                            { color: colors.textSecondary },
+                          ]}
+                        >
+                          From
+                        </Text>
+                        <Text
+                          style={[
+                            styles.transactionValue,
+                            { color: colors.text },
+                          ]}
+                        >
+                          {transactionData.from}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData?.to && (
+                      <View style={styles.transactionRow}>
+                        <Text
+                          style={[
+                            styles.transactionLabel,
+                            { color: colors.textSecondary },
+                          ]}
+                        >
+                          To
+                        </Text>
+                        <Text
+                          style={[
+                            styles.transactionValue,
+                            { color: colors.text },
+                          ]}
+                        >
+                          {transactionData.to}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData?.amount && (
+                      <View style={styles.transactionRow}>
+                        <Text
+                          style={[
+                            styles.transactionLabel,
+                            { color: colors.textSecondary },
+                          ]}
+                        >
+                          Amount
+                        </Text>
+                        <Text
+                          style={[
+                            styles.transactionValue,
+                            { color: colors.text },
+                          ]}
+                        >
+                          {transactionData.amount}{' '}
+                          {transactionData.token?.symbol || 'ETH'}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData?.token?.chainKey && (
+                      <View style={styles.transactionRow}>
+                        <Text
+                          style={[
+                            styles.transactionLabel,
+                            { color: colors.textSecondary },
+                          ]}
+                        >
+                          Network
+                        </Text>
+                        <Text
+                          style={[
+                            styles.transactionValue,
+                            { color: colors.text },
+                          ]}
+                        >
+                          {transactionData.token.chainKey
+                            .charAt(0)
+                            .toUpperCase() +
+                            transactionData.token.chainKey.slice(1)}
+                        </Text>
+                      </View>
+                    )}
+                    {transactionData?.transactionHash && (
+                      <View style={styles.transactionRow}>
+                        <Text
+                          style={[
+                            styles.transactionLabel,
+                            { color: colors.textSecondary },
+                          ]}
+                        >
+                          Transaction Hash
+                        </Text>
+                        <Text
+                          style={[
+                            styles.transactionValue,
+                            { color: colors.primary },
+                          ]}
+                        >
+                          {transactionData.transactionHash}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              )}
 
               {status === 'review' && transactionData && (
                 <View
@@ -377,6 +521,25 @@ export default function TransactionModal({
                   </Text>
                 </TouchableOpacity>
               )}
+
+              {status === 'success' && (
+                <TouchableOpacity
+                  style={[
+                    styles.explorerButton,
+                    { backgroundColor: colors.primary },
+                  ]}
+                  onPress={handleViewOnExplorer}
+                >
+                  <Text
+                    style={[
+                      styles.explorerButtonText,
+                      { color: colors.textInverse },
+                    ]}
+                  >
+                    View on Explorer
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </ScrollView>
         </View>
@@ -473,6 +636,19 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   approveButtonText: {
+    fontSize: typography.sizes.base,
+    fontWeight: '600',
+  },
+  explorerButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.lg,
+    marginTop: spacing.sm,
+    width: '100%',
+  },
+  explorerButtonText: {
     fontSize: typography.sizes.base,
     fontWeight: '600',
   },

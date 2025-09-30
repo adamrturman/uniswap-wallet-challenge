@@ -126,6 +126,17 @@ export default function EnterAmountToSend({
         // Update modal to show success
         updateTransactionStatus({
           status: 'success',
+          transactionData: {
+            from: address || '',
+            to: recipientAddress || '',
+            amount: amount,
+            token: {
+              symbol: selectedToken.symbol,
+              chainKey: selectedToken.chainKey,
+            },
+            transactionHash: result.hash,
+            timestamp: new Date().toISOString(),
+          },
         });
 
         // Set the transaction amount before navigating
