@@ -4,7 +4,7 @@
 
 import { ethers } from 'ethers';
 import { chainConfig } from '../config/chain';
-import { isENSName } from './addressValidation';
+import { isValidENSName } from './addressValidation';
 
 /**
  * Truncates a wallet address with customizable parameters
@@ -48,8 +48,8 @@ export const resolveAddress = async (
       return null;
     }
   };
-  
-  if (isENSName(inputValue)) {
+
+  if (isValidENSName(inputValue) && !ethers.utils.isAddress(inputValue)) {
     return await resolveENS(inputValue);
   }
   return inputValue;

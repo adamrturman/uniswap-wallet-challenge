@@ -184,7 +184,9 @@ export default function EnterAmountToSend({
               '../utils/transactionUtils'
             );
             const token =
-              tokenConfig[selectedToken.chainKey][selectedToken.tokenKey as TokenKey];
+              tokenConfig[selectedToken.chainKey][
+                selectedToken.tokenKey as TokenKey
+              ];
 
             if (token) {
               gasEstimate = await estimateGasForERC20Transfer(
@@ -508,11 +510,6 @@ const styles = StyleSheet.create({
   leftSection: {
     flex: 1,
     alignItems: 'flex-start',
-  },
-  balanceLeftSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
   },
   balanceMaxSection: {
     flexDirection: 'row',

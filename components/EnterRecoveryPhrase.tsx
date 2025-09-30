@@ -104,16 +104,6 @@ export default function EnterRecoveryPhrase({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
   content: {
     flex: 1,
     alignItems: 'center',

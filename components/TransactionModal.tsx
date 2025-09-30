@@ -251,8 +251,9 @@ export default function TransactionModal({
                             { color: colors.text },
                           ]}
                         >
-                          {chainConfig[transactionData.token.chainKey as ChainKey]
-                            ?.chainId || 'Unknown'}
+                          {chainConfig[
+                            transactionData.token.chainKey as ChainKey
+                          ]?.chainId || 'Unknown'}
                         </Text>
                       </View>
                     )}

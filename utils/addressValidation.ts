@@ -17,22 +17,8 @@ export const isValidENSName = (name: string): boolean => {
  * Validates if input is a valid Ethereum address or ENS name
  */
 export const isValidAddressOrENS = (value: string): boolean => {
+    //  Don't bother checking if the value is empty
   if (!value.trim()) return false;
-
-  // If it's a valid address, return true
-  if (ethers.utils.isAddress(value)) return true;
-
-  // If it's a valid ENS name format
-  if (isValidENSName(value)) {
-    return true;
-  }
-
-  return false;
+  return ethers.utils.isAddress(value) || isValidENSName(value);
 };
 
-/**
- * Checks if the input is specifically an ENS name
- */
-export const isENSName = (value: string): boolean => {
-  return isValidENSName(value) && !ethers.utils.isAddress(value);
-};
