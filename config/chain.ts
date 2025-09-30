@@ -8,6 +8,8 @@ import usdcLogo from '../assets/usdc-logo.png';
 import btcLogo from '../assets/btc-logo.png';
 import linkLogo from '../assets/link-logo.png';
 import EthIcon from '../components/EthIcon';
+import { ImageSourcePropType } from 'react-native';
+import { ComponentType } from 'react';
 
 export type ChainKey =
   | 'Ethereum'
@@ -15,8 +17,6 @@ export type ChainKey =
   | 'Optimism'
   | 'Arbitrum'
   | 'Sepolia';
-
-// Union type for all possible token identifiers (native + ERC20 symbols)
 export type TokenKey =
   | 'ETH'
   | 'POL'
@@ -26,6 +26,9 @@ export type TokenKey =
   | 'OP'
   | 'ARB'
   | 'LINK';
+
+// Icon type for React Native components and images
+export type IconType = ImageSourcePropType | ComponentType<any>;
 
 // Helper functions to determine token type
 export const isNativeAsset = (
@@ -44,7 +47,7 @@ export const isErc20Asset = (
   return (
     tokenKey !== nativeSymbol &&
     chainConfig[chainKey].supportedErc20s.some(
-      (token) => token.symbol === tokenKey,
+      (token: Token) => token.symbol === tokenKey,
     )
   );
 };
@@ -54,12 +57,14 @@ export const getSupportedTokens = (chainKey: ChainKey): string[] => {
   const nativeSymbol = chainConfig[chainKey].symbol;
   return [
     nativeSymbol,
-    ...chainConfig[chainKey].supportedErc20s.map((token) => token.symbol),
+    ...chainConfig[chainKey].supportedErc20s.map(
+      (token: Token) => token.symbol,
+    ),
   ];
 };
 
 // Get supported ERC20 tokens for a chain
-export const getSupportedErc20s = (chainKey: ChainKey): TokenConfig[] => {
+export const getSupportedErc20s = (chainKey: ChainKey): Token[] => {
   return chainConfig[chainKey].supportedErc20s;
 };
 
@@ -67,25 +72,25 @@ export const getSupportedErc20s = (chainKey: ChainKey): TokenConfig[] => {
 export const getTokenConfig = (
   chainKey: ChainKey,
   symbol: string,
-): TokenConfig | null => {
+): Token | null => {
   const token = chainConfig[chainKey].supportedErc20s.find(
-    (t) => t.symbol === symbol,
+    (t: Token) => t.symbol === symbol,
   );
   return token || null;
 };
 
-export type TokenConfig = {
+export type Token = {
   symbol: string;
   name: string;
   decimals: number;
   contractAddress: string;
   icon: {
-    baseIcon: any;
-    overlayIcon?: any;
+    baseIcon: IconType;
+    overlayIcon?: IconType;
   };
 };
 
-export type ChainTokenConfig = Partial<Record<TokenKey, TokenConfig>>;
+export type ChainTokenConfig = Partial<Record<TokenKey, Token>>;
 
 export const chainConfig: Record<
   ChainKey,
@@ -94,14 +99,14 @@ export const chainConfig: Record<
     nativeTokenDisplay: string;
     rpcUrl: string;
     symbol: string;
-    chainIcon: any;
+    chainIcon: IconType;
     explorerUrl: string;
     chainId: number;
     nativeTokenIcon: {
-      baseIcon: any;
-      overlayIcon?: any;
+      baseIcon: IconType;
+      overlayIcon?: IconType;
     };
-    supportedErc20s: TokenConfig[];
+    supportedErc20s: Token[];
   }
 > = {
   Ethereum: {

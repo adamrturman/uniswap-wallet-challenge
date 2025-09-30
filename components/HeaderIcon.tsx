@@ -6,10 +6,11 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { useTheme } from '../theme';
 
 export type IconSize = 'small' | 'medium' | 'large' | 'xlarge';
+export type IconLibrary = 'material' | 'ionicons' | 'fontawesome6';
 
 export type HeaderIconProps = {
   icon: string;
-  library?: 'material' | 'ionicons' | 'fontawesome6';
+  library?: IconLibrary;
   size?: IconSize;
   backgroundColor?: string;
   style?: ViewStyle;
