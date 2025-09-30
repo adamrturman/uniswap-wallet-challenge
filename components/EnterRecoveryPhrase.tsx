@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  StyleSheet, 
-  Text, 
-  View,
-  StatusBar
-} from 'react-native';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
 import { Wallet } from 'ethers';
-import { useTheme, spacing, typography, radius } from '../theme';
+import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
 import Header from './Header';
@@ -19,7 +13,9 @@ type EnterRecoveryPhraseProps = {
   onContinue?: (phrase: string) => void;
 };
 
-export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseProps) {
+export default function EnterRecoveryPhrase({
+  onContinue,
+}: EnterRecoveryPhraseProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [phrase, setPhrase] = useState('');
@@ -27,7 +23,7 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
 
   const handlePhraseChange = (newPhrase: string) => {
     setPhrase(newPhrase);
-    
+
     if (newPhrase.trim().length === 0) {
       setIsValidPhrase(false);
       return;
@@ -45,12 +41,11 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
     if (onContinue && isValidPhrase) {
       onContinue(phrase);
       navigation.navigate('Portfolio');
-      
+
       // Clear the input field for when user comes back
       setPhrase('');
     }
   };
-
 
   return (
     <ScreenWrapper>
@@ -86,11 +81,16 @@ export default function EnterRecoveryPhrase({ onContinue }: EnterRecoveryPhraseP
         </View>
       </View>
 
-      <View style={[styles.buttonContainer, { 
-        paddingHorizontal: spacing.xl, 
-        paddingBottom: spacing.xl * 2, 
-        paddingTop: spacing.xl 
-      }]}>
+      <View
+        style={[
+          styles.buttonContainer,
+          {
+            paddingHorizontal: spacing.xl,
+            paddingBottom: spacing.xl * 2,
+            paddingTop: spacing.xl,
+          },
+        ]}
+      >
         <Button
           title="Continue"
           onPress={handleContinue}

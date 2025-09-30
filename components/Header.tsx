@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { spacing } from '../theme';
 import HeaderIcon from './HeaderIcon';
 
@@ -10,13 +10,14 @@ export type HeaderProps = {
 };
 
 // Map of icons to their appropriate libraries
-const iconLibraryMap: Record<string, 'material' | 'ionicons' | 'fontawesome6'> = {
-  'person': 'ionicons',
-  'coins': 'fontawesome6',
-  'wallet': 'material',
-  'check-circle': 'fontawesome6',
-  'key': 'fontawesome6',
-};
+const iconLibraryMap: Record<string, 'material' | 'ionicons' | 'fontawesome6'> =
+  {
+    person: 'ionicons',
+    coins: 'fontawesome6',
+    wallet: 'material',
+    'check-circle': 'fontawesome6',
+    key: 'fontawesome6',
+  };
 
 export default function Header({ icon, text, onPress }: HeaderProps) {
   const library = iconLibraryMap[icon] || 'fontawesome6'; // Default to FontAwesome6 for unknown icons

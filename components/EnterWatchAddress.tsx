@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,7 +19,10 @@ import Button from './Button';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
 import AddressInput, { resolveAddress } from './AddressInput';
-import { AllTokenBalances, createInitialAllTokenBalances } from '../utils/balanceUtils';
+import {
+  AllTokenBalances,
+  createInitialAllTokenBalances,
+} from '../utils/balanceUtils';
 
 type EnterWatchAddressProps = {
   onContinue?: (address: string, balances: AllTokenBalances) => void;
@@ -20,7 +31,9 @@ type EnterWatchAddressProps = {
 const ADDRESS_HISTORY_KEY = 'wallet_address_history';
 const MAX_HISTORY_ITEMS = 10;
 
-export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps) {
+export default function EnterWatchAddress({
+  onContinue,
+}: EnterWatchAddressProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
@@ -41,35 +54,45 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
         setAddressHistory(JSON.parse(history));
       }
     } catch (error) {
-      console.log('Failed to load address history:', error);
+      throw new Error('Failed to load address history');
     }
   };
 
   const saveAddressToHistory = async (newAddress: string) => {
     try {
       const trimmedAddress = newAddress.trim();
-      const updatedHistory = [trimmedAddress, ...addressHistory.filter(addr => addr !== trimmedAddress)].slice(0, MAX_HISTORY_ITEMS);
+      const updatedHistory = [
+        trimmedAddress,
+        ...addressHistory.filter((addr) => addr !== trimmedAddress),
+      ].slice(0, MAX_HISTORY_ITEMS);
       setAddressHistory(updatedHistory);
-      await AsyncStorage.setItem(ADDRESS_HISTORY_KEY, JSON.stringify(updatedHistory));
+      await AsyncStorage.setItem(
+        ADDRESS_HISTORY_KEY,
+        JSON.stringify(updatedHistory),
+      );
     } catch (error) {
-      console.log('Failed to save address to history:', error);
+      throw new Error('Failed to save address to history');
     }
   };
 
   const removeAddressFromHistory = async (addressToRemove: string) => {
     try {
-      const updatedHistory = addressHistory.filter(addr => addr !== addressToRemove);
+      const updatedHistory = addressHistory.filter(
+        (addr) => addr !== addressToRemove,
+      );
       setAddressHistory(updatedHistory);
       if (updatedHistory.length === 0) {
         await AsyncStorage.removeItem(ADDRESS_HISTORY_KEY);
       } else {
-        await AsyncStorage.setItem(ADDRESS_HISTORY_KEY, JSON.stringify(updatedHistory));
+        await AsyncStorage.setItem(
+          ADDRESS_HISTORY_KEY,
+          JSON.stringify(updatedHistory),
+        );
       }
     } catch (error) {
-      console.log('Failed to remove address from history:', error);
+      throw new Error('Failed to remove address from history');
     }
   };
-
 
   const handleAddressChange = (newAddress: string) => {
     setAddress(newAddress);
@@ -89,29 +112,27 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
       // Resolve address (handles ENS names)
       const finalAddress = await resolveAddress(trimmedInput);
       if (!finalAddress) {
-        console.log('Failed to resolve address');
         return;
       }
-      
+
       // Save the original input (ENS name or address) to history
       await saveAddressToHistory(trimmedInput);
-      
+
       // Set initial loading state and navigate immediately
       const initialBalances = createInitialAllTokenBalances();
       onContinue?.(finalAddress, initialBalances);
       navigation.navigate('Portfolio');
-      
+
       // Clear the input field for when user comes back
       setAddress('');
     } catch (error) {
-      console.log('Failed to resolve address:', error);
+      throw new Error('Failed to resolve address');
     }
   };
 
   const handleAddressSelect = (selectedAddress: string) => {
     setAddress(selectedAddress);
   };
-
 
   const copyAddressToClipboard = async (address: string) => {
     try {
@@ -125,14 +146,12 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
     }
   };
 
-
   return (
     <ScreenWrapper>
       <KeyboardAvoidingView
         style={[styles.container, { backgroundColor: colors.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-
         <View style={styles.content}>
           <Header
             icon="person"
@@ -149,36 +168,42 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
               onChangeText={handleAddressChange}
               onValidationChange={handleValidationChange}
             />
-            
+
             {addressHistory.length > 0 && (
-              <View style={[
-                styles.historyContainer, 
-                { 
-                  backgroundColor: 'transparent',
-                  borderColor: 'transparent'
-                }
-              ]}>
+              <View
+                style={[
+                  styles.historyContainer,
+                  {
+                    backgroundColor: 'transparent',
+                    borderColor: 'transparent',
+                  },
+                ]}
+              >
                 <TouchableOpacity
                   style={[
-                    styles.historyHeader, 
-                    { 
+                    styles.historyHeader,
+                    {
                       borderBottomColor: 'transparent',
-                      backgroundColor: 'transparent'
-                    }
+                      backgroundColor: 'transparent',
+                    },
                   ]}
                   onPress={() => setIsHistoryExpanded(!isHistoryExpanded)}
                 >
                   <View style={styles.historyTitleContainer}>
-                    <Text style={[
-                      styles.historyTitle, 
-                      { 
-                        color: colors.textSecondary
-                      }
-                    ]}>Recent Addresses</Text>
-                    <Ionicons 
-                      name={isHistoryExpanded ? "chevron-up" : "chevron-down"} 
-                      size={16} 
-                      color={colors.textSecondary} 
+                    <Text
+                      style={[
+                        styles.historyTitle,
+                        {
+                          color: colors.textSecondary,
+                        },
+                      ]}
+                    >
+                      Recent Addresses
+                    </Text>
+                    <Ionicons
+                      name={isHistoryExpanded ? 'chevron-up' : 'chevron-down'}
+                      size={16}
+                      color={colors.textSecondary}
                       style={styles.chevronIcon}
                     />
                   </View>
@@ -188,12 +213,23 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
                     data={addressHistory}
                     keyExtractor={(item, index) => `${item}-${index}`}
                     renderItem={({ item }) => (
-                      <View style={[styles.historyItem, { borderBottomColor: 'transparent' }]}>
+                      <View
+                        style={[
+                          styles.historyItem,
+                          { borderBottomColor: 'transparent' },
+                        ]}
+                      >
                         <TouchableOpacity
                           style={styles.historyItemContent}
                           onPress={() => handleAddressSelect(item)}
                         >
-                          <Text style={[styles.historyItemText, { color: colors.textSecondary }]} numberOfLines={1}>
+                          <Text
+                            style={[
+                              styles.historyItemText,
+                              { color: colors.textSecondary },
+                            ]}
+                            numberOfLines={1}
+                          >
                             {truncateAddress(item)}
                           </Text>
                         </TouchableOpacity>
@@ -201,17 +237,29 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
                           style={styles.copyButton}
                           onPress={() => copyAddressToClipboard(item)}
                         >
-                          <Ionicons 
-                            name={copySuccess === item ? "checkmark-circle" : "copy-outline"} 
-                            size={16} 
-                            color={copySuccess === item ? colors.success : colors.textSecondary} 
+                          <Ionicons
+                            name={
+                              copySuccess === item
+                                ? 'checkmark-circle'
+                                : 'copy-outline'
+                            }
+                            size={16}
+                            color={
+                              copySuccess === item
+                                ? colors.success
+                                : colors.textSecondary
+                            }
                           />
                         </TouchableOpacity>
                         <TouchableOpacity
                           style={styles.removeButton}
                           onPress={() => removeAddressFromHistory(item)}
                         >
-                          <Ionicons name="trash-outline" size={16} color={colors.textSecondary} />
+                          <Ionicons
+                            name="trash-outline"
+                            size={16}
+                            color={colors.textSecondary}
+                          />
                         </TouchableOpacity>
                       </View>
                     )}
@@ -224,11 +272,16 @@ export default function EnterWatchAddress({ onContinue }: EnterWatchAddressProps
           </View>
         </View>
 
-        <View style={[styles.footer, { 
-          paddingHorizontal: spacing.xl, 
-          paddingBottom: spacing.xl * 2, 
-          paddingTop: spacing.xl 
-        }]}>
+        <View
+          style={[
+            styles.footer,
+            {
+              paddingHorizontal: spacing.xl,
+              paddingBottom: spacing.xl * 2,
+              paddingTop: spacing.xl,
+            },
+          ]}
+        >
           <Button
             title="Continue"
             onPress={handleContinue}
@@ -315,4 +368,4 @@ const styles = StyleSheet.create({
   footer: {
     marginTop: 'auto',
   },
-}); 
+});

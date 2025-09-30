@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle, Image } from 'react-native';
-import ethIcon from '../assets/eth-diamond-black.png';
 import { useTheme } from '../theme';
 import { IconComponent, IconSource } from './types';
 
@@ -9,7 +8,6 @@ export type ChainTokenIconProps = {
   baseIcon: IconComponent | IconSource;
   overlayIcon?: IconSource;
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -29,13 +27,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function ChainTokenIcon({ 
+export default function ChainTokenIcon({
   style,
   baseIcon,
-  overlayIcon
+  overlayIcon,
 }: ChainTokenIconProps) {
   const { colors } = useTheme();
-  
+
   const containerStyle: ViewStyle = {
     width: 40,
     height: 40,
@@ -50,7 +48,7 @@ export default function ChainTokenIcon({
         {
           width: 16,
           height: 16,
-        }
+        },
       ]}
     >
       <Image
@@ -70,7 +68,7 @@ export default function ChainTokenIcon({
       const Component = baseIcon;
       return <Component style={[styles.ethIcon, { width: 36, height: 36 }]} />;
     }
-    
+
     // If baseIcon is an image source
     return (
       <Image
@@ -80,7 +78,7 @@ export default function ChainTokenIcon({
           {
             width: 36,
             height: 36,
-          }
+          },
         ]}
         resizeMode="contain"
       />
@@ -91,7 +89,7 @@ export default function ChainTokenIcon({
     <View style={[styles.container, containerStyle, style]}>
       {/* Base icon (token icon) */}
       {renderBaseIcon()}
-      
+
       {/* Overlay icon (chain icon) */}
       {overlayComponent}
     </View>

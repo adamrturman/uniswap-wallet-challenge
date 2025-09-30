@@ -6,13 +6,13 @@ export default function Skeleton() {
   const { colors } = useTheme();
 
   return (
-    <View 
+    <View
       style={[
-        styles.skeleton, 
-        { 
+        styles.skeleton,
+        {
           backgroundColor: colors.border,
-        }
-      ]} 
+        },
+      ]}
     />
   );
 }

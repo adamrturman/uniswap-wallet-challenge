@@ -41,16 +41,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function HeaderIcon({ 
-  icon, 
-  library = 'material', 
+export default function HeaderIcon({
+  icon,
+  library = 'material',
   size = 'medium',
   backgroundColor,
-  style 
+  style,
 }: HeaderIconProps) {
   const { colors } = useTheme();
   const config = sizeConfig[size];
-  
+
   const dynamicStyles: ViewStyle = {
     width: config.container,
     height: config.container,
@@ -58,8 +58,12 @@ export default function HeaderIcon({
     backgroundColor: backgroundColor || colors.backgroundSecondary,
   };
 
-  const IconComponent = library === 'ionicons' ? Ionicons : 
-                        library === 'fontawesome6' ? FontAwesome6 : MaterialIcons;
+  const IconComponent =
+    library === 'ionicons'
+      ? Ionicons
+      : library === 'fontawesome6'
+        ? FontAwesome6
+        : MaterialIcons;
 
   return (
     <View style={[styles.container, dynamicStyles, style]}>

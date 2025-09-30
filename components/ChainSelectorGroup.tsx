@@ -1,5 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Image } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ScrollView,
+  Image,
+} from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { chainConfig, ChainKey, chainOrder } from '../config/chain';
 import { useTheme, spacing, typography } from '../theme';
@@ -9,7 +16,10 @@ export type ChainSelectorGroupProps = {
   onSelectionChange: (selection: 'all' | 'active' | ChainKey) => void;
 };
 
-export default function ChainSelectorGroup({ selected, onSelectionChange }: ChainSelectorGroupProps) {
+export default function ChainSelectorGroup({
+  selected,
+  onSelectionChange,
+}: ChainSelectorGroupProps) {
   const { colors } = useTheme();
 
   const handleSelection = (selection: 'all' | 'active' | ChainKey) => {
@@ -18,8 +28,8 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
 
   return (
     <View style={styles.container}>
-      <ScrollView 
-        horizontal 
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
         style={styles.scrollView}
@@ -32,18 +42,30 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
             <View style={styles.allChainsIcon}>
               <View style={styles.chainGrid}>
                 <View style={styles.gridRow}>
-                  <Image source={chainConfig.Ethereum.chainIcon} style={styles.gridIcon} />
-                  <Image source={chainConfig.Optimism.chainIcon} style={styles.gridIcon} />
+                  <Image
+                    source={chainConfig.Ethereum.chainIcon}
+                    style={styles.gridIcon}
+                  />
+                  <Image
+                    source={chainConfig.Optimism.chainIcon}
+                    style={styles.gridIcon}
+                  />
                 </View>
                 <View style={styles.gridRow}>
-                  <Image source={chainConfig.Arbitrum.chainIcon} style={styles.gridIcon} />
-                  <Image source={chainConfig.Polygon.chainIcon} style={styles.gridIcon} />
+                  <Image
+                    source={chainConfig.Arbitrum.chainIcon}
+                    style={styles.gridIcon}
+                  />
+                  <Image
+                    source={chainConfig.Polygon.chainIcon}
+                    style={styles.gridIcon}
+                  />
                 </View>
               </View>
             </View>
           )}
         />
-        
+
         <ChainPill
           label="Active"
           isSelected={selected === 'active'}
@@ -62,7 +84,10 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
             isSelected={selected === key}
             onPress={() => handleSelection(key)}
             renderIcon={() => (
-              <Image source={chainConfig[key].chainIcon} style={styles.chainIcon} />
+              <Image
+                source={chainConfig[key].chainIcon}
+                style={styles.chainIcon}
+              />
             )}
           />
         ))}
@@ -71,32 +96,45 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
   );
 }
 
-function ChainPill({ label, isSelected, onPress, renderIcon }: { 
-  label: string; 
-  isSelected: boolean; 
-  onPress: () => void; 
-  renderIcon?: () => React.ReactNode 
+function ChainPill({
+  label,
+  isSelected,
+  onPress,
+  renderIcon,
+}: {
+  label: string;
+  isSelected: boolean;
+  onPress: () => void;
+  renderIcon?: () => React.ReactNode;
 }) {
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity 
-      onPress={onPress} 
-      activeOpacity={0.7} 
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.7}
       style={[
-        styles.pill, 
-        { 
-          backgroundColor: isSelected ? colors.pillSelectedBackground : colors.pillBackground,
-          borderColor: isSelected ? colors.pillSelectedBackground : colors.border
-        }
+        styles.pill,
+        {
+          backgroundColor: isSelected
+            ? colors.pillSelectedBackground
+            : colors.pillBackground,
+          borderColor: isSelected
+            ? colors.pillSelectedBackground
+            : colors.border,
+        },
       ]}
     >
       <View style={styles.pillContent}>
         {renderIcon && renderIcon()}
-        <Text style={[
-          styles.pillText, 
-          { color: isSelected ? colors.pillSelectedText : colors.text }
-        ]}>{label}</Text>
+        <Text
+          style={[
+            styles.pillText,
+            { color: isSelected ? colors.pillSelectedText : colors.text },
+          ]}
+        >
+          {label}
+        </Text>
       </View>
     </TouchableOpacity>
   );

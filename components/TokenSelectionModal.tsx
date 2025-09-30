@@ -1,15 +1,31 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView, Modal } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ScrollView,
+  Modal,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useTheme, spacing, typography, radius } from '../theme';
 import TokenBalance from './TokenBalance';
-import { AllTokenBalances, getTokensWithBalances, TokenItem } from '../utils/balanceUtils';
+import {
+  AllTokenBalances,
+  getTokensWithBalances,
+  TokenItem,
+} from '../utils/balanceUtils';
 import { ChainKey, TokenKey } from '../config/chain';
 
 export type TokenSelectionModalProps = {
   visible: boolean;
   onClose: () => void;
-  onTokenSelect: (chainKey: ChainKey, tokenKey: TokenKey, balance: number, symbol: string) => void;
+  onTokenSelect: (
+    chainKey: ChainKey,
+    tokenKey: TokenKey,
+    balance: number,
+    symbol: string,
+  ) => void;
   balances: AllTokenBalances;
   currentToken?: {
     chainKey: ChainKey;
@@ -17,13 +33,12 @@ export type TokenSelectionModalProps = {
   };
 };
 
-
-export default function TokenSelectionModal({ 
-  visible, 
-  onClose, 
-  onTokenSelect, 
-  balances, 
-  currentToken 
+export default function TokenSelectionModal({
+  visible,
+  onClose,
+  onTokenSelect,
+  balances,
+  currentToken,
 }: TokenSelectionModalProps) {
   const { colors, themeMode } = useTheme();
   const [localCurrentToken, setLocalCurrentToken] = useState(currentToken);
@@ -46,9 +61,11 @@ export default function TokenSelectionModal({
   };
 
   const isCurrentToken = (token: TokenItem) => {
-    return localCurrentToken && 
-           localCurrentToken.chainKey === token.chainKey && 
-           localCurrentToken.tokenKey === token.tokenKey;
+    return (
+      localCurrentToken &&
+      localCurrentToken.chainKey === token.chainKey &&
+      localCurrentToken.tokenKey === token.tokenKey
+    );
   };
 
   return (
@@ -58,13 +75,24 @@ export default function TokenSelectionModal({
       transparent={true}
       onRequestClose={onClose}
     >
-      <TouchableOpacity 
-        style={[styles.overlay, { backgroundColor: themeMode === 'dark' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.5)' }]}
+      <TouchableOpacity
+        style={[
+          styles.overlay,
+          {
+            backgroundColor:
+              themeMode === 'dark'
+                ? 'rgba(0, 0, 0, 0.8)'
+                : 'rgba(0, 0, 0, 0.5)',
+          },
+        ]}
         activeOpacity={1}
         onPress={onClose}
       >
-        <TouchableOpacity 
-          style={[styles.modalContainer, { backgroundColor: colors.background, shadowColor: colors.shadow }]}
+        <TouchableOpacity
+          style={[
+            styles.modalContainer,
+            { backgroundColor: colors.background, shadowColor: colors.shadow },
+          ]}
           activeOpacity={1}
           onPress={(e) => e.stopPropagation()}
         >
@@ -77,19 +105,29 @@ export default function TokenSelectionModal({
               onPress={onClose}
               activeOpacity={0.7}
             >
-              <MaterialIcons name="close" size={24} color={colors.textSecondary} />
+              <MaterialIcons
+                name="close"
+                size={24}
+                color={colors.textSecondary}
+              />
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.tokenList} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.tokenList}
+            showsVerticalScrollIndicator={false}
+          >
             {availableTokens.map((token) => (
               <TouchableOpacity
                 key={`${token.chainKey}-${token.tokenKey}`}
                 style={[
                   styles.tokenRow,
-                  isCurrentToken(token) && { 
-                    backgroundColor: themeMode === 'dark' ? colors.backgroundSecondary : colors.primaryLight 
-                  }
+                  isCurrentToken(token) && {
+                    backgroundColor:
+                      themeMode === 'dark'
+                        ? colors.backgroundSecondary
+                        : colors.primaryLight,
+                  },
                 ]}
                 onPress={() => handleTokenSelect(token)}
                 activeOpacity={0.7}
@@ -103,8 +141,18 @@ export default function TokenSelectionModal({
                   />
                 </View>
                 {isCurrentToken(token) && (
-                  <View style={[styles.selectedIndicator, { backgroundColor: colors.primary }]}>
-                    <Text style={[styles.selectedText, { color: colors.background }]}>
+                  <View
+                    style={[
+                      styles.selectedIndicator,
+                      { backgroundColor: colors.primary },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.selectedText,
+                        { color: colors.background },
+                      ]}
+                    >
                       ✓
                     </Text>
                   </View>

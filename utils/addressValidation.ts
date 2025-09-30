@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
  */
 export const isValidENSName = (name: string): boolean => {
   if (!name.includes('.eth') || name.startsWith('0x')) return false;
-  
+
   try {
     return ethers.utils.isValidName(name);
   } catch (error) {
@@ -18,15 +18,15 @@ export const isValidENSName = (name: string): boolean => {
  */
 export const isValidAddressOrENS = (value: string): boolean => {
   if (!value.trim()) return false;
-  
+
   // If it's a valid address, return true
   if (ethers.utils.isAddress(value)) return true;
-  
+
   // If it's a valid ENS name format
   if (isValidENSName(value)) {
     return true;
   }
-  
+
   return false;
 };
 

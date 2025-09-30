@@ -9,26 +9,53 @@ import btcLogo from '../assets/btc-logo.png';
 import linkLogo from '../assets/link-logo.png';
 import EthIcon from '../components/EthIcon';
 
-export type ChainKey = 'Ethereum' | 'Polygon' | 'Optimism' | 'Arbitrum' | 'Sepolia';
+export type ChainKey =
+  | 'Ethereum'
+  | 'Polygon'
+  | 'Optimism'
+  | 'Arbitrum'
+  | 'Sepolia';
 
 // Union type for all possible token identifiers (native + ERC20 symbols)
-export type TokenKey = 'ETH' | 'POL' | 'USDT' | 'USDC' | 'WBTC' | 'OP' | 'ARB' | 'LINK';
+export type TokenKey =
+  | 'ETH'
+  | 'POL'
+  | 'USDT'
+  | 'USDC'
+  | 'WBTC'
+  | 'OP'
+  | 'ARB'
+  | 'LINK';
 
 // Helper functions to determine token type
-export const isNativeAsset = (chainKey: ChainKey, tokenKey: TokenKey): boolean => {
+export const isNativeAsset = (
+  chainKey: ChainKey,
+  tokenKey: TokenKey,
+): boolean => {
   const nativeSymbol = chainConfig[chainKey].symbol;
   return tokenKey === nativeSymbol;
 };
 
-export const isErc20Asset = (chainKey: ChainKey, tokenKey: TokenKey): boolean => {
+export const isErc20Asset = (
+  chainKey: ChainKey,
+  tokenKey: TokenKey,
+): boolean => {
   const nativeSymbol = chainConfig[chainKey].symbol;
-  return tokenKey !== nativeSymbol && chainConfig[chainKey].supportedErc20s.some(token => token.symbol === tokenKey);
+  return (
+    tokenKey !== nativeSymbol &&
+    chainConfig[chainKey].supportedErc20s.some(
+      (token) => token.symbol === tokenKey,
+    )
+  );
 };
 
 // Get all supported tokens for a chain (native + ERC20s)
 export const getSupportedTokens = (chainKey: ChainKey): string[] => {
   const nativeSymbol = chainConfig[chainKey].symbol;
-  return [nativeSymbol, ...chainConfig[chainKey].supportedErc20s.map(token => token.symbol)];
+  return [
+    nativeSymbol,
+    ...chainConfig[chainKey].supportedErc20s.map((token) => token.symbol),
+  ];
 };
 
 // Get supported ERC20 tokens for a chain
@@ -37,8 +64,13 @@ export const getSupportedErc20s = (chainKey: ChainKey): TokenConfig[] => {
 };
 
 // Get token configuration by symbol for a chain
-export const getTokenConfig = (chainKey: ChainKey, symbol: string): TokenConfig | null => {
-  const token = chainConfig[chainKey].supportedErc20s.find(t => t.symbol === symbol);
+export const getTokenConfig = (
+  chainKey: ChainKey,
+  symbol: string,
+): TokenConfig | null => {
+  const token = chainConfig[chainKey].supportedErc20s.find(
+    (t) => t.symbol === symbol,
+  );
   return token || null;
 };
 
@@ -55,20 +87,23 @@ export type TokenConfig = {
 
 export type ChainTokenConfig = Partial<Record<TokenKey, TokenConfig>>;
 
-export const chainConfig: Record<ChainKey, { 
-  name: string; 
-  nativeTokenDisplay: string; 
-  rpcUrl: string; 
-  symbol: string; 
-  chainIcon: any; 
-  explorerUrl: string;
-  chainId: number;
-  nativeTokenIcon: {
-    baseIcon: any;
-    overlayIcon?: any;
-  };
-  supportedErc20s: TokenConfig[];
-}> = {
+export const chainConfig: Record<
+  ChainKey,
+  {
+    name: string;
+    nativeTokenDisplay: string;
+    rpcUrl: string;
+    symbol: string;
+    chainIcon: any;
+    explorerUrl: string;
+    chainId: number;
+    nativeTokenIcon: {
+      baseIcon: any;
+      overlayIcon?: any;
+    };
+    supportedErc20s: TokenConfig[];
+  }
+> = {
   Ethereum: {
     name: 'Ethereum',
     nativeTokenDisplay: 'ETH',
@@ -296,7 +331,13 @@ export const chainConfig: Record<ChainKey, {
   },
 };
 
-export const chainOrder: ChainKey[] = ['Ethereum', 'Optimism', 'Arbitrum', 'Polygon', 'Sepolia'];
+export const chainOrder: ChainKey[] = [
+  'Ethereum',
+  'Optimism',
+  'Arbitrum',
+  'Polygon',
+  'Sepolia',
+];
 
 // Token configurations for each chain
 export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
@@ -463,4 +504,4 @@ export const tokenConfig: Record<ChainKey, ChainTokenConfig> = {
       },
     },
   },
-}; 
+};

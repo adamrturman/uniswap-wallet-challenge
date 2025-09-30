@@ -27,7 +27,10 @@ export default function Input({
   multiline = false,
   minHeight,
   maxHeight,
-  keyboardType = Platform.select({ ios: 'default', android: 'visible-password' }),
+  keyboardType = Platform.select({
+    ios: 'default',
+    android: 'visible-password',
+  }),
   returnKeyType = 'done',
   autoCapitalize = 'none',
   autoCorrect = false,
@@ -41,12 +44,12 @@ export default function Input({
   const containerStyle = [
     styles.container,
     {
-      borderColor: showError 
-        ? colors.error 
-        : isFocused 
-          ? colors.primary 
+      borderColor: showError
+        ? colors.error
+        : isFocused
+          ? colors.primary
           : colors.border,
-    }
+    },
   ];
 
   const inputStyle = [
@@ -59,17 +62,20 @@ export default function Input({
         maxHeight: maxHeight || 200,
         flex: 1,
       }),
-    }
+    },
   ];
 
   return (
     <View style={styles.wrapper}>
       <View style={containerStyle}>
         <TextInput
-          style={[inputStyle, {
-            borderWidth: 0,
-            borderColor: 'transparent'
-          }]}
+          style={[
+            inputStyle,
+            {
+              borderWidth: 0,
+              borderColor: 'transparent',
+            },
+          ]}
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
           value={value}
@@ -84,11 +90,16 @@ export default function Input({
           returnKeyType={returnKeyType}
         />
       </View>
-       {/* This space is intentionally left blank to preserve layout white space */}
-      <Text style={[styles.errorText, { 
-        color: showError ? colors.error : 'transparent',
-        minHeight: showError ? undefined : typography.sizes.sm + spacing.xs
-      }]}>
+      {/* This space is intentionally left blank to preserve layout white space */}
+      <Text
+        style={[
+          styles.errorText,
+          {
+            color: showError ? colors.error : 'transparent',
+            minHeight: showError ? undefined : typography.sizes.sm + spacing.xs,
+          },
+        ]}
+      >
         {showError ? errorMessage : ' '}
       </Text>
     </View>

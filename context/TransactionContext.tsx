@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useRef, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  ReactNode,
+} from 'react';
 import { TransactionStatus } from '../components/TransactionModal';
 
 type TransactionParams = {
@@ -25,20 +31,32 @@ interface TransactionContextType {
   setApproveTransaction: (callback: (() => Promise<void>) | undefined) => void;
 }
 
-const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
+const TransactionContext = createContext<TransactionContextType | undefined>(
+  undefined,
+);
 
 export function TransactionProvider({ children }: { children: ReactNode }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>('pending');
+  const [transactionStatus, setTransactionStatus] =
+    useState<TransactionStatus>('pending');
   const [transactionHash, setTransactionHash] = useState<string | undefined>();
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [chainKey, setChainKey] = useState<string | undefined>();
   const [transactionData, setTransactionData] = useState<any>(undefined);
-  const [onApprove, setOnApproveState] = useState<(() => void) | undefined>(undefined);
-  const approveTransactionRef = useRef<(() => Promise<void>) | undefined>(undefined);
-  
+  const [onApprove, setOnApproveState] = useState<(() => void) | undefined>(
+    undefined,
+  );
+  const approveTransactionRef = useRef<(() => Promise<void>) | undefined>(
+    undefined,
+  );
 
-  const showTransactionModal = ({ status, hash, error, chainKey, transactionData }: TransactionParams) => {
+  const showTransactionModal = ({
+    status,
+    hash,
+    error,
+    chainKey,
+    transactionData,
+  }: TransactionParams) => {
     setTransactionStatus(status);
     setTransactionHash(hash);
     setErrorMessage(error);
@@ -61,7 +79,13 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     }, 300);
   };
 
-  const updateTransactionStatus = ({ status, hash, error, chainKey, transactionData }: TransactionParams) => {
+  const updateTransactionStatus = ({
+    status,
+    hash,
+    error,
+    chainKey,
+    transactionData,
+  }: TransactionParams) => {
     setTransactionStatus(status);
     if (hash) setTransactionHash(hash);
     if (error) setErrorMessage(error);
@@ -74,7 +98,9 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
     setOnApproveState(callback);
   };
 
-  const setApproveTransaction = (callback: (() => Promise<void>) | undefined) => {
+  const setApproveTransaction = (
+    callback: (() => Promise<void>) | undefined,
+  ) => {
     approveTransactionRef.current = callback;
   };
 

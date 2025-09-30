@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import uniswapLogo from "../assets/Uniswap_icon_pink.png";
+import uniswapLogo from '../assets/Uniswap_icon_pink.png';
 import { useTheme, spacing, radius } from '../theme';
 import { NavigationType } from '../types';
 import Button from './Button';
@@ -10,38 +10,56 @@ import ScreenWrapper from './ScreenWrapper';
 export default function Landing() {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
-  
+
   return (
     <ScreenWrapper disableBackButton={true}>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.content}>
           <View style={styles.logoWrapper}>
-          <View style={[styles.logoContainer, { backgroundColor: colors.primaryLightDark, padding: spacing.xl, shadowColor: colors.shadow }]}>
-            <Image
-              source={uniswapLogo}
-              style={{ width: spacing.xxxl * 3, height: spacing.xxxl * 3, resizeMode: 'contain' }}
-            />
+            <View
+              style={[
+                styles.logoContainer,
+                {
+                  backgroundColor: colors.primaryLightDark,
+                  padding: spacing.xl,
+                  shadowColor: colors.shadow,
+                },
+              ]}
+            >
+              <Image
+                source={uniswapLogo}
+                style={{
+                  width: spacing.xxxl * 3,
+                  height: spacing.xxxl * 3,
+                  resizeMode: 'contain',
+                }}
+              />
+            </View>
           </View>
-        </View>
 
-        <View style={[styles.actions, { 
-          gap: spacing.lg, 
-          paddingBottom: spacing.xl * 2, 
-          paddingTop: spacing.xl 
-        }]}>
-          <Button 
-            title="Import a wallet"
-            onPress={() => navigation.navigate('EnterRecoveryPhrase')}
-            variant="primary"
-            fullWidth
-          />
+          <View
+            style={[
+              styles.actions,
+              {
+                gap: spacing.lg,
+                paddingBottom: spacing.xl * 2,
+                paddingTop: spacing.xl,
+              },
+            ]}
+          >
+            <Button
+              title="Import a wallet"
+              onPress={() => navigation.navigate('EnterRecoveryPhrase')}
+              variant="primary"
+              fullWidth
+            />
 
-          <Button 
-            title="Watch an address"
-            onPress={() => navigation.navigate('EnterWatchAddress')}
-            variant="secondary"
-            fullWidth
-          />
+            <Button
+              title="Watch an address"
+              onPress={() => navigation.navigate('EnterWatchAddress')}
+              variant="secondary"
+              fullWidth
+            />
           </View>
         </View>
       </View>
@@ -79,4 +97,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
   },
-}); 
+});

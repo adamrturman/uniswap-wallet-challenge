@@ -1,11 +1,24 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, { useMemo, useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import * as Clipboard from 'expo-clipboard';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { ChainKey, chainOrder, TokenKey, chainConfig, tokenConfig } from '../config/chain';
-import { useTheme, spacing, typography, radius } from '../theme';
+import {
+  ChainKey,
+  chainOrder,
+  TokenKey,
+  chainConfig,
+  tokenConfig,
+} from '../config/chain';
+import { useTheme, spacing, typography } from '../theme';
 import { NavigationType } from '../types';
 import { truncateAddress } from '../utils/addressUtils';
 import Button from './Button';
@@ -13,7 +26,11 @@ import Header from './Header';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
 import ScreenWrapper from './ScreenWrapper';
-import { AllTokenBalances, getTokensWithBalances, BalanceLoadingState } from '../utils/balanceUtils';
+import {
+  AllTokenBalances,
+  getTokensWithBalances,
+  BalanceLoadingState,
+} from '../utils/balanceUtils';
 import { usePrice } from '../context/PriceContext';
 
 export type PortfolioProps = {
@@ -23,8 +40,12 @@ export type PortfolioProps = {
   onLogout?: () => void;
 };
 
-
-export default function Portfolio({ address, balances, wallet, onLogout }: PortfolioProps) {
+export default function Portfolio({
+  address,
+  balances,
+  wallet,
+  onLogout,
+}: PortfolioProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const { getTokenUsdValue } = usePrice();
@@ -56,8 +77,6 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
     }
   };
 
-
-
   const orderedKeys = useMemo(() => chainOrder, []);
 
   // Create a list of all tokens (native + ERC-20) with their balance states
@@ -77,8 +96,8 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
     // Handle active balances filtering
     if (selected === 'active') {
       const activeTokens = getTokensWithBalances(balances);
-      
-      const mappedTokens = activeTokens.map(token => {
+
+      const mappedTokens = activeTokens.map((token) => {
         const usdValue = getTokenUsdValue(token.symbol, token.balance);
         return {
           chainKey: token.chainKey,
@@ -95,15 +114,19 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
 
       // Apply USD sorting to active tokens if enabled
       if (sortByUsd) {
-        return [...mappedTokens].sort((a, b) => (b.usdValue || 0) - (a.usdValue || 0));
+        return [...mappedTokens].sort(
+          (a, b) => (b.usdValue || 0) - (a.usdValue || 0),
+        );
       }
 
       return mappedTokens;
     }
 
-    const keys = selected === 'all' ? orderedKeys : orderedKeys.filter((k) => k === selected);
-    
-    
+    const keys =
+      selected === 'all'
+        ? orderedKeys
+        : orderedKeys.filter((k) => k === selected);
+
     keys.forEach((chainKey) => {
       const chainBalances = balances[chainKey];
       if (!chainBalances) return;
@@ -113,7 +136,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       // Add native token (always show, regardless of balance)
       const nativeBalance = chainBalances.native?.value || 0;
       const nativeUsdValue = getTokenUsdValue(config.symbol, nativeBalance);
-      
+
       tokens.push({
         chainKey,
         tokenKey: config.symbol as TokenKey,
@@ -129,16 +152,18 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       // Add ERC-20 tokens (show all, regardless of balance)
       if (chainBalances.tokens) {
         // Get available tokens for this chain
-        const availableTokens = Object.keys(tokenConfig[chainKey]) as TokenKey[];
+        const availableTokens = Object.keys(
+          tokenConfig[chainKey],
+        ) as TokenKey[];
         const tokenKeys: TokenKey[] = availableTokens;
-        
+
         tokenKeys.forEach((tokenKey) => {
           const tokenBalance = chainBalances.tokens[tokenKey];
           const token = tokenConfig[chainKey][tokenKey];
           if (token) {
             const balance = tokenBalance?.value || 0;
             const usdValue = getTokenUsdValue(token.symbol, balance);
-            
+
             tokens.push({
               chainKey,
               tokenKey,
@@ -164,11 +189,10 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
   }, [orderedKeys, selected, balances, sortByUsd, getTokenUsdValue]);
 
   return (
-    <ScreenWrapper 
+    <ScreenWrapper
       showLogoutButton={!!(wallet && onLogout)}
       onLogout={onLogout}
     >
-
       <View style={styles.addressCard}>
         <Header
           icon="wallet"
@@ -183,7 +207,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
                 activeOpacity={0.7}
               >
                 <FontAwesome6
-                  name={copySuccess ? "circle-check" : "copy"}
+                  name={copySuccess ? 'circle-check' : 'copy'}
                   size={12}
                   color={copySuccess ? colors.success : colors.textSecondary}
                 />
@@ -193,10 +217,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
         />
       </View>
 
-      <ChainSelectorGroup
-        selected={selected}
-        onSelectionChange={setSelected}
-      />
+      <ChainSelectorGroup selected={selected} onSelectionChange={setSelected} />
 
       <View style={styles.sortContainer}>
         <TouchableOpacity
@@ -204,10 +225,9 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
           onPress={() => setSortByUsd(!sortByUsd)}
           activeOpacity={0.7}
         >
-          <Text style={[
-            styles.sortButtonText,
-            { color: colors.textSecondary }
-          ]}>
+          <Text
+            style={[styles.sortButtonText, { color: colors.textSecondary }]}
+          >
             {'USD Value ' + (sortByUsd ? '↑' : '↓')}
           </Text>
         </TouchableOpacity>
@@ -227,11 +247,13 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
 
       {/* Send button - only show if wallet is available */}
       {wallet && (
-        <View style={{ 
-          paddingHorizontal: spacing.xl, 
-          paddingBottom: spacing.xl * 2, 
-          paddingTop: spacing.xl 
-        }}>
+        <View
+          style={{
+            paddingHorizontal: spacing.xl,
+            paddingBottom: spacing.xl * 2,
+            paddingTop: spacing.xl,
+          }}
+        >
           <Button
             title="Send"
             onPress={handleSendTransaction}
@@ -243,7 +265,6 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
     </ScreenWrapper>
   );
 }
-
 
 const styles = StyleSheet.create({
   addressCard: {
@@ -285,5 +306,4 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.xs,
     fontWeight: typography.weights.normal,
   },
-
 });

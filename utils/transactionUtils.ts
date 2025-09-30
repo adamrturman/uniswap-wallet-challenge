@@ -1,5 +1,4 @@
 import { ethers } from 'ethers';
-import { chainConfig } from '../config/chain';
 
 export interface TransactionResult {
   success: boolean;
@@ -33,21 +32,21 @@ export async function estimateGasForTransaction(
   provider: ethers.providers.JsonRpcProvider,
   fromAddress: string,
   toAddress: string,
-  amount: string
+  amount: string,
 ): Promise<GasEstimate> {
   try {
     const amountInWei = ethers.utils.parseEther(amount);
-    
+
     // Estimate gas for the transaction
     const gasEstimate = await provider.estimateGas({
       to: toAddress,
       value: amountInWei,
       from: fromAddress,
     });
-    
+
     // Get fee data
     const feeData = await provider.getFeeData();
-    
+
     // Use EIP-1559 if available, otherwise fall back to legacy gas pricing
     if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
       const networkFee = gasEstimate.mul(feeData.maxFeePerGas);
@@ -79,21 +78,21 @@ export async function sendNativeTransaction(
   toAddress: string,
   amount: string,
   rpcUrl: string,
-  gasEstimate?: GasEstimate
+  gasEstimate?: GasEstimate,
 ): Promise<TransactionResult> {
   try {
     // Create a provider for the specified network
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-    
+
     // Connect the wallet to the provider
     const connectedWallet = wallet.connect(provider);
-    
+
     // Convert amount to wei
     const amountInWei = ethers.utils.parseEther(amount);
-    
+
     // Get current fee data for gas estimation
     const feeData = await provider.getFeeData();
-    
+
     // Use provided gas estimate or estimate fresh
     let gasLimit: ethers.BigNumber;
     if (gasEstimate) {
@@ -105,14 +104,14 @@ export async function sendNativeTransaction(
         from: wallet.address,
       });
     }
-    
+
     // Create the transaction object with EIP-1559 support
     const transaction: any = {
       to: toAddress,
       value: amountInWei,
       gasLimit: gasLimit,
     };
-    
+
     // Use EIP-1559 if available, otherwise use legacy gas pricing
     if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
       transaction.maxFeePerGas = feeData.maxFeePerGas;
@@ -123,13 +122,13 @@ export async function sendNativeTransaction(
     } else {
       throw new Error('Unable to get fee data from network');
     }
-    
+
     // Send the transaction
     const txResponse = await connectedWallet.sendTransaction(transaction);
-    
+
     // Wait for the transaction to be mined
     const receipt = await txResponse.wait();
-    
+
     return {
       success: true,
       hash: receipt?.transactionHash || txResponse.hash,
@@ -157,17 +156,21 @@ const ERC20_ABI = [
 export async function getERC20TokenInfo(
   provider: ethers.providers.JsonRpcProvider,
   tokenAddress: string,
-  walletAddress: string
+  walletAddress: string,
 ): Promise<ERC20TokenInfo> {
   try {
-    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-    
+    const tokenContract = new ethers.Contract(
+      tokenAddress,
+      ERC20_ABI,
+      provider,
+    );
+
     const [symbol, decimals, balance] = await Promise.all([
       tokenContract.symbol(),
       tokenContract.decimals(),
       tokenContract.balanceOf(walletAddress),
     ]);
-    
+
     return {
       address: tokenAddress,
       symbol,
@@ -183,10 +186,14 @@ export async function getERC20TokenInfo(
 export async function getERC20TokenBalance(
   provider: ethers.providers.JsonRpcProvider,
   tokenAddress: string,
-  walletAddress: string
+  walletAddress: string,
 ): Promise<string> {
   try {
-    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+    const tokenContract = new ethers.Contract(
+      tokenAddress,
+      ERC20_ABI,
+      provider,
+    );
     const balance = await tokenContract.balanceOf(walletAddress);
     const decimals = await tokenContract.decimals();
     return ethers.utils.formatUnits(balance, decimals);
@@ -200,11 +207,18 @@ export async function checkERC20Allowance(
   provider: ethers.providers.JsonRpcProvider,
   tokenAddress: string,
   ownerAddress: string,
-  spenderAddress: string
+  spenderAddress: string,
 ): Promise<string> {
   try {
-    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-    const allowance = await tokenContract.allowance(ownerAddress, spenderAddress);
+    const tokenContract = new ethers.Contract(
+      tokenAddress,
+      ERC20_ABI,
+      provider,
+    );
+    const allowance = await tokenContract.allowance(
+      ownerAddress,
+      spenderAddress,
+    );
     const decimals = await tokenContract.decimals();
     return ethers.utils.formatUnits(allowance, decimals);
   } catch (error) {
@@ -219,24 +233,28 @@ export async function approveERC20Token(
   spenderAddress: string,
   amount: string,
   rpcUrl: string,
-  decimals?: number
+  decimals?: number,
 ): Promise<TransactionResult> {
   try {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
     const connectedWallet = wallet.connect(provider);
-    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, connectedWallet);
-    
+    const tokenContract = new ethers.Contract(
+      tokenAddress,
+      ERC20_ABI,
+      connectedWallet,
+    );
+
     // Get token decimals if not provided
     let tokenDecimals = decimals;
     if (!tokenDecimals) {
       tokenDecimals = await tokenContract.decimals();
     }
-    
+
     const amountInWei = ethers.utils.parseUnits(amount, tokenDecimals);
-    
+
     const tx = await tokenContract.approve(spenderAddress, amountInWei);
     const receipt = await tx.wait();
-    
+
     return {
       success: true,
       hash: receipt?.transactionHash || tx.hash,
@@ -254,40 +272,54 @@ export async function sendERC20Transaction(
   wallet: ethers.Wallet,
   transferParams: ERC20TransferParams,
   rpcUrl: string,
-  gasEstimate?: GasEstimate
+  gasEstimate?: GasEstimate,
 ): Promise<TransactionResult> {
   try {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
     const connectedWallet = wallet.connect(provider);
-    const tokenContract = new ethers.Contract(transferParams.tokenAddress, ERC20_ABI, connectedWallet);
-    
+    const tokenContract = new ethers.Contract(
+      transferParams.tokenAddress,
+      ERC20_ABI,
+      connectedWallet,
+    );
+
     // Get token decimals if not provided
     let tokenDecimals = transferParams.decimals;
     if (!tokenDecimals) {
       tokenDecimals = await tokenContract.decimals();
     }
-    
-    const amountInWei = ethers.utils.parseUnits(transferParams.amount, tokenDecimals);
-    
+
+    const amountInWei = ethers.utils.parseUnits(
+      transferParams.amount,
+      tokenDecimals,
+    );
+
     // Prepare transaction options with gas settings
     const txOptions: any = {};
-    
+
     if (gasEstimate) {
       txOptions.gasLimit = gasEstimate.gasLimit;
-      
+
       // Use EIP-1559 if available
       if (gasEstimate.maxFeePerGas && gasEstimate.maxPriorityFeePerGas) {
         txOptions.maxFeePerGas = gasEstimate.maxFeePerGas;
         txOptions.maxPriorityFeePerGas = gasEstimate.maxPriorityFeePerGas;
         txOptions.type = 2; // EIP-1559 transaction type
       } else if (gasEstimate.gasPrice) {
-        txOptions.gasPrice = ethers.utils.parseUnits(gasEstimate.gasPrice, 'gwei');
+        txOptions.gasPrice = ethers.utils.parseUnits(
+          gasEstimate.gasPrice,
+          'gwei',
+        );
       }
     }
-    
-    const tx = await tokenContract.transfer(transferParams.toAddress, amountInWei, txOptions);
+
+    const tx = await tokenContract.transfer(
+      transferParams.toAddress,
+      amountInWei,
+      txOptions,
+    );
     const receipt = await tx.wait();
-    
+
     return {
       success: true,
       hash: receipt?.transactionHash || tx.hash,
@@ -307,27 +339,35 @@ export async function estimateGasForERC20Transfer(
   fromAddress: string,
   toAddress: string,
   amount: string,
-  decimals?: number
+  decimals?: number,
 ): Promise<GasEstimate> {
   try {
-    const tokenContract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-    
+    const tokenContract = new ethers.Contract(
+      tokenAddress,
+      ERC20_ABI,
+      provider,
+    );
+
     // Get token decimals if not provided
     let tokenDecimals = decimals;
     if (!tokenDecimals) {
       tokenDecimals = await tokenContract.decimals();
     }
-    
+
     const amountInWei = ethers.utils.parseUnits(amount, tokenDecimals);
-    
+
     // Estimate gas for the transfer
-    const gasEstimate = await tokenContract.estimateGas.transfer(toAddress, amountInWei, {
-      from: fromAddress,
-    });
-    
+    const gasEstimate = await tokenContract.estimateGas.transfer(
+      toAddress,
+      amountInWei,
+      {
+        from: fromAddress,
+      },
+    );
+
     // Get fee data
     const feeData = await provider.getFeeData();
-    
+
     // Use EIP-1559 if available, otherwise fall back to legacy gas pricing
     if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
       const networkFee = gasEstimate.mul(feeData.maxFeePerGas);

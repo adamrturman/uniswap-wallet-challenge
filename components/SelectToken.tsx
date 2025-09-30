@@ -1,5 +1,11 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ScrollView,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import { ChainKey, TokenKey } from '../config/chain';
@@ -8,18 +14,32 @@ import { NavigationType } from '../types';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
 import TokenBalance from './TokenBalance';
-import { AllTokenBalances, getTokensWithBalances, TokenItem } from '../utils/balanceUtils';
+import {
+  AllTokenBalances,
+  getTokensWithBalances,
+  TokenItem,
+} from '../utils/balanceUtils';
 
 export type SelectTokenProps = {
   address: string;
   balances: AllTokenBalances;
   wallet?: Wallet | null;
-  onTokenSelect?: (chainKey: ChainKey, tokenKey: TokenKey, balance: number, symbol: string) => void;
+  onTokenSelect?: (
+    chainKey: ChainKey,
+    tokenKey: TokenKey,
+    balance: number,
+    symbol: string,
+  ) => void;
   onLogout?: () => void;
 };
 
-
-export default function SelectToken({ address, balances, wallet, onTokenSelect, onLogout }: SelectTokenProps) {
+export default function SelectToken({
+  address,
+  balances,
+  wallet,
+  onTokenSelect,
+  onLogout,
+}: SelectTokenProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
 
@@ -29,16 +49,20 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
   }, [balances]);
 
   const handleTokenSelect = (token: TokenItem) => {
-    onTokenSelect?.(token.chainKey, token.tokenKey, token.balance, token.symbol);
+    onTokenSelect?.(
+      token.chainKey,
+      token.tokenKey,
+      token.balance,
+      token.symbol,
+    );
     navigation.navigate('EnterAmountToSend');
   };
 
   return (
-    <ScreenWrapper 
+    <ScreenWrapper
       showLogoutButton={!!(wallet && onLogout)}
       onLogout={onLogout}
     >
-
       <View style={styles.content}>
         <Header
           icon="coins"
@@ -49,7 +73,10 @@ export default function SelectToken({ address, balances, wallet, onTokenSelect, 
           }
         />
 
-        <ScrollView style={styles.tokenList} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.tokenList}
+          showsVerticalScrollIndicator={false}
+        >
           {availableTokens.map((token) => (
             <TouchableOpacity
               key={`${token.chainKey}-${token.tokenKey}`}

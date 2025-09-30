@@ -11,26 +11,24 @@ type ScreenWrapperProps = {
   onLogout?: () => void;
 };
 
-export default function ScreenWrapper({ 
-  children, 
-  showLogoutButton = false, 
+export default function ScreenWrapper({
+  children,
+  showLogoutButton = false,
   showBackButton = true,
   disableBackButton = false,
-  onLogout 
+  onLogout,
 }: ScreenWrapperProps) {
   const { colors } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <AppHeader 
+      <AppHeader
         showLogoutButton={showLogoutButton}
         showBackButton={showBackButton}
         disableBackButton={disableBackButton}
         onLogout={onLogout}
       />
-      <View style={styles.content}>
-        {children}
-      </View>
+      <View style={styles.content}>{children}</View>
     </View>
   );
 }

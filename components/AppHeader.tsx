@@ -14,11 +14,11 @@ type AppHeaderProps = {
   onLogout?: () => void;
 };
 
-export default function AppHeader({ 
-  showLogoutButton = false, 
+export default function AppHeader({
+  showLogoutButton = false,
   showBackButton = true,
   disableBackButton = false,
-  onLogout 
+  onLogout,
 }: AppHeaderProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
@@ -27,17 +27,15 @@ export default function AppHeader({
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.leftSection}>
         {showBackButton && (
-          <BackButton 
-            onPress={() => navigation.goBack()} 
+          <BackButton
+            onPress={() => navigation.goBack()}
             disabled={disableBackButton}
           />
         )}
       </View>
-      
+
       <View style={styles.rightSection}>
-        {showLogoutButton && onLogout && (
-          <LogoutButton onPress={onLogout} />
-        )}
+        {showLogoutButton && onLogout && <LogoutButton onPress={onLogout} />}
         <ThemeToggle />
       </View>
     </View>

@@ -25,24 +25,18 @@ const ThemeToggle = memo(function ThemeToggle({ onPress }: ThemeToggleProps) {
   // Show empty div if icon name is not available
   if (!iconName) {
     return (
-      <TouchableOpacity
-        onPress={handlePress}
-        activeOpacity={0.7}
-      >
+      <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
         <View style={{ width: 24, height: 24 }} />
       </TouchableOpacity>
     );
   }
 
   return (
-    <TouchableOpacity
-      onPress={handlePress}
-      activeOpacity={0.7}
-    >
-      <MaterialCommunityIcons 
-        name={iconName} 
-        size={24} 
-        color={colors.primary} 
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
+      <MaterialCommunityIcons
+        name={iconName}
+        size={24}
+        color={colors.primary}
       />
     </TouchableOpacity>
   );

@@ -11,16 +11,8 @@ export default function LogoutButton({ onPress }: LogoutButtonProps) {
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <MaterialCommunityIcons 
-        name="exit-run" 
-        size={24} 
-        color={colors.text} 
-      />
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <MaterialCommunityIcons name="exit-run" size={24} color={colors.text} />
     </TouchableOpacity>
   );
 }
-

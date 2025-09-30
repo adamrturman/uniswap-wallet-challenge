@@ -1,5 +1,15 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { formatPrice, calculateUsdValue, formatUsdValue } from '../utils/priceUtils';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
+import {
+  formatPrice,
+  calculateUsdValue,
+  formatUsdValue,
+} from '../utils/priceUtils';
 
 export type TokenPrice = {
   symbol: string;
@@ -27,14 +37,14 @@ const PriceContext = createContext<PriceContextType | undefined>(undefined);
 
 // CoinGecko API mapping for tokens
 const COINGECKO_IDS: Record<string, string> = {
-  'ETH': 'ethereum',
-  'POL': 'matic-network',
-  'USDT': 'tether',
-  'USDC': 'usd-coin',
-  'WBTC': 'wrapped-bitcoin',
-  'OP': 'optimism',
-  'ARB': 'arbitrum',
-  'LINK': 'chainlink',
+  ETH: 'ethereum',
+  POL: 'matic-network',
+  USDT: 'tether',
+  USDC: 'usd-coin',
+  WBTC: 'wrapped-bitcoin',
+  OP: 'optimism',
+  ARB: 'arbitrum',
+  LINK: 'chainlink',
 };
 
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3/simple/price';
@@ -48,24 +58,24 @@ export function PriceProvider({ children }: { children: ReactNode }) {
   });
 
   const fetchPrices = async () => {
-    setPriceState(prev => ({ ...prev, isLoading: true, error: null }));
-    
+    setPriceState((prev) => ({ ...prev, isLoading: true, error: null }));
+
     try {
       const tokenIds = Object.values(COINGECKO_IDS).join(',');
       const response = await fetch(
-        `${COINGECKO_API_URL}?ids=${tokenIds}&vs_currencies=usd&include_last_updated_at=true`
+        `${COINGECKO_API_URL}?ids=${tokenIds}&vs_currencies=usd&include_last_updated_at=true`,
       );
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch prices: ${response.status}`);
       }
-      
+
       const data = await response.json();
       const now = Date.now();
-      
+
       // Transform the response to our format
       const prices: Record<string, TokenPrice> = {};
-      
+
       Object.entries(COINGECKO_IDS).forEach(([symbol, coingeckoId]) => {
         const tokenData = data[coingeckoId];
         if (tokenData && tokenData.usd) {
@@ -76,7 +86,7 @@ export function PriceProvider({ children }: { children: ReactNode }) {
           };
         }
       });
-      
+
       setPriceState({
         prices,
         isLoading: false,
@@ -85,10 +95,11 @@ export function PriceProvider({ children }: { children: ReactNode }) {
       });
     } catch (error) {
       console.error('Error fetching prices:', error);
-      setPriceState(prev => ({
+      setPriceState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch prices',
+        error:
+          error instanceof Error ? error.message : 'Failed to fetch prices',
       }));
     }
   };
@@ -101,21 +112,24 @@ export function PriceProvider({ children }: { children: ReactNode }) {
   const getTokenPriceFormatted = (symbol: string): string => {
     const price = getTokenPrice(symbol);
     if (price === null) return 'Price unavailable';
-    
+
     return formatPrice(price);
   };
 
   const getTokenUsdValue = (symbol: string, amount: number): number | null => {
     const price = getTokenPrice(symbol);
     if (price === null) return null;
-    
+
     return calculateUsdValue(amount, price);
   };
 
-  const getTokenUsdValueFormatted = (symbol: string, amount: number): string => {
+  const getTokenUsdValueFormatted = (
+    symbol: string,
+    amount: number,
+  ): string => {
     const usdValue = getTokenUsdValue(symbol, amount);
     if (usdValue === null) return 'Value unavailable';
-    
+
     return formatUsdValue(usdValue);
   };
 
@@ -126,10 +140,10 @@ export function PriceProvider({ children }: { children: ReactNode }) {
   // Fetch prices on mount and set up periodic refresh
   useEffect(() => {
     fetchPrices();
-    
+
     // Refresh prices every 5 minutes
     const interval = setInterval(fetchPrices, 5 * 60 * 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 

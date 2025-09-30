@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
+import { openExplorer } from '../utils/explorerUtils';
 import Button from './Button';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
@@ -14,6 +15,7 @@ type TransactionConfirmationProps = {
   tokenSymbol: string;
   recipientAddress: string;
   fromAddress: string;
+  chainKey: string;
 };
 
 export default function TransactionConfirmation({
@@ -22,13 +24,13 @@ export default function TransactionConfirmation({
   tokenSymbol,
   recipientAddress,
   fromAddress,
+  chainKey,
 }: TransactionConfirmationProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
 
-  const handleViewOnExplorer = () => {
-    // TODO: Open blockchain explorer with transaction hash
-    console.log('View transaction on explorer:', transactionHash);
+  const handleViewOnExplorer = async () => {
+    await openExplorer(transactionHash, chainKey);
   };
 
   const handleDone = () => {
@@ -47,35 +49,55 @@ export default function TransactionConfirmation({
           }
         />
 
-        <View style={[styles.transactionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <View
+          style={[
+            styles.transactionCard,
+            { backgroundColor: colors.surface, borderColor: colors.border },
+          ]}
+        >
           <View style={styles.transactionRow}>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>Amount</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>
+              Amount
+            </Text>
             <Text style={[styles.value, { color: colors.text }]}>
               {amount} {tokenSymbol}
             </Text>
           </View>
-          
+
           <View style={styles.transactionRow}>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>From</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>
+              From
+            </Text>
             <Text style={[styles.value, { color: colors.text }]}>
               {fromAddress.slice(0, 6)}...{fromAddress.slice(-4)}
             </Text>
           </View>
-          
+
           <View style={styles.transactionRow}>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>To</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>
+              To
+            </Text>
             <Text style={[styles.value, { color: colors.text }]}>
               {recipientAddress.slice(0, 6)}...{recipientAddress.slice(-4)}
             </Text>
           </View>
-          
+
           <View style={styles.transactionRow}>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>Transaction Hash</Text>
-            <TouchableOpacity onPress={handleViewOnExplorer} style={styles.hashContainer}>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>
+              Transaction Hash
+            </Text>
+            <TouchableOpacity
+              onPress={handleViewOnExplorer}
+              style={styles.hashContainer}
+            >
               <Text style={[styles.hashText, { color: colors.primary }]}>
                 {transactionHash.slice(0, 10)}...{transactionHash.slice(-8)}
               </Text>
-              <FontAwesome6 name="external-link-alt" size={12} color={colors.primary} />
+              <FontAwesome6
+                name="external-link-alt"
+                size={12}
+                color={colors.primary}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -88,17 +110,17 @@ export default function TransactionConfirmation({
         </View>
       </View>
 
-      <View style={[styles.footer, { 
-        paddingHorizontal: spacing.xl, 
-        paddingBottom: spacing.xl * 2, 
-        paddingTop: spacing.xl 
-      }]}>
-        <Button
-          title="Done"
-          onPress={handleDone}
-          variant="primary"
-          fullWidth
-        />
+      <View
+        style={[
+          styles.footer,
+          {
+            paddingHorizontal: spacing.xl,
+            paddingBottom: spacing.xl * 2,
+            paddingTop: spacing.xl,
+          },
+        ]}
+      >
+        <Button title="Done" onPress={handleDone} variant="primary" fullWidth />
       </View>
     </ScreenWrapper>
   );

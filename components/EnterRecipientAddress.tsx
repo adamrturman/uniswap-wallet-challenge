@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useNavigation } from '@react-navigation/native';
-import { Wallet, ethers } from 'ethers';
+import { Wallet } from 'ethers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, spacing, typography } from '../theme';
@@ -22,7 +30,11 @@ type EnterRecipientAddressProps = {
 const RECIPIENT_HISTORY_KEY = 'recipient_address_history';
 const MAX_HISTORY_ITEMS = 10;
 
-export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: EnterRecipientAddressProps) {
+export default function EnterRecipientAddress({
+  onContinue,
+  onLogout,
+  wallet,
+}: EnterRecipientAddressProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationType>();
   const [address, setAddress] = useState('');
@@ -43,32 +55,43 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
         setAddressHistory(JSON.parse(history));
       }
     } catch (error) {
-      console.log('Failed to load recipient address history:', error);
+      console.error('Failed to load recipient address history:', error);
     }
   };
 
   const saveAddressToHistory = async (newAddress: string) => {
     try {
       const trimmedAddress = newAddress.trim();
-      const updatedHistory = [trimmedAddress, ...addressHistory.filter(addr => addr !== trimmedAddress)].slice(0, MAX_HISTORY_ITEMS);
+      const updatedHistory = [
+        trimmedAddress,
+        ...addressHistory.filter((addr) => addr !== trimmedAddress),
+      ].slice(0, MAX_HISTORY_ITEMS);
       setAddressHistory(updatedHistory);
-      await AsyncStorage.setItem(RECIPIENT_HISTORY_KEY, JSON.stringify(updatedHistory));
+      await AsyncStorage.setItem(
+        RECIPIENT_HISTORY_KEY,
+        JSON.stringify(updatedHistory),
+      );
     } catch (error) {
-      console.log('Failed to save recipient address to history:', error);
+      console.error('Failed to save recipient address to history:', error);
     }
   };
 
   const removeAddressFromHistory = async (addressToRemove: string) => {
     try {
-      const updatedHistory = addressHistory.filter(addr => addr !== addressToRemove);
+      const updatedHistory = addressHistory.filter(
+        (addr) => addr !== addressToRemove,
+      );
       setAddressHistory(updatedHistory);
       if (updatedHistory.length === 0) {
         await AsyncStorage.removeItem(RECIPIENT_HISTORY_KEY);
       } else {
-        await AsyncStorage.setItem(RECIPIENT_HISTORY_KEY, JSON.stringify(updatedHistory));
+        await AsyncStorage.setItem(
+          RECIPIENT_HISTORY_KEY,
+          JSON.stringify(updatedHistory),
+        );
       }
     } catch (error) {
-      console.log('Failed to remove recipient address from history:', error);
+      console.error('Failed to remove recipient address from history:', error);
     }
   };
 
@@ -89,30 +112,28 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
     try {
       const finalAddress = await resolveAddress(trimmedInput);
       if (!finalAddress) {
-        console.log('Failed to resolve address');
         return;
       }
-      
+
       // Save the original input (ENS name or address) to history
       await saveAddressToHistory(trimmedInput);
 
       // Call the continue handler with the resolved address
       onContinue?.(finalAddress);
-      
+
       // Navigate to SelectToken screen
       navigation.navigate('SelectToken');
-      
+
       // Clear the input field for when user comes back
       setAddress('');
     } catch (error) {
-      console.log('Failed to process address:', error);
+      console.error('Failed to process address:', error);
     }
   };
 
   const handleAddressSelect = (selectedAddress: string) => {
     setAddress(selectedAddress);
   };
-
 
   const copyAddressToClipboard = async (address: string) => {
     try {
@@ -127,7 +148,7 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
   };
 
   return (
-    <ScreenWrapper 
+    <ScreenWrapper
       showLogoutButton={!!(wallet && onLogout)}
       onLogout={onLogout}
     >
@@ -135,7 +156,6 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
         style={[styles.container, { backgroundColor: colors.background }]}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-
         <View style={styles.content}>
           <Header
             icon="person"
@@ -152,36 +172,42 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
               onChangeText={handleAddressChange}
               onValidationChange={handleValidationChange}
             />
-            
+
             {addressHistory.length > 0 && (
-              <View style={[
-                styles.historyContainer, 
-                { 
-                  backgroundColor: 'transparent',
-                  borderColor: 'transparent'
-                }
-              ]}>
+              <View
+                style={[
+                  styles.historyContainer,
+                  {
+                    backgroundColor: 'transparent',
+                    borderColor: 'transparent',
+                  },
+                ]}
+              >
                 <TouchableOpacity
                   style={[
-                    styles.historyHeader, 
-                    { 
+                    styles.historyHeader,
+                    {
                       borderBottomColor: 'transparent',
-                      backgroundColor: 'transparent'
-                    }
+                      backgroundColor: 'transparent',
+                    },
                   ]}
                   onPress={() => setIsHistoryExpanded(!isHistoryExpanded)}
                 >
                   <View style={styles.historyTitleContainer}>
-                    <Text style={[
-                      styles.historyTitle, 
-                      { 
-                        color: colors.textSecondary
-                      }
-                    ]}>Recent Recipients</Text>
-                    <Ionicons 
-                      name={isHistoryExpanded ? "chevron-up" : "chevron-down"} 
-                      size={16} 
-                      color={colors.textSecondary} 
+                    <Text
+                      style={[
+                        styles.historyTitle,
+                        {
+                          color: colors.textSecondary,
+                        },
+                      ]}
+                    >
+                      Recent Recipients
+                    </Text>
+                    <Ionicons
+                      name={isHistoryExpanded ? 'chevron-up' : 'chevron-down'}
+                      size={16}
+                      color={colors.textSecondary}
                       style={styles.chevronIcon}
                     />
                   </View>
@@ -191,12 +217,23 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
                     data={addressHistory}
                     keyExtractor={(item, index) => `${item}-${index}`}
                     renderItem={({ item }) => (
-                      <View style={[styles.historyItem, { borderBottomColor: 'transparent' }]}>
+                      <View
+                        style={[
+                          styles.historyItem,
+                          { borderBottomColor: 'transparent' },
+                        ]}
+                      >
                         <TouchableOpacity
                           style={styles.historyItemContent}
                           onPress={() => handleAddressSelect(item)}
                         >
-                          <Text style={[styles.historyItemText, { color: colors.textSecondary }]} numberOfLines={1}>
+                          <Text
+                            style={[
+                              styles.historyItemText,
+                              { color: colors.textSecondary },
+                            ]}
+                            numberOfLines={1}
+                          >
                             {truncateAddress(item)}
                           </Text>
                         </TouchableOpacity>
@@ -204,17 +241,29 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
                           style={styles.copyButton}
                           onPress={() => copyAddressToClipboard(item)}
                         >
-                          <Ionicons 
-                            name={copySuccess === item ? "checkmark-circle" : "copy-outline"} 
-                            size={16} 
-                            color={copySuccess === item ? colors.success : colors.textSecondary} 
+                          <Ionicons
+                            name={
+                              copySuccess === item
+                                ? 'checkmark-circle'
+                                : 'copy-outline'
+                            }
+                            size={16}
+                            color={
+                              copySuccess === item
+                                ? colors.success
+                                : colors.textSecondary
+                            }
                           />
                         </TouchableOpacity>
                         <TouchableOpacity
                           style={styles.removeButton}
                           onPress={() => removeAddressFromHistory(item)}
                         >
-                          <Ionicons name="trash-outline" size={16} color={colors.textSecondary} />
+                          <Ionicons
+                            name="trash-outline"
+                            size={16}
+                            color={colors.textSecondary}
+                          />
                         </TouchableOpacity>
                       </View>
                     )}
@@ -227,11 +276,16 @@ export default function EnterRecipientAddress({ onContinue, onLogout, wallet }: 
           </View>
         </View>
 
-        <View style={[styles.footer, { 
-          paddingHorizontal: spacing.xl, 
-          paddingBottom: spacing.xl * 2, 
-          paddingTop: spacing.xl 
-        }]}>
+        <View
+          style={[
+            styles.footer,
+            {
+              paddingHorizontal: spacing.xl,
+              paddingBottom: spacing.xl * 2,
+              paddingTop: spacing.xl,
+            },
+          ]}
+        >
           <Button
             title="Continue"
             onPress={handleContinue}

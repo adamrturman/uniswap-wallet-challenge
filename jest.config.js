@@ -18,6 +18,6 @@ module.exports = {
   automock: false,
   // Only run when NODE_ENV is test
   testEnvironmentOptions: {
-    NODE_ENV: 'test'
-  }
+    NODE_ENV: 'test',
+  },
 };

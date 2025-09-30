@@ -5,7 +5,7 @@ export const typography = {
     medium: '500' as const,
     semibold: '600' as const,
   },
-  
+
   // Font sizes
   sizes: {
     xs: 12,
@@ -15,7 +15,7 @@ export const typography = {
     xl: 20,
     xxl: 24,
   },
-  
+
   // Line heights
   lineHeights: {
     xs: 16,

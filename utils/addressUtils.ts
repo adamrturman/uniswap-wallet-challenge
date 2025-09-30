@@ -15,15 +15,15 @@ import { ethers } from 'ethers';
 export function truncateAddress(
   address: string,
   prefixLength: number = 6,
-  suffixLength: number = 4
+  suffixLength: number = 4,
 ): string {
   const trimmedAddress = address.trim();
-  
+
   // If it's not a 0x address (i.e., it's an ENS name), return it as-is
   if (!ethers.utils.isAddress(trimmedAddress)) {
     return trimmedAddress;
   }
-  
+
   // Only truncate 0x addresses
   return `${trimmedAddress.slice(0, prefixLength)}...${trimmedAddress.slice(-suffixLength)}`;
 }

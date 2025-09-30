@@ -9,12 +9,11 @@ type AddressInputProps = {
   onValidationChange?: (isValid: boolean) => void;
 };
 
-export default function AddressInput({ 
-  value, 
-  onChangeText, 
-  onValidationChange
+export default function AddressInput({
+  value,
+  onChangeText,
+  onValidationChange,
 }: AddressInputProps) {
-
   // Check if input is a valid address or ENS name using shared helper
   const isValid = useMemo(() => {
     return isValidAddressOrENS(value);
@@ -39,15 +38,18 @@ export default function AddressInput({
 }
 
 // Export the resolution function for use in parent components
-export const resolveAddress = async (inputValue: string): Promise<string | null> => {
+export const resolveAddress = async (
+  inputValue: string,
+): Promise<string | null> => {
   const resolveENS = async (ensName: string): Promise<string | null> => {
     try {
       const { ethers } = require('ethers');
       const { chainConfig } = require('../config/chain');
-      const provider = new ethers.providers.JsonRpcProvider(chainConfig.Ethereum.rpcUrl);
+      const provider = new ethers.providers.JsonRpcProvider(
+        chainConfig.Ethereum.rpcUrl,
+      );
       return await provider.resolveName(ensName);
     } catch (error) {
-      console.log('Failed to resolve ENS name:', error);
       return null;
     }
   };

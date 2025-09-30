@@ -8,17 +8,28 @@ type BackButtonProps = {
   disabled?: boolean;
 };
 
-export default function BackButton({ onPress, style, disabled = false }: BackButtonProps) {
+export default function BackButton({
+  onPress,
+  style,
+  disabled = false,
+}: BackButtonProps) {
   const { colors } = useTheme();
 
   return (
-    <TouchableOpacity 
-      style={[styles.backButton, style, disabled && styles.disabled]} 
+    <TouchableOpacity
+      style={[styles.backButton, style, disabled && styles.disabled]}
       onPress={disabled ? undefined : onPress}
       activeOpacity={disabled ? 1 : 0.7}
       disabled={disabled}
     >
-      <Text style={[styles.backArrow, { color: disabled ? colors.textSecondary : colors.text }]}>←</Text>
+      <Text
+        style={[
+          styles.backArrow,
+          { color: disabled ? colors.textSecondary : colors.text },
+        ]}
+      >
+        ←
+      </Text>
     </TouchableOpacity>
   );
 }

@@ -36,12 +36,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function EthIcon({ 
-  size = 'medium',
-  style 
-}: EthIconProps) {
+export default function EthIcon({ size = 'medium', style }: EthIconProps) {
   const config = sizeConfig[size];
-  
+
   const containerStyle: ViewStyle = {
     width: config.container,
     height: config.container,

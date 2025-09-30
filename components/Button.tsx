@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
+import { Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
 import { useTheme, spacing, typography, radius } from '../theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'disabled';
@@ -15,15 +15,15 @@ export type ButtonProps = {
   fullWidth?: boolean;
 };
 
-export default function Button({ 
-  title, 
-  onPress, 
-  variant = 'primary', 
-  disabled = false, 
+export default function Button({
+  title,
+  onPress,
+  variant = 'primary',
+  disabled = false,
   style,
   textStyle,
   activeOpacity = 0.85,
-  fullWidth = false
+  fullWidth = false,
 }: ButtonProps) {
   const { colors } = useTheme();
 
@@ -101,9 +101,7 @@ export default function Button({
       disabled={isDisabled}
       activeOpacity={activeOpacity}
     >
-      <Text style={[getTextStyle(), textStyle]}>
-        {title}
-      </Text>
+      <Text style={[getTextStyle(), textStyle]}>{title}</Text>
     </TouchableOpacity>
   );
 }

@@ -15,39 +15,48 @@ export type TokenBalanceProps = {
   tokenIcon: TokenIcon;
 };
 
-export default function TokenBalance({ 
-  balance, 
-  tokenName, 
-  tokenSymbol, 
-  tokenIcon 
+export default function TokenBalance({
+  balance,
+  tokenName,
+  tokenSymbol,
+  tokenIcon,
 }: TokenBalanceProps) {
   const { colors } = useTheme();
-  const { getTokenPrice, getTokenPriceFormatted, getTokenUsdValueFormatted } = usePrice();
-  
+  const { getTokenPrice, getTokenPriceFormatted, getTokenUsdValueFormatted } =
+    usePrice();
+
   // Extract baseIcon and overlayIcon from the tokenIcon object
   const { baseIcon, overlayIcon } = tokenIcon;
 
   const renderIcon = () => {
     // If there's an overlay, use ChainTokenIcon
     if (overlayIcon) {
-      return <ChainTokenIcon baseIcon={baseIcon} overlayIcon={overlayIcon} style={styles.tokenIcon} />;
+      return (
+        <ChainTokenIcon
+          baseIcon={baseIcon}
+          overlayIcon={overlayIcon}
+          style={styles.tokenIcon}
+        />
+      );
     }
-    
+
     // If baseIcon is a component (like EthIcon)
     if (typeof baseIcon === 'function') {
       const Component = baseIcon;
       return <Component style={styles.tokenIcon} />;
     }
-    
+
     // If baseIcon is an image source
-    return <Image source={baseIcon} style={styles.tokenIcon} resizeMode="contain" />;
+    return (
+      <Image source={baseIcon} style={styles.tokenIcon} resizeMode="contain" />
+    );
   };
 
   const renderBalance = () => {
     if (balance.state === 'loading') {
       return <Skeleton />;
     }
-    
+
     if (balance.state === 'error') {
       return (
         <Text style={[styles.chainBalance, { color: colors.textSecondary }]}>
@@ -55,16 +64,21 @@ export default function TokenBalance({
         </Text>
       );
     }
-    
+
     const balanceValue = Number(balance.value);
     const tokenPrice = getTokenPrice(tokenSymbol);
     const usdValue = tokenPrice ? balanceValue * tokenPrice : null;
-    
+
     return (
       <View style={styles.balanceContainer}>
-        <Text style={[styles.chainBalance, { 
-          color: balanceValue === 0 ? colors.textSecondary : colors.text 
-        }]}>
+        <Text
+          style={[
+            styles.chainBalance,
+            {
+              color: balanceValue === 0 ? colors.textSecondary : colors.text,
+            },
+          ]}
+        >
           {formatTokenAmount(balanceValue)} {tokenSymbol}
         </Text>
         {usdValue !== null && balanceValue > 0 && (

@@ -20,7 +20,12 @@ config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
 config.resolver.unstable_enablePackageExports = false;
 
 // Add web-specific resolver configuration
-config.resolver.sourceExts = [...config.resolver.sourceExts, 'web.js', 'web.ts', 'web.tsx'];
+config.resolver.sourceExts = [
+  ...config.resolver.sourceExts,
+  'web.js',
+  'web.ts',
+  'web.tsx',
+];
 
 // Configure transformer for better web compatibility
 config.transformer = {

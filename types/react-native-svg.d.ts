@@ -24,7 +24,7 @@ declare module 'react-native-svg' {
   export default Svg;
 }
 
-declare module "*.png" {
-	const value: any;
-	export default value;
-} 
+declare module '*.png' {
+  const value: any;
+  export default value;
+}
