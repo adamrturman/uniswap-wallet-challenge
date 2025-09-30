@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   sortContainer: {
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.xs,
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
   },
   sortButton: {
     paddingHorizontal: spacing.sm,
