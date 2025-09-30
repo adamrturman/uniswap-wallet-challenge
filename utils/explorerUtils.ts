@@ -1,4 +1,5 @@
 import { Linking } from 'react-native';
+import { chainConfig, ChainKey } from '../config/chain';
 
 /**
  * Opens a blockchain explorer URL for a given transaction hash and chain
@@ -7,14 +8,13 @@ import { Linking } from 'react-native';
  */
 export const openExplorer = async (
   transactionHash: string,
-  chainKey: string,
+  chainKey: ChainKey,
 ): Promise<void> => {
   if (!transactionHash || !chainKey) {
     throw new Error('Transaction hash and chain key are required');
   }
 
   try {
-    const chainConfig = require('../config/chain').chainConfig;
     const config = chainConfig[chainKey];
 
     if (!config || !config.explorerUrl) {

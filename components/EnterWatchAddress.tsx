@@ -18,7 +18,8 @@ import { truncateAddress } from '../utils/addressUtils';
 import Button from './Button';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
-import AddressInput, { resolveAddress } from './AddressInput';
+import AddressInput from './AddressInput';
+import { resolveAddress } from '../utils/addressUtils';
 import {
   AllTokenBalances,
   createInitialAllTokenBalances,

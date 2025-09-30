@@ -18,7 +18,8 @@ import { NavigationType } from '../types';
 import { truncateAddress } from '../utils/addressUtils';
 import Button from './Button';
 import Header from './Header';
-import AddressInput, { resolveAddress } from './AddressInput';
+import AddressInput from './AddressInput';
+import { resolveAddress } from '../utils/addressUtils';
 import ScreenWrapper from './ScreenWrapper';
 
 type EnterRecipientAddressProps = {

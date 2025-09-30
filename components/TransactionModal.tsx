@@ -12,17 +12,14 @@ import {
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme, spacing, typography, radius } from '../theme';
+import { chainConfig, ChainKey } from '../config/chain';
 
 export type TransactionStatus = 'review' | 'pending' | 'success' | 'error';
 
 export interface TransactionModalProps {
   visible: boolean;
   status: TransactionStatus;
-  transactionHash?: string;
-  errorMessage?: string;
-  chainKey?: string;
   transactionData?: any;
-  onApprove?: () => void;
   onClose: () => void;
   onExecuteTransaction?: () => Promise<void>;
 }
@@ -32,11 +29,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 export default function TransactionModal({
   visible,
   status,
-  transactionHash,
-  errorMessage,
-  chainKey,
   transactionData,
-  onApprove,
   onClose,
   onExecuteTransaction,
 }: TransactionModalProps) {
@@ -258,14 +251,8 @@ export default function TransactionModal({
                             { color: colors.text },
                           ]}
                         >
-                          {(() => {
-                            const chainConfig =
-                              require('../config/chain').chainConfig;
-                            return (
-                              chainConfig[transactionData.token.chainKey]
-                                ?.chainId || 'Unknown'
-                            );
-                          })()}
+                          {chainConfig[transactionData.token.chainKey as ChainKey]
+                            ?.chainId || 'Unknown'}
                         </Text>
                       </View>
                     )}

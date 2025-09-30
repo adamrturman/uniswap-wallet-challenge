@@ -20,7 +20,7 @@ import EthIcon from './EthIcon';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
 import TokenSelectionModal from './TokenSelectionModal';
-import { ChainKey, TokenKey, chainConfig } from '../config/chain';
+import { ChainKey, TokenKey, chainConfig, tokenConfig } from '../config/chain';
 import { GasEstimate } from '../utils/transactionUtils';
 import { AllTokenBalances } from '../utils/balanceUtils';
 
@@ -111,7 +111,6 @@ export default function EnterAmountToSend({
     // Open new transaction modal with pending status
     showTransactionModal({
       status: 'pending',
-      chainKey: selectedToken.chainKey,
     });
 
     // Add a small delay to ensure the spinner is visible
@@ -128,8 +127,6 @@ export default function EnterAmountToSend({
         // Update modal to show success
         updateTransactionStatus({
           status: 'success',
-          hash: result.hash,
-          chainKey: selectedToken.chainKey,
         });
 
         // Set the transaction amount before navigating
@@ -146,8 +143,6 @@ export default function EnterAmountToSend({
         // Update modal to show error
         updateTransactionStatus({
           status: 'error',
-          error: result.error,
-          chainKey: selectedToken.chainKey,
         });
       }
     } catch (error) {
@@ -156,8 +151,6 @@ export default function EnterAmountToSend({
         error instanceof Error ? error.message : 'Unknown error';
       updateTransactionStatus({
         status: 'error',
-        error: errorMessage,
-        chainKey: selectedToken.chainKey,
       });
     } finally {
       setIsExecuting(false);
@@ -190,9 +183,8 @@ export default function EnterAmountToSend({
             const { estimateGasForERC20Transfer } = await import(
               '../utils/transactionUtils'
             );
-            const tokenConfig = require('../config/chain').tokenConfig;
             const token =
-              tokenConfig[selectedToken.chainKey][selectedToken.tokenKey];
+              tokenConfig[selectedToken.chainKey][selectedToken.tokenKey as TokenKey];
 
             if (token) {
               gasEstimate = await estimateGasForERC20Transfer(
@@ -230,7 +222,6 @@ export default function EnterAmountToSend({
       // Show review modal - this should NOT execute the transaction automatically
       showTransactionModal({
         status: 'review',
-        chainKey: selectedToken.chainKey,
         transactionData: transactionData,
       });
     } else {

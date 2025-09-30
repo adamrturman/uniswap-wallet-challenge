@@ -3,6 +3,8 @@
  */
 
 import { ethers } from 'ethers';
+import { chainConfig } from '../config/chain';
+import { isENSName } from './addressValidation';
 
 /**
  * Truncates a wallet address with customizable parameters
@@ -27,3 +29,28 @@ export function truncateAddress(
   // Only truncate 0x addresses
   return `${trimmedAddress.slice(0, prefixLength)}...${trimmedAddress.slice(-suffixLength)}`;
 }
+
+/**
+ * Resolves an address input (either direct address or ENS name) to a final address
+ * @param inputValue - The input value (address or ENS name)
+ * @returns Resolved address or null if resolution fails
+ */
+export const resolveAddress = async (
+  inputValue: string,
+): Promise<string | null> => {
+  const resolveENS = async (ensName: string): Promise<string | null> => {
+    try {
+      const provider = new ethers.providers.JsonRpcProvider(
+        chainConfig.Ethereum.rpcUrl,
+      );
+      return await provider.resolveName(ensName);
+    } catch (error) {
+      return null;
+    }
+  };
+  
+  if (isENSName(inputValue)) {
+    return await resolveENS(inputValue);
+  }
+  return inputValue;
+};

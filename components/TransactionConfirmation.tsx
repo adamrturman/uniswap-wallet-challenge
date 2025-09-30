@@ -5,6 +5,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import { openExplorer } from '../utils/explorerUtils';
+import { ChainKey } from '../config/chain';
 import Button from './Button';
 import Header from './Header';
 import ScreenWrapper from './ScreenWrapper';
@@ -15,7 +16,7 @@ type TransactionConfirmationProps = {
   tokenSymbol: string;
   recipientAddress: string;
   fromAddress: string;
-  chainKey: string;
+  chainKey: ChainKey;
 };
 
 export default function TransactionConfirmation({

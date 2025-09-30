@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ChainKey, TokenKey } from './config/chain';
+import { ChainKey, TokenKey, chainConfig, tokenConfig } from './config/chain';
 import {
   createInitialAllTokenBalances,
   fetchAllTokenBalances,
@@ -117,8 +117,6 @@ export default function App() {
     }
 
     try {
-      const chainConfig = require('./config/chain').chainConfig;
-      const tokenConfig = require('./config/chain').tokenConfig;
       const config = chainConfig[selectedToken.chainKey];
 
       let result;

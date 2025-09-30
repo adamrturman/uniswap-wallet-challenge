@@ -37,30 +37,6 @@ export default function AddressInput({
   );
 }
 
-// Export the resolution function for use in parent components
-export const resolveAddress = async (
-  inputValue: string,
-): Promise<string | null> => {
-  const resolveENS = async (ensName: string): Promise<string | null> => {
-    try {
-      const { ethers } = require('ethers');
-      const { chainConfig } = require('../config/chain');
-      const provider = new ethers.providers.JsonRpcProvider(
-        chainConfig.Ethereum.rpcUrl,
-      );
-      return await provider.resolveName(ensName);
-    } catch (error) {
-      return null;
-    }
-  };
-
-  const { isENSName } = require('../utils/addressValidation');
-  if (isENSName(inputValue)) {
-    return await resolveENS(inputValue);
-  }
-  return inputValue;
-};
-
 const styles = StyleSheet.create({
   container: {
     width: '100%',

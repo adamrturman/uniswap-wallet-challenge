@@ -6,11 +6,7 @@ export default function TransactionModalWrapper() {
   const {
     isModalVisible,
     transactionStatus,
-    transactionHash,
-    errorMessage,
-    chainKey,
     transactionData,
-    onApprove,
     approveTransaction,
     hideTransactionModal,
   } = useTransaction();
@@ -19,11 +15,7 @@ export default function TransactionModalWrapper() {
     <TransactionModal
       visible={isModalVisible}
       status={transactionStatus}
-      transactionHash={transactionHash}
-      errorMessage={errorMessage}
-      chainKey={chainKey}
       transactionData={transactionData}
-      onApprove={onApprove}
       onExecuteTransaction={approveTransaction}
       onClose={hideTransactionModal}
     />
