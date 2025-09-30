@@ -6,16 +6,17 @@ import React, {
   ReactNode,
 } from 'react';
 import { TransactionStatus } from '../components/TransactionModal';
+import { TransactionData } from '../components/types';
 
 type TransactionParams = {
   status: TransactionStatus;
-  transactionData?: any;
+  transactionData?: TransactionData;
 };
 
 interface TransactionContextType {
   isModalVisible: boolean;
   transactionStatus: TransactionStatus;
-  transactionData?: any;
+  transactionData?: TransactionData;
   showTransactionModal: (params: TransactionParams) => void;
   hideTransactionModal: () => void;
   updateTransactionStatus: (params: TransactionParams) => void;
@@ -31,7 +32,9 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [transactionStatus, setTransactionStatus] =
     useState<TransactionStatus>('pending');
-  const [transactionData, setTransactionData] = useState<any>(undefined);
+  const [transactionData, setTransactionData] = useState<
+    TransactionData | undefined
+  >(undefined);
   const approveTransactionRef = useRef<(() => Promise<void>) | undefined>(
     undefined,
   );

@@ -13,18 +13,19 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { chainConfig, ChainKey } from '../config/chain';
+import { TransactionData } from './types';
 
 export type TransactionStatus = 'review' | 'pending' | 'success' | 'error';
 
 export interface TransactionModalProps {
   visible: boolean;
   status: TransactionStatus;
-  transactionData?: any;
+  transactionData?: TransactionData;
   onClose: () => void;
   onExecuteTransaction?: () => Promise<void>;
 }
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const { height: screenHeight } = Dimensions.get('window');
 
 export default function TransactionModal({
   visible,
@@ -332,7 +333,7 @@ export default function TransactionModal({
                         </Text>
                       </View>
                     )}
-                    {transactionData.gasEstimate?.estimatedCost && (
+                    {transactionData.gasEstimate?.networkFee && (
                       <View style={styles.transactionRow}>
                         <Text
                           style={[
@@ -340,7 +341,7 @@ export default function TransactionModal({
                             { color: colors.textSecondary },
                           ]}
                         >
-                          Estimated Cost
+                          Network Fee
                         </Text>
                         <Text
                           style={[
@@ -348,7 +349,7 @@ export default function TransactionModal({
                             { color: colors.text },
                           ]}
                         >
-                          {transactionData.gasEstimate.estimatedCost} ETH
+                          {transactionData.gasEstimate.networkFee} ETH
                         </Text>
                       </View>
                     )}
