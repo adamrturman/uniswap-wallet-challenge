@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -140,40 +140,40 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * Utility functions for address formatting and manipulation
@@ -191,20 +191,20 @@ import { isValidENSName } from './addressValidation';
  * @param suffixLength - Number of characters to show at the end (default: 4)
  * @returns Truncated address string or full ENS name
  */
-export function <span class="fstat-no" title="function not covered" >truncateAddress(</span>
+export function truncateAddress(
   address: string,
-  prefixLength: number = <span class="branch-0 cbranch-no" title="branch not covered" >6,</span>
-  suffixLength: number = <span class="branch-0 cbranch-no" title="branch not covered" >4,</span>
+  prefixLength: number = 6,
+  suffixLength: number = 4,
 ): string {
-  const trimmedAddress = <span class="cstat-no" title="statement not covered" >address.trim();</span>
+  const trimmedAddress = address.trim();
 &nbsp;
   // If it's not a 0x address (i.e., it's an ENS name), return it as-is
-<span class="cstat-no" title="statement not covered" >  if (!ethers.utils.isAddress(trimmedAddress)) {</span>
-<span class="cstat-no" title="statement not covered" >    return trimmedAddress;</span>
+  if (!ethers.utils.isAddress(trimmedAddress)) {
+    return trimmedAddress;
   }
 &nbsp;
   // Only truncate 0x addresses
-<span class="cstat-no" title="statement not covered" >  return `${trimmedAddress.slice(0, prefixLength)}...${trimmedAddress.slice(-suffixLength)}`;</span>
+  return `${trimmedAddress.slice(0, prefixLength)}...${trimmedAddress.slice(-suffixLength)}`;
 }
 &nbsp;
 /**
@@ -212,24 +212,24 @@ export function <span class="fstat-no" title="function not covered" >truncateAdd
  * @param inputValue - The input value (address or ENS name)
  * @returns Resolved address or null if resolution fails
  */
-export const resolveAddress = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync (</span>
+export const resolveAddress = async (
   inputValue: string,
 ): Promise&lt;string | null&gt; =&gt; {
-  const resolveENS = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >as</span>ync (ensName: string): Promise&lt;string | null&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-      const provider = <span class="cstat-no" title="statement not covered" >new ethers.providers.JsonRpcProvider(</span>
+  const resolveENS = async (ensName: string): Promise&lt;string | null&gt; =&gt; {
+    try {
+      const provider = new ethers.providers.JsonRpcProvider(
         chainConfig.Ethereum.rpcUrl,
       );
-<span class="cstat-no" title="statement not covered" >      return await provider.resolveName(ensName);</span>
+      return await provider.resolveName(ensName);
     } catch (error) {
-<span class="cstat-no" title="statement not covered" >      return null;</span>
+      return null;
     }
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  if (isValidENSName(inputValue) &amp;&amp; !ethers.utils.isAddress(inputValue)) {</span>
-<span class="cstat-no" title="statement not covered" >    return await resolveENS(inputValue);</span>
+  if (isValidENSName(inputValue) &amp;&amp; !ethers.utils.isAddress(inputValue)) {
+    return await resolveENS(inputValue);
   }
-<span class="cstat-no" title="statement not covered" >  return inputValue;</span>
+  return inputValue;
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -238,7 +238,7 @@ export const resolveAddress = <span class="cstat-no" title="statement not covere
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-30T15:49:22.882Z
+                at 2025-09-30T15:54:30.757Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
