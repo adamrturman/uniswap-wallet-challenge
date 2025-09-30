@@ -69,10 +69,7 @@ export default function Input({
     <View style={styles.wrapper}>
       <View style={containerStyle}>
         <TextInput
-          style={[
-            inputStyle,
-            styles.textInput,
-          ]}
+          style={[inputStyle, styles.textInput]}
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
           value={value}

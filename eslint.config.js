@@ -79,23 +79,23 @@ module.exports = [
       // TypeScript specific rules
       '@typescript-eslint/no-unused-vars': [
         'error',
-        { 
+        {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_',
         },
       ],
       'no-unused-vars': 'off', // Turn off base rule as it can conflict with @typescript-eslint/no-unused-vars
-      
+
       // Unused imports rules
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
         'warn',
-        { 
-          vars: 'all', 
-          varsIgnorePattern: '^_', 
-          args: 'after-used', 
-          argsIgnorePattern: '^_' 
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_',
         },
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',

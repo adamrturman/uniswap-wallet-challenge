@@ -130,7 +130,9 @@ export default function TransactionConfirmation({
               <>
                 {gasEstimate.gasLimit && (
                   <View style={styles.transactionRow}>
-                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                    <Text
+                      style={[styles.label, { color: colors.textSecondary }]}
+                    >
                       Gas Limit
                     </Text>
                     <Text style={[styles.value, { color: colors.text }]}>
@@ -141,7 +143,9 @@ export default function TransactionConfirmation({
 
                 {gasEstimate.gasPrice && (
                   <View style={styles.transactionRow}>
-                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                    <Text
+                      style={[styles.label, { color: colors.textSecondary }]}
+                    >
                       Gas Price
                     </Text>
                     <Text style={[styles.value, { color: colors.text }]}>
@@ -152,7 +156,9 @@ export default function TransactionConfirmation({
 
                 {gasEstimate.maxFeePerGas && (
                   <View style={styles.transactionRow}>
-                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                    <Text
+                      style={[styles.label, { color: colors.textSecondary }]}
+                    >
                       Max Fee Per Gas
                     </Text>
                     <Text style={[styles.value, { color: colors.text }]}>
@@ -163,7 +169,9 @@ export default function TransactionConfirmation({
 
                 {gasEstimate.maxPriorityFeePerGas && (
                   <View style={styles.transactionRow}>
-                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                    <Text
+                      style={[styles.label, { color: colors.textSecondary }]}
+                    >
                       Max Priority Fee
                     </Text>
                     <Text style={[styles.value, { color: colors.text }]}>
@@ -174,7 +182,9 @@ export default function TransactionConfirmation({
 
                 {gasEstimate.networkFee && (
                   <View style={styles.transactionRow}>
-                    <Text style={[styles.label, { color: colors.textSecondary }]}>
+                    <Text
+                      style={[styles.label, { color: colors.textSecondary }]}
+                    >
                       Network Fee
                     </Text>
                     <Text style={[styles.value, { color: colors.text }]}>

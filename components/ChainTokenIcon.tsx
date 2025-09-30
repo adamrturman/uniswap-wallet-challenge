@@ -71,11 +71,7 @@ export default function ChainTokenIcon({
 
     // If baseIcon is an image source
     return (
-      <Image
-        source={baseIcon}
-        style={styles.baseIcon}
-        resizeMode="contain"
-      />
+      <Image source={baseIcon} style={styles.baseIcon} resizeMode="contain" />
     );
   };
 

@@ -37,12 +37,14 @@ interface AppContextType {
   setWatchedAddress: (address: string) => void;
   setBalances: (balances: AllTokenBalances | null) => void;
   setRecipientAddress: (address: string) => void;
-  setSelectedToken: (token: {
-    chainKey: ChainKey;
-    tokenKey: TokenKey;
-    balance: number;
-    symbol: string;
-  } | null) => void;
+  setSelectedToken: (
+    token: {
+      chainKey: ChainKey;
+      tokenKey: TokenKey;
+      balance: number;
+      symbol: string;
+    } | null,
+  ) => void;
   setTransactionAmount: (amount: string) => void;
   setTransactionHash: (hash: string) => void;
   setTransactionGasEstimate: (gasEstimate: GasEstimate | null) => void;
@@ -96,7 +98,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   } | null>(null);
   const [transactionAmount, setTransactionAmount] = useState<string>('');
   const [transactionHash, setTransactionHash] = useState<string>('');
-  const [transactionGasEstimate, setTransactionGasEstimate] = useState<GasEstimate | null>(null);
+  const [transactionGasEstimate, setTransactionGasEstimate] =
+    useState<GasEstimate | null>(null);
 
   const handleWatchAddressContinue = async (
     address: string,

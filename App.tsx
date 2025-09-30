@@ -46,17 +46,11 @@ function App() {
       >
         <Stack.Screen name="Landing">{() => <Landing />}</Stack.Screen>
         <Stack.Screen name="EnterWatchAddress">
-          {() => (
-            <EnterWatchAddress
-              onContinue={handleWatchAddressContinue}
-            />
-          )}
+          {() => <EnterWatchAddress onContinue={handleWatchAddressContinue} />}
         </Stack.Screen>
         <Stack.Screen name="EnterRecoveryPhrase">
           {() => (
-            <EnterRecoveryPhrase
-              onContinue={handleRecoveryPhraseContinue}
-            />
+            <EnterRecoveryPhrase onContinue={handleRecoveryPhraseContinue} />
           )}
         </Stack.Screen>
         <Stack.Screen name="EnterRecipientAddress">
