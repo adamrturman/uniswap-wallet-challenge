@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, spacing, typography, radius } from '../theme';
-import { TransactionData } from './types';
+import { TransactionData } from '../types';
 import { truncateAddress } from '../utils/addressUtils';
 
 type TransactionDetailsProps = {
@@ -89,45 +89,58 @@ export default function TransactionDetails({
               Amount
             </Text>
             <Text style={[styles.transactionValue, { color: colors.text }]}>
-              {transactionData.amount}
-            </Text>
-          </View>
-        )}
-        {transactionData.tokenSymbol && (
-          <View style={styles.transactionRow}>
-            <Text
-              style={[styles.transactionLabel, { color: colors.textSecondary }]}
-            >
-              Token
-            </Text>
-            <Text style={[styles.transactionValue, { color: colors.text }]}>
-              {transactionData.tokenSymbol}
+              {transactionData.amount} {transactionData.token?.symbol || 'ETH'}
             </Text>
           </View>
         )}
         {transactionData.gasEstimate && (
-          <View style={styles.transactionRow}>
-            <Text
-              style={[styles.transactionLabel, { color: colors.textSecondary }]}
-            >
-              Network Fee
-            </Text>
-            <Text style={[styles.transactionValue, { color: colors.text }]}>
-              {transactionData.gasEstimate.networkFee} ETH
-            </Text>
-          </View>
-        )}
-        {transactionData.chainKey && (
-          <View style={styles.transactionRow}>
-            <Text
-              style={[styles.transactionLabel, { color: colors.textSecondary }]}
-            >
-              Network
-            </Text>
-            <Text style={[styles.transactionValue, { color: colors.text }]}>
-              {transactionData.chainKey}
-            </Text>
-          </View>
+          <>
+            {transactionData.gasEstimate.gasLimit && (
+              <View style={styles.transactionRow}>
+                <Text
+                  style={[
+                    styles.transactionLabel,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Gas Limit
+                </Text>
+                <Text style={[styles.transactionValue, { color: colors.text }]}>
+                  {transactionData.gasEstimate.gasLimit}
+                </Text>
+              </View>
+            )}
+            {transactionData.gasEstimate.gasPrice && (
+              <View style={styles.transactionRow}>
+                <Text
+                  style={[
+                    styles.transactionLabel,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Gas Price
+                </Text>
+                <Text style={[styles.transactionValue, { color: colors.text }]}>
+                  {transactionData.gasEstimate.gasPrice} Gwei
+                </Text>
+              </View>
+            )}
+            {transactionData.gasEstimate.networkFee && (
+              <View style={styles.transactionRow}>
+                <Text
+                  style={[
+                    styles.transactionLabel,
+                    { color: colors.textSecondary },
+                  ]}
+                >
+                  Network Fee
+                </Text>
+                <Text style={[styles.transactionValue, { color: colors.text }]}>
+                  {transactionData.gasEstimate.networkFee} ETH
+                </Text>
+              </View>
+            )}
+          </>
         )}
       </View>
     </View>
@@ -136,18 +149,19 @@ export default function TransactionDetails({
 
 const styles = StyleSheet.create({
   transactionDataContainer: {
-    marginTop: spacing.lg,
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    borderWidth: 1,
+    width: '100%',
+    borderRadius: radius.md,
+    padding: spacing.sm,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
   },
   transactionDataTitle: {
-    fontSize: typography.sizes.base,
-    fontWeight: typography.weights.semibold,
-    marginBottom: spacing.md,
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.medium,
+    marginBottom: spacing.xs,
   },
   transactionDetails: {
-    gap: spacing.sm,
+    width: '100%',
   },
   transactionRow: {
     flexDirection: 'row',
@@ -156,24 +170,23 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
   },
   transactionLabel: {
-    fontSize: typography.sizes.sm,
+    fontSize: typography.sizes.xs,
     fontWeight: typography.weights.medium,
-    flex: 1,
-  },
-  transactionValue: {
-    fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.normal,
-    flex: 2,
-    textAlign: 'right',
   },
   transactionValueContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 2,
+    flex: 1,
     justifyContent: 'flex-end',
   },
+  transactionValue: {
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.normal,
+    textAlign: 'right',
+    flex: 1,
+  },
   copyButton: {
-    marginLeft: spacing.xs,
+    marginLeft: spacing.sm,
     padding: spacing.xs,
   },
 });

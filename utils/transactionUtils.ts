@@ -1,25 +1,5 @@
 import { ethers } from 'ethers';
-
-export interface TransactionResult {
-  success: boolean;
-  hash?: string;
-  error?: string;
-}
-
-export interface GasEstimate {
-  gasLimit: string;
-  gasPrice: string;
-  maxFeePerGas?: string;
-  maxPriorityFeePerGas?: string;
-  networkFee: string;
-}
-
-export interface ERC20TransferParams {
-  tokenAddress: string;
-  toAddress: string;
-  amount: string;
-  decimals?: number;
-}
+import { TransactionResult, GasEstimate, ERC20TransferParams } from '../types';
 
 export async function estimateGasForTransaction(
   provider: ethers.providers.JsonRpcProvider,

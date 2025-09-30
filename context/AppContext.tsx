@@ -1,75 +1,24 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Wallet } from 'ethers';
-import { ChainKey, TokenKey } from '../config/chain';
+import {
+  ChainKey,
+  TokenKey,
+  AllTokenBalances,
+  GasEstimate,
+  ERC20TransferParams,
+  NavigationType,
+  AppContextType,
+} from '../types';
 import {
   createInitialAllTokenBalances,
   fetchAllTokenBalances,
-  AllTokenBalances,
   clearBalanceCache,
 } from '../utils/balanceUtils';
 import {
   sendNativeTransaction,
   sendERC20Transaction,
-  ERC20TransferParams,
-  GasEstimate,
 } from '../utils/transactionUtils';
 import { chainConfig, tokenConfig } from '../config/chain';
-import { NavigationType } from '../types';
-
-interface AppContextType {
-  // State
-  wallet: Wallet | null;
-  watchedAddress: string;
-  balances: AllTokenBalances | null;
-  recipientAddress: string;
-  selectedToken: {
-    chainKey: ChainKey;
-    tokenKey: TokenKey;
-    balance: number;
-    symbol: string;
-  } | null;
-  transactionAmount: string;
-  transactionHash: string;
-  transactionGasEstimate: GasEstimate | null;
-
-  // Setters
-  setWallet: (wallet: Wallet | null) => void;
-  setWatchedAddress: (address: string) => void;
-  setBalances: (balances: AllTokenBalances | null) => void;
-  setRecipientAddress: (address: string) => void;
-  setSelectedToken: (
-    token: {
-      chainKey: ChainKey;
-      tokenKey: TokenKey;
-      balance: number;
-      symbol: string;
-    } | null,
-  ) => void;
-  setTransactionAmount: (amount: string) => void;
-  setTransactionHash: (hash: string) => void;
-  setTransactionGasEstimate: (gasEstimate: GasEstimate | null) => void;
-
-  // Event Handlers
-  handleWatchAddressContinue: (
-    address: string,
-    watchedAddressBalances: AllTokenBalances,
-  ) => Promise<void>;
-  handleRecoveryPhraseContinue: (phrase: string) => Promise<void>;
-  handleRecipientAddressContinue: (address: string) => void;
-  handleTokenSelect: (
-    chainKey: ChainKey,
-    tokenKey: TokenKey,
-    balance: number,
-    symbol: string,
-  ) => void;
-  handleAmountContinue: (amount: string) => void;
-  handleTransactionExecute: (
-    amount: string,
-    gasEstimate?: GasEstimate,
-  ) => Promise<{ success: boolean; hash?: string; error?: string }>;
-  refreshBalances: () => Promise<void>;
-  handleLogout: (navigation: NavigationType) => void;
-}
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 

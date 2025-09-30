@@ -2,44 +2,14 @@ import { providers, utils, BigNumber, Contract } from 'ethers';
 import {
   ChainKey,
   TokenKey,
-  tokenConfig,
-  chainConfig,
-  chainOrder,
-} from '../config/chain';
-import { TokenIcon } from '../components/types';
-
-export type BalanceLoadingState = 'loading' | 'loaded' | 'error';
-
-export type ChainBalance = {
-  value: number;
-  state: BalanceLoadingState;
-};
-
-export type ChainBalances = Record<ChainKey, ChainBalance>;
-
-export type TokenBalance = {
-  value: number;
-  state: BalanceLoadingState;
-};
-
-export type ChainTokenBalances = Record<TokenKey, TokenBalance>;
-
-export type AllTokenBalances = Record<
-  ChainKey,
-  {
-    native: ChainBalance;
-    tokens: ChainTokenBalances;
-  }
->;
-
-export type TokenItem = {
-  chainKey: ChainKey;
-  tokenKey: TokenKey;
-  name: string;
-  symbol: string;
-  balance: number;
-  tokenIcon: TokenIcon;
-};
+  ChainBalance,
+  ChainBalances,
+  ChainTokenBalances,
+  AllTokenBalances,
+  TokenItem,
+  TokenIcon,
+} from '../types';
+import { chainConfig, tokenConfig, chainOrder } from '../config/chain';
 
 // ERC-20 ABI for balanceOf function
 const ERC20_ABI = [

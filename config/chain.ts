@@ -8,27 +8,13 @@ import usdcLogo from '../assets/usdc-logo.png';
 import btcLogo from '../assets/btc-logo.png';
 import linkLogo from '../assets/link-logo.png';
 import EthIcon from '../components/EthIcon';
-import { ImageSourcePropType } from 'react-native';
-import { ComponentType } from 'react';
-
-export type ChainKey =
-  | 'Ethereum'
-  | 'Polygon'
-  | 'Optimism'
-  | 'Arbitrum'
-  | 'Sepolia';
-export type TokenKey =
-  | 'ETH'
-  | 'POL'
-  | 'USDT'
-  | 'USDC'
-  | 'WBTC'
-  | 'OP'
-  | 'ARB'
-  | 'LINK';
-
-// Icon type for React Native components and images
-export type IconType = ImageSourcePropType | ComponentType<any>;
+import {
+  ChainKey,
+  TokenKey,
+  ChainTokenConfig,
+  IconType,
+  Token,
+} from '../types';
 
 // Helper functions to determine token type
 export const isNativeAsset = (
@@ -78,19 +64,6 @@ export const getTokenConfig = (
   );
   return token || null;
 };
-
-export type Token = {
-  symbol: string;
-  name: string;
-  decimals: number;
-  contractAddress: string;
-  icon: {
-    baseIcon: IconType;
-    overlayIcon?: IconType;
-  };
-};
-
-export type ChainTokenConfig = Partial<Record<TokenKey, Token>>;
 
 export const chainConfig: Record<
   ChainKey,
