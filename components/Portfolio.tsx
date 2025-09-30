@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import * as Clipboard from 'expo-clipboard';
 import { FontAwesome6 } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
   ChainKey,
   chainOrder,
@@ -52,6 +53,7 @@ export default function Portfolio({
   const [selected, setSelected] = useState<'all' | 'active' | ChainKey>('all');
   const [sortByUsd, setSortByUsd] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [showGradient, setShowGradient] = useState(true);
 
   // Removed automatic balance refetching on focus to prevent 429 errors
 
@@ -75,6 +77,12 @@ export default function Portfolio({
     } catch (error) {
       console.error('Failed to copy address:', error);
     }
+  };
+
+  const handleScroll = (event: any) => {
+    const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+    const isAtBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
+    setShowGradient(!isAtBottom);
   };
 
   const orderedKeys = useMemo(() => chainOrder, []);
@@ -233,17 +241,31 @@ export default function Portfolio({
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-        {allTokens.map((token) => (
-          <TokenBalance
-            key={`${token.chainKey}-${token.tokenKey}`}
-            balance={{ value: token.balance, state: token.balanceState }}
-            tokenName={token.name}
-            tokenSymbol={token.symbol}
-            tokenIcon={token.tokenIcon}
+      <View style={styles.scrollContainer}>
+        <ScrollView 
+          style={styles.list} 
+          showsVerticalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
+          {allTokens.map((token) => (
+            <TokenBalance
+              key={`${token.chainKey}-${token.tokenKey}`}
+              balance={{ value: token.balance, state: token.balanceState }}
+              tokenName={token.name}
+              tokenSymbol={token.symbol}
+              tokenIcon={token.tokenIcon}
+            />
+          ))}
+        </ScrollView>
+        {showGradient && (
+          <LinearGradient
+            colors={['transparent', colors.background]}
+            style={styles.bottomGradient}
+            pointerEvents="none"
           />
-        ))}
-      </ScrollView>
+        )}
+      </View>
 
       {/* Send button - only show if wallet is available */}
       {wallet && (
@@ -287,9 +309,20 @@ const styles = StyleSheet.create({
   copyButton: {
     padding: 0,
   },
+  scrollContainer: {
+    flex: 1,
+    position: 'relative',
+  },
   list: {
     flex: 1,
     paddingHorizontal: spacing.xl,
+  },
+  bottomGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 120,
   },
   sortContainer: {
     paddingHorizontal: spacing.xl,
