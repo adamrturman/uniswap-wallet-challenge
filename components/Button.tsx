@@ -66,8 +66,9 @@ export default function Button({
 
   const getTextStyle = (): TextStyle => {
     const baseTextStyle: TextStyle = {
-      fontSize: typography.sizes.lg,
+      fontSize: typography.sizes.base,
       fontWeight: typography.weights.semibold,
+      textAlign: 'center',
     };
 
     switch (variant) {
