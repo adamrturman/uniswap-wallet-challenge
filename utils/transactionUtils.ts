@@ -14,13 +14,6 @@ export interface GasEstimate {
   networkFee: string;
 }
 
-export interface ERC20TokenInfo {
-  address: string;
-  symbol: string;
-  decimals: number;
-  balance: string;
-}
-
 export interface ERC20TransferParams {
   tokenAddress: string;
   toAddress: string;
@@ -153,120 +146,9 @@ const ERC20_ABI = [
   'function approve(address spender, uint256 amount) returns (bool)',
 ];
 
-export async function getERC20TokenInfo(
-  provider: ethers.providers.JsonRpcProvider,
-  tokenAddress: string,
-  walletAddress: string,
-): Promise<ERC20TokenInfo> {
-  try {
-    const tokenContract = new ethers.Contract(
-      tokenAddress,
-      ERC20_ABI,
-      provider,
-    );
 
-    const [symbol, decimals, balance] = await Promise.all([
-      tokenContract.symbol(),
-      tokenContract.decimals(),
-      tokenContract.balanceOf(walletAddress),
-    ]);
 
-    return {
-      address: tokenAddress,
-      symbol,
-      decimals,
-      balance: ethers.utils.formatUnits(balance, decimals),
-    };
-  } catch (error) {
-    console.error('Failed to get ERC20 token info:', error);
-    throw error;
-  }
-}
 
-export async function getERC20TokenBalance(
-  provider: ethers.providers.JsonRpcProvider,
-  tokenAddress: string,
-  walletAddress: string,
-): Promise<string> {
-  try {
-    const tokenContract = new ethers.Contract(
-      tokenAddress,
-      ERC20_ABI,
-      provider,
-    );
-    const balance = await tokenContract.balanceOf(walletAddress);
-    const decimals = await tokenContract.decimals();
-    return ethers.utils.formatUnits(balance, decimals);
-  } catch (error) {
-    console.error('Failed to get ERC20 token balance:', error);
-    throw error;
-  }
-}
-
-export async function checkERC20Allowance(
-  provider: ethers.providers.JsonRpcProvider,
-  tokenAddress: string,
-  ownerAddress: string,
-  spenderAddress: string,
-): Promise<string> {
-  try {
-    const tokenContract = new ethers.Contract(
-      tokenAddress,
-      ERC20_ABI,
-      provider,
-    );
-    const allowance = await tokenContract.allowance(
-      ownerAddress,
-      spenderAddress,
-    );
-    const decimals = await tokenContract.decimals();
-    return ethers.utils.formatUnits(allowance, decimals);
-  } catch (error) {
-    console.error('Failed to check ERC20 allowance:', error);
-    throw error;
-  }
-}
-
-export async function approveERC20Token(
-  wallet: ethers.Wallet,
-  tokenAddress: string,
-  spenderAddress: string,
-  amount: string,
-  rpcUrl: string,
-  decimals?: number,
-): Promise<TransactionResult> {
-  try {
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-    const connectedWallet = wallet.connect(provider);
-    const tokenContract = new ethers.Contract(
-      tokenAddress,
-      ERC20_ABI,
-      connectedWallet,
-    );
-
-    // Get token decimals if not provided
-    let tokenDecimals = decimals;
-    if (!tokenDecimals) {
-      tokenDecimals = await tokenContract.decimals();
-    }
-
-    const amountInWei = ethers.utils.parseUnits(amount, tokenDecimals);
-
-    const tx = await tokenContract.approve(spenderAddress, amountInWei);
-    const receipt = await tx.wait();
-
-    return {
-      success: true,
-      hash: receipt?.transactionHash || tx.hash,
-    };
-  } catch (error) {
-    console.error('ERC20 approval failed:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
-    };
-  }
-}
 
 export async function sendERC20Transaction(
   wallet: ethers.Wallet,
