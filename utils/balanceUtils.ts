@@ -48,6 +48,12 @@ const balanceCache = new Map<string, { balances: ChainBalances; timestamp: numbe
 const tokenBalanceCache = new Map<string, { balances: AllTokenBalances; timestamp: number }>();
 const CACHE_DURATION = 30000; // 30 seconds cache duration
 
+// Function to clear balance cache for a specific address
+export function clearBalanceCache(address: string) {
+  balanceCache.delete(address);
+  tokenBalanceCache.delete(address);
+}
+
 export async function fetchBalancesForAllChains(address: string): Promise<Record<ChainKey, number>> {
   const balances: Record<ChainKey, number> = {} as Record<ChainKey, number>;
   

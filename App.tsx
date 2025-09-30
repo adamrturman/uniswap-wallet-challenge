@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Wallet } from 'ethers';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ChainKey, TokenKey } from './config/chain';
-import { fetchChainBalances, createInitialChainBalances, createInitialAllTokenBalances, ChainBalances, fetchAllTokenBalances, AllTokenBalances } from './utils/balanceUtils';
+import { fetchChainBalances, createInitialChainBalances, createInitialAllTokenBalances, ChainBalances, fetchAllTokenBalances, AllTokenBalances, clearBalanceCache } from './utils/balanceUtils';
 import { sendNativeTransaction, sendERC20Transaction, ERC20TransferParams, GasEstimate } from './utils/transactionUtils';
 import { NavigationType } from './types';
 import Landing from './components/Landing';
@@ -158,6 +158,20 @@ export default function App() {
   };
 
 
+  const refreshBalances = async () => {
+    const currentAddress = wallet?.address || watchedAddress;
+    if (!currentAddress) return;
+    
+    try {
+      // Clear cache to ensure fresh data is fetched
+      clearBalanceCache(currentAddress);
+      const fetchedBalances = await fetchAllTokenBalances(currentAddress);
+      setBalances(fetchedBalances);
+    } catch (error) {
+      console.error('Failed to refresh balances:', error);
+    }
+  };
+
   const handleLogout = (navigation: NavigationType) => {
     // Clear wallet state
     setWallet(null);
@@ -216,6 +230,7 @@ export default function App() {
                     balances={balances}
                     address={wallet?.address || watchedAddress}
                     onTokenSelect={handleTokenSelect}
+                    onRefreshBalances={refreshBalances}
                   />
                 ) : null}
               </Stack.Screen>

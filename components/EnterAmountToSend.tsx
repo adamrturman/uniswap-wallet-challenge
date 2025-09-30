@@ -31,6 +31,7 @@ type EnterAmountToSendProps = {
   balances?: AllTokenBalances | null;
   address?: string;
   onTokenSelect?: (chainKey: ChainKey, tokenKey: TokenKey, balance: number, symbol: string) => void;
+  onRefreshBalances?: () => Promise<void>;
 };
 
 export default function EnterAmountToSend({ 
@@ -42,7 +43,8 @@ export default function EnterAmountToSend({
   onLogout,
   balances,
   address,
-  onTokenSelect
+  onTokenSelect,
+  onRefreshBalances
 }: EnterAmountToSendProps) {
   const { colors, themeMode } = useTheme();
   const navigation = useNavigation<NavigationType>();
@@ -111,6 +113,11 @@ export default function EnterAmountToSend({
         
         // Set the transaction amount before navigating
         onContinue?.(amount);
+        
+        // Refresh balances before navigating to portfolio
+        if (onRefreshBalances) {
+          await onRefreshBalances();
+        }
         
         // Navigate to portfolio to show updated balances
         navigation.navigate('Portfolio');
