@@ -1,10 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import TokenBalance, { TokenBalanceProps } from '../../components/TokenBalance';
-import { ChainBalance } from '../../utils/balanceUtils';
-import { TokenIcon } from '../../components/types';
-import ethIcon from '../../assets/eth-color-icon.png';
-import arbIcon from '../../assets/arb-logo-official.png';
+import TokenBalance, { TokenBalanceProps } from './TokenBalance';
+import { ChainBalance } from '../utils/balanceUtils';
+import { TokenIcon } from './types';
+import ethIcon from '../assets/eth-color-icon.png';
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
@@ -13,7 +12,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 }));
 
 // Mock the theme context - only what's needed for stylesheet evaluation
-jest.mock('../../theme', () => ({
+jest.mock('../theme', () => ({
   useTheme: () => ({ colors: { text: '#000', textSecondary: '#666', border: '#ccc' } }),
   spacing: { md: 16, sm: 8, xl: 24, xxl: 32 },
   typography: { sizes: { base: 16, sm: 14 }, weights: { normal: '400' } },
@@ -24,7 +23,7 @@ const mockGetTokenPrice = jest.fn();
 const mockGetTokenPriceFormatted = jest.fn();
 const mockGetTokenUsdValueFormatted = jest.fn();
 
-jest.mock('../../context/PriceContext', () => ({
+jest.mock('../context/PriceContext', () => ({
   usePrice: () => ({
     getTokenPrice: mockGetTokenPrice,
     getTokenPriceFormatted: mockGetTokenPriceFormatted,

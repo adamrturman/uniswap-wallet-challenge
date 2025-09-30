@@ -1,4 +1,4 @@
-import { truncateAddress, resolveAddress } from '../../utils/addressUtils';
+import { truncateAddress, resolveAddress } from './addressUtils';
 
 // Mock ethers
 jest.mock('ethers', () => ({
@@ -13,7 +13,7 @@ jest.mock('ethers', () => ({
 }));
 
 // Mock chainConfig
-jest.mock('../../config/chain', () => ({
+jest.mock('../config/chain', () => ({
   chainConfig: {
     Ethereum: {
       rpcUrl: 'https://mainnet.infura.io/v3/test',
@@ -22,12 +22,12 @@ jest.mock('../../config/chain', () => ({
 }));
 
 // Mock addressValidation
-jest.mock('../../utils/addressValidation', () => ({
+jest.mock('./addressValidation', () => ({
   isValidENSName: jest.fn(),
 }));
 
 import { ethers } from 'ethers';
-import { isValidENSName } from '../../utils/addressValidation';
+import { isValidENSName } from './addressValidation';
 
 describe('addressUtils', () => {
   beforeEach(() => {

@@ -1,4 +1,4 @@
-import { openExplorer } from '../../utils/explorerUtils';
+import { openExplorer } from './explorerUtils';
 
 // Mock react-native Linking
 jest.mock('react-native', () => ({
@@ -8,7 +8,7 @@ jest.mock('react-native', () => ({
 }));
 
 // Mock chainConfig
-jest.mock('../../config/chain', () => ({
+jest.mock('../config/chain', () => ({
   chainConfig: {
     Ethereum: {
       explorerUrl: 'https://etherscan.io/tx/',

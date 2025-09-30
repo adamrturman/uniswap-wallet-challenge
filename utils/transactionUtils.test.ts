@@ -1,7 +1,7 @@
 import {
   sendNativeTransaction,
   sendERC20Transaction,
-} from '../../utils/transactionUtils';
+} from './transactionUtils';
 
 // Mock ethers
 jest.mock('ethers', () => ({

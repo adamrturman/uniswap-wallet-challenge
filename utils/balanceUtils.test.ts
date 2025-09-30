@@ -1,4 +1,4 @@
-import { formatTokenAmount } from '../../utils/balanceUtils';
+import { formatTokenAmount } from './balanceUtils';
 
 describe('formatTokenAmount', () => {
   it('should return "0.00" for zero amount', () => {

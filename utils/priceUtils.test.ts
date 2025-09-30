@@ -1,4 +1,4 @@
-import { formatPrice, calculateUsdValue, formatUsdValue } from '../../utils/priceUtils';
+import { formatPrice, calculateUsdValue, formatUsdValue } from './priceUtils';
 
 describe('priceUtils', () => {
   describe('formatPrice', () => {
