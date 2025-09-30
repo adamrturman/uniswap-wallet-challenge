@@ -6,6 +6,7 @@ import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import { useTransaction } from '../context/TransactionContext';
 import { usePrice } from '../context/PriceContext';
+import { formatTokenAmount } from '../utils/priceUtils';
 import Button from './Button';
 import EthIcon from './EthIcon';
 import Header from './Header';
@@ -315,7 +316,7 @@ export default function EnterAmountToSend({
                 {/* Right side: Balance helper and Max button */}
                 <View style={styles.balanceMaxSection}>
                   <Text style={[styles.balanceText, { color: colors.textSecondary }]}>
-                    {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
+                    {formatTokenAmount(selectedToken.balance)} {selectedToken.symbol}
                   </Text>
                   <TouchableOpacity
                     style={[styles.maxButton, { 
@@ -337,7 +338,7 @@ export default function EnterAmountToSend({
           
           {showError && (
             <Text style={[styles.errorText, { color: colors.error }]}>
-              Amount exceeds your balance of {selectedToken.balance.toFixed(8)} {selectedToken.symbol}
+              Amount exceeds your balance of {formatTokenAmount(selectedToken.balance)} {selectedToken.symbol}
             </Text>
           )}
         </View>

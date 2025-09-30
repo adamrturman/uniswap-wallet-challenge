@@ -15,12 +15,10 @@ export const formatUsdValue = (usdValue: number): string => {
 };
 
 export const formatTokenAmount = (amount: number): string => {
-  if (amount >= 1) {
-    return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 8 });
-  } else if (amount >= 0.01) {
-    return amount.toFixed(4);
+  if (amount === 0) {
+    return '0.00';
   } else {
-    return amount.toFixed(8);
+    return amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 6 });
   }
 };
 
