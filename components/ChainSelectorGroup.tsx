@@ -22,6 +22,7 @@ export default function ChainSelectorGroup({ selected, onSelectionChange }: Chai
         horizontal 
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        style={styles.scrollView}
       >
         <ChainPill
           label="All"
@@ -105,14 +106,16 @@ const styles = StyleSheet.create({
   container: {
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
-    paddingHorizontal: spacing.xl,
     alignItems: 'center',
   },
+  scrollView: {
+    width: '100%',
+  },
   scrollContent: {
-    paddingRight: spacing.xl,
+    paddingHorizontal: spacing.xl,
     gap: spacing.sm,
-    flexGrow: 1,
     justifyContent: 'center',
+    flexGrow: 1,
   },
   pill: {
     flexDirection: 'row',
