@@ -1,19 +1,19 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Modal,
   TouchableOpacity,
-  ActivityIndicator,
   Dimensions,
   ScrollView,
 } from 'react-native';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useTheme, spacing, typography, radius } from '../theme';
-import { chainConfig, ChainKey } from '../config/chain';
+import { useTheme, spacing, radius } from '../theme';
 import { TransactionData } from './types';
+import TransactionStatusIcon from './TransactionStatusIcon';
+import TransactionStatusContent from './TransactionStatusContent';
+import TransactionDetails from './TransactionDetails';
+import TransactionActions from './TransactionActions';
 
 export type TransactionStatus = 'review' | 'pending' | 'success' | 'error';
 
@@ -35,57 +35,6 @@ export default function TransactionModal({
   onExecuteTransaction,
 }: TransactionModalProps) {
   const { colors } = useTheme();
-
-  const getStatusIcon = () => {
-    switch (status) {
-      case 'review':
-        return (
-          <MaterialIcons name="visibility" size={48} color={colors.primary} />
-        );
-      case 'pending':
-        return <ActivityIndicator size="large" color={colors.primary} />;
-      case 'success':
-        return (
-          <FontAwesome6 name="check-circle" size={48} color={colors.success} />
-        );
-      case 'error':
-        return (
-          <MaterialIcons name="error-outline" size={48} color={colors.error} />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const getStatusTitle = () => {
-    switch (status) {
-      case 'review':
-        return 'Review Transaction';
-      case 'pending':
-        return 'Transaction in Progress';
-      case 'success':
-        return 'Transaction Successful!';
-      case 'error':
-        return 'Transaction Failed';
-      default:
-        return '';
-    }
-  };
-
-  const getStatusMessage = () => {
-    switch (status) {
-      case 'review':
-        return 'Please review the transaction details below before approving.';
-      case 'pending':
-        return 'Your transaction is being processed. Please wait...';
-      case 'success':
-        return 'Your transaction has been successfully submitted to the blockchain.';
-      case 'error':
-        return 'Please check and try again.';
-      default:
-        return '';
-    }
-  };
 
   return (
     <Modal
@@ -120,265 +69,27 @@ export default function TransactionModal({
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.content}>
-              <View style={styles.iconContainer}>{getStatusIcon()}</View>
+              <View style={styles.iconContainer}>
+                <TransactionStatusIcon status={status} />
+              </View>
 
-              <Text style={[styles.title, { color: colors.text }]}>
-                {getStatusTitle()}
-              </Text>
-
-              <Text style={[styles.message, { color: colors.text }]}>
-                {getStatusMessage()}
-              </Text>
+              <TransactionStatusContent status={status} />
 
               {status === 'review' && transactionData && (
-                <View
-                  style={[
-                    styles.transactionDataContainer,
-                    { backgroundColor: colors.backgroundSecondary },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.transactionDataTitle,
-                      { color: colors.text },
-                    ]}
-                  >
-                    Transaction Details:
-                  </Text>
-                  <View style={styles.transactionDetails}>
-                    {transactionData.from && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          From
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.from}
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.to && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          To
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.to}
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.amount && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          Amount
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.amount}{' '}
-                          {transactionData.token?.symbol || 'ETH'}
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.token?.chainKey && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          Network
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.token.chainKey
-                            .charAt(0)
-                            .toUpperCase() +
-                            transactionData.token.chainKey.slice(1)}
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.token?.chainKey && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          Chain ID
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {chainConfig[
-                            transactionData.token.chainKey as ChainKey
-                          ]?.chainId || 'Unknown'}
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.gasEstimate?.gasLimit && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          Gas Limit
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.gasEstimate.gasLimit}
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.gasEstimate?.gasPrice && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          Gas Price
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.gasEstimate.gasPrice} Gwei
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.gasEstimate?.maxFeePerGas && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          Max Fee Per Gas
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.gasEstimate.maxFeePerGas} Gwei
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.gasEstimate?.maxPriorityFeePerGas && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          Max Priority Fee
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.gasEstimate.maxPriorityFeePerGas}{' '}
-                          Gwei
-                        </Text>
-                      </View>
-                    )}
-                    {transactionData.gasEstimate?.networkFee && (
-                      <View style={styles.transactionRow}>
-                        <Text
-                          style={[
-                            styles.transactionLabel,
-                            { color: colors.textSecondary },
-                          ]}
-                        >
-                          Network Fee
-                        </Text>
-                        <Text
-                          style={[
-                            styles.transactionValue,
-                            { color: colors.text },
-                          ]}
-                        >
-                          {transactionData.gasEstimate.networkFee} ETH
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                </View>
+                <TransactionDetails
+                  transactionData={transactionData}
+                  onCopyAddress={(address) => {
+                    // TODO: Implement clipboard functionality
+                    console.log('Copy address:', address);
+                  }}
+                />
               )}
 
-              {status === 'review' && (
-                <TouchableOpacity
-                  style={[
-                    styles.approveButton,
-                    { backgroundColor: colors.success },
-                  ]}
-                  onPress={async () => {
-                    if (onExecuteTransaction) {
-                      await onExecuteTransaction();
-                    }
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.approveButtonText,
-                      { color: colors.textInverse },
-                    ]}
-                  >
-                    Approve Transaction
-                  </Text>
-                </TouchableOpacity>
-              )}
+              <TransactionActions
+                status={status}
+                onApprove={onExecuteTransaction}
+                onClose={onClose}
+              />
             </View>
           </ScrollView>
         </View>
@@ -424,58 +135,5 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  title: {
-    fontSize: typography.sizes.xl,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  message: {
-    fontSize: typography.sizes.base,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: spacing.md,
-  },
-  transactionDataContainer: {
-    width: '100%',
-    borderRadius: radius.md,
-    padding: spacing.sm,
-    marginTop: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  transactionDataTitle: {
-    fontSize: typography.sizes.sm,
-    fontWeight: '600',
-    marginBottom: spacing.xs,
-  },
-  transactionDetails: {
-    width: '100%',
-  },
-  transactionRow: {
-    flexDirection: 'column',
-    paddingVertical: spacing.xs,
-  },
-  transactionLabel: {
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.medium,
-    marginBottom: 2,
-  },
-  transactionValue: {
-    fontSize: typography.sizes.xs,
-    fontWeight: typography.weights.normal,
-    lineHeight: 16,
-  },
-  approveButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.lg,
-    marginTop: spacing.sm,
-  },
-  approveButtonText: {
-    fontSize: typography.sizes.base,
-    fontWeight: '600',
   },
 });
