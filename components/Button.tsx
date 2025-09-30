@@ -35,7 +35,7 @@ export default function Button({
       borderRadius: radius.xl,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingHorizontal: spacing.xl * 1.2,
+      paddingHorizontal: spacing.xl,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.08,
       shadowRadius: 6,
