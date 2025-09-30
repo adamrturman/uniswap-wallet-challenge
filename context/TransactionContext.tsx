@@ -5,8 +5,7 @@ import React, {
   useRef,
   ReactNode,
 } from 'react';
-import { TransactionStatus } from '../components/TransactionModal';
-import { TransactionData } from '../components/types';
+import { TransactionStatus, TransactionData } from '../types';
 
 type TransactionParams = {
   status: TransactionStatus;
@@ -38,6 +37,7 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
   const approveTransactionRef = useRef<(() => Promise<void>) | undefined>(
     undefined,
   );
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const showTransactionModal = ({
     status,
@@ -50,11 +50,16 @@ export function TransactionProvider({ children }: { children: ReactNode }) {
 
   const hideTransactionModal = () => {
     setIsModalVisible(false);
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
     // Reset state after a short delay to allow modal to close
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setTransactionStatus('pending');
       setTransactionData(undefined);
       approveTransactionRef.current = undefined;
+      timeoutRef.current = null;
     }, 300);
   };
 

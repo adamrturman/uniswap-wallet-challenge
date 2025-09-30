@@ -57,13 +57,14 @@ export function PriceProvider({ children }: { children: ReactNode }) {
     lastFetch: null,
   });
 
-  const fetchPrices = async () => {
+  const fetchPrices = async (signal?: AbortSignal) => {
     setPriceState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const tokenIds = Object.values(COINGECKO_IDS).join(',');
       const response = await fetch(
         `${COINGECKO_API_URL}?ids=${tokenIds}&vs_currencies=usd&include_last_updated_at=true`,
+        { signal },
       );
 
       if (!response.ok) {
@@ -139,12 +140,22 @@ export function PriceProvider({ children }: { children: ReactNode }) {
 
   // Fetch prices on mount and set up periodic refresh
   useEffect(() => {
-    fetchPrices();
+    const abortController = new AbortController();
+
+    fetchPrices(abortController.signal);
 
     // Refresh prices every 5 minutes
-    const interval = setInterval(fetchPrices, 5 * 60 * 1000);
+    const interval = setInterval(
+      () => {
+        fetchPrices(abortController.signal);
+      },
+      5 * 60 * 1000,
+    );
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      abortController.abort();
+    };
   }, []);
 
   return (
