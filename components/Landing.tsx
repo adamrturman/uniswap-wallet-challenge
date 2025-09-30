@@ -22,7 +22,6 @@ export default function Landing() {
                 {
                   backgroundColor: colors.primaryLightDark,
                   padding: spacing.xl,
-                  shadowColor: colors.shadow,
                 },
               ]}
             >
@@ -31,8 +30,8 @@ export default function Landing() {
                 style={{
                   width: spacing.xxxl * 3,
                   height: spacing.xxxl * 3,
-                  resizeMode: 'contain',
                 }}
+                resizeMode="contain"
               />
             </View>
           </View>
@@ -87,9 +86,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.xxl,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
     elevation: 4,
   },
   actions: {

@@ -319,10 +319,7 @@ export default function EnterAmountToSend({
                     backgroundColor: colors.tokenSelectorBackground,
                     borderColor: colors.border,
                     borderWidth: 1,
-                    shadowColor: colors.shadow,
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 2,
+                    boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.1)',
                     elevation: 2,
                   },
                 ]}

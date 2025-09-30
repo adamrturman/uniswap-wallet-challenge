@@ -99,13 +99,7 @@ export default function TransactionModal({
             styles.modal,
             {
               backgroundColor: colors.backgroundSecondary,
-              shadowColor: colors.shadow,
-              shadowOffset: {
-                width: 0,
-                height: 4,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 8,
+              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)',
               elevation: 8,
             },
           ]}

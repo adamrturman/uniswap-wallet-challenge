@@ -36,9 +36,7 @@ export default function Button({
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: spacing.xl,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 6,
+      boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.08)',
       elevation: 2,
     };
 
@@ -52,7 +50,6 @@ export default function Button({
         return {
           ...baseStyle,
           backgroundColor: colors.backgroundSecondary,
-          shadowColor: colors.shadow,
         };
       case 'disabled':
         return {
