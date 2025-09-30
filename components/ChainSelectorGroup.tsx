@@ -77,7 +77,7 @@ function ChainPill({ label, isSelected, onPress, renderIcon }: {
   renderIcon?: () => React.ReactNode 
 }) {
   const { colors } = useTheme();
-  
+
   return (
     <TouchableOpacity 
       onPress={onPress} 
