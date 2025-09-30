@@ -106,10 +106,13 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
     paddingHorizontal: spacing.xl,
+    alignItems: 'center',
   },
   scrollContent: {
     paddingRight: spacing.xl,
     gap: spacing.sm,
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   pill: {
     flexDirection: 'row',
