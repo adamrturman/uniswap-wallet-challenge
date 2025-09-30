@@ -4,7 +4,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import * as Clipboard from 'expo-clipboard';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { ChainKey, chainOrder, TokenKey } from '../config/chain';
+import { ChainKey, chainOrder, TokenKey, chainConfig, tokenConfig } from '../config/chain';
 import { useTheme, spacing, typography, radius } from '../theme';
 import { NavigationType } from '../types';
 import { truncateAddress } from '../utils/addressUtils';
@@ -14,7 +14,7 @@ import HeaderIcon from './HeaderIcon';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
 import ScreenWrapper from './ScreenWrapper';
-import { AllTokenBalances, getTokensWithBalances } from '../utils/balanceUtils';
+import { AllTokenBalances, getTokensWithBalances, BalanceLoadingState } from '../utils/balanceUtils';
 import { usePrice } from '../context/PriceContext';
 
 export type PortfolioProps = {
@@ -69,7 +69,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       name: string;
       symbol: string;
       balance: number;
-      balanceState: 'loading' | 'loaded' | 'error';
+      balanceState: BalanceLoadingState;
       chainIcon: any;
       tokenIcon: any;
       usdValue?: number;
@@ -78,8 +78,6 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
     // Handle active balances filtering
     if (selected === 'active') {
       const activeTokens = getTokensWithBalances(balances);
-      const chainConfig = require('../config/chain').chainConfig;
-      const tokenConfig = require('../config/chain').tokenConfig;
       
       const mappedTokens = activeTokens.map(token => {
         const usdValue = getTokenUsdValue(token.symbol, token.balance);
@@ -111,7 +109,6 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
       const chainBalances = balances[chainKey];
       if (!chainBalances) return;
 
-      const chainConfig = require('../config/chain').chainConfig;
       const config = chainConfig[chainKey];
 
       // Add native token (always show, regardless of balance)
@@ -132,7 +129,6 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
 
       // Add ERC-20 tokens (show all, regardless of balance)
       if (chainBalances.tokens) {
-        const tokenConfig = require('../config/chain').tokenConfig;
         // Get available tokens for this chain
         const availableTokens = Object.keys(tokenConfig[chainKey]) as TokenKey[];
         const tokenKeys: TokenKey[] = availableTokens;
@@ -213,7 +209,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
             styles.sortButtonText,
             { color: colors.textSecondary }
           ]}>
-            {sortByUsd ? 'USD Value ↑' : 'USD Value ↓'}
+            {'USD Value ' + (sortByUsd ? '↑' : '↓')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -232,11 +228,11 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
 
       {/* Send button - only show if wallet is available */}
       {wallet && (
-        <View style={[{ 
+        <View style={{ 
           paddingHorizontal: spacing.xl, 
           paddingBottom: spacing.xl * 2, 
           paddingTop: spacing.xl 
-        }]}>
+        }}>
           <Button
             title="Send"
             onPress={handleSendTransaction}
