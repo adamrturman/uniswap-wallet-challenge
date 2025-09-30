@@ -10,7 +10,6 @@ import { NavigationType } from '../types';
 import { truncateAddress } from '../utils/addressUtils';
 import Button from './Button';
 import Header from './Header';
-import HeaderIcon from './HeaderIcon';
 import ChainSelectorGroup from './ChainSelectorGroup';
 import TokenBalance from './TokenBalance';
 import ScreenWrapper from './ScreenWrapper';
@@ -214,7 +213,7 @@ export default function Portfolio({ address, balances, wallet, onLogout }: Portf
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.list}>
+      <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
         {allTokens.map((token) => (
           <TokenBalance
             key={`${token.chainKey}-${token.tokenKey}`}

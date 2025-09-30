@@ -146,7 +146,7 @@ export default function TransactionModal({
           <ScrollView 
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={true}
+            showsVerticalScrollIndicator={false}
           >
             <View style={styles.content}>
               <View style={styles.iconContainer}>
