@@ -281,7 +281,7 @@ export default function TransactionModal({
                   onPress={handleViewExplorer}
                 >
                   <Text style={[styles.explorerButtonText, { color: colors.textInverse }]}>
-                    View transaction on explorer
+                    View on explorer
                   </Text>
                 </TouchableOpacity>
               )}
@@ -299,14 +299,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.lg,
+    padding: spacing.md,
   },
   modal: {
     width: '100%',
     maxWidth: 400,
     maxHeight: screenHeight * 0.8,
     borderRadius: radius.xl,
-    padding: spacing.xl,
+    padding: spacing.lg,
     position: 'relative',
   },
   scrollContainer: {
@@ -326,8 +326,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconContainer: {
-    marginBottom: spacing.lg,
-    height: 60,
+    marginBottom: spacing.md,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -335,21 +335,21 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.xl,
     fontWeight: '600',
     textAlign: 'center',
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   message: {
     fontSize: typography.sizes.base,
     textAlign: 'center',
     lineHeight: 22,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   explorerButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     borderRadius: radius.lg,
-    marginTop: spacing.md,
+    marginTop: spacing.sm,
   },
   explorerButtonText: {
     fontSize: typography.sizes.base,
@@ -358,26 +358,26 @@ const styles = StyleSheet.create({
   transactionDataContainer: {
     width: '100%',
     borderRadius: radius.md,
-    padding: spacing.md,
-    marginTop: spacing.md,
-    marginBottom: spacing.md,
+    padding: spacing.sm,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
   },
   transactionDataTitle: {
     fontSize: typography.sizes.sm,
     fontWeight: '600',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.xs,
   },
   transactionDetails: {
     width: '100%',
   },
   transactionRow: {
     flexDirection: 'column',
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   transactionLabel: {
     fontSize: typography.sizes.xs,
     fontWeight: typography.weights.medium,
-    marginBottom: spacing.xs,
+    marginBottom: 2,
   },
   transactionValue: {
     fontSize: typography.sizes.xs,
@@ -387,10 +387,10 @@ const styles = StyleSheet.create({
   approveButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     borderRadius: radius.lg,
-    marginTop: spacing.md,
+    marginTop: spacing.sm,
   },
   approveButtonText: {
     fontSize: typography.sizes.base,
