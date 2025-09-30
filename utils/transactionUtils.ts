@@ -146,10 +146,6 @@ const ERC20_ABI = [
   'function approve(address spender, uint256 amount) returns (bool)',
 ];
 
-
-
-
-
 export async function sendERC20Transaction(
   wallet: ethers.Wallet,
   transferParams: ERC20TransferParams,

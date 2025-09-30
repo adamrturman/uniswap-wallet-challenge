@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useCallback } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../theme';
 
@@ -26,7 +26,7 @@ const ThemeToggle = memo(function ThemeToggle({ onPress }: ThemeToggleProps) {
   if (!iconName) {
     return (
       <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
-        <View style={{ width: 24, height: 24 }} />
+        <View style={styles.emptyIcon} />
       </TouchableOpacity>
     );
   }
@@ -40,6 +40,13 @@ const ThemeToggle = memo(function ThemeToggle({ onPress }: ThemeToggleProps) {
       />
     </TouchableOpacity>
   );
+});
+
+const styles = StyleSheet.create({
+  emptyIcon: {
+    width: 24,
+    height: 24,
+  },
 });
 
 export default ThemeToggle;

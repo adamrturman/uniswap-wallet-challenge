@@ -93,9 +93,6 @@ export function createInitialAllTokenBalances(): AllTokenBalances {
   ) as AllTokenBalances;
 }
 
-
-
-
 // Function to fetch all token balances across all chains
 export async function fetchAllTokenBalances(
   address: string,
@@ -109,7 +106,9 @@ export async function fetchAllTokenBalances(
   const chainKeys = Object.keys(chainConfig) as ChainKey[];
   const promises = chainKeys.map(async (chainKey) => {
     try {
-      const provider = new providers.JsonRpcProvider(chainConfig[chainKey].rpcUrl);
+      const provider = new providers.JsonRpcProvider(
+        chainConfig[chainKey].rpcUrl,
+      );
 
       // Fetch native token balance
       let nativeBalance: ChainBalance;
@@ -136,10 +135,16 @@ export async function fetchAllTokenBalances(
               error: 'Token not available on this chain',
             };
           }
-          
-          const contract = new Contract(token.contractAddress, ERC20_ABI, provider);
+
+          const contract = new Contract(
+            token.contractAddress,
+            ERC20_ABI,
+            provider,
+          );
           const balance: BigNumber = await contract.balanceOf(address);
-          const formattedBalance = parseFloat(utils.formatUnits(balance, token.decimals));
+          const formattedBalance = parseFloat(
+            utils.formatUnits(balance, token.decimals),
+          );
           return { tokenKey, balance: formattedBalance, success: true };
         } catch (error) {
           return { tokenKey, balance: 0, success: false, error };

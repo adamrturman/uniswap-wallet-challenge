@@ -16,4 +16,3 @@ export const calculateUsdValue = (
 export const formatUsdValue = (usdValue: number): string => {
   return `$${usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
-

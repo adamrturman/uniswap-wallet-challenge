@@ -1,4 +1,4 @@
-import { truncateAddress, resolveAddress } from './addressUtils';
+import { truncateAddress } from './addressUtils';
 
 // Mock ethers
 jest.mock('ethers', () => ({
@@ -27,7 +27,6 @@ jest.mock('./addressValidation', () => ({
 }));
 
 import { ethers } from 'ethers';
-import { isValidENSName } from './addressValidation';
 
 describe('addressUtils', () => {
   beforeEach(() => {

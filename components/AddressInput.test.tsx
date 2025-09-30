@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { render, fireEvent } from '@testing-library/react-native';
 import { ThemeProvider } from '../theme/ThemeContext';
 import AddressInput from './AddressInput';
 
@@ -10,7 +10,9 @@ jest.mock('../utils/addressValidation', () => ({
 
 import { isValidAddressOrENS } from '../utils/addressValidation';
 
-const mockIsValidAddressOrENS = isValidAddressOrENS as jest.MockedFunction<typeof isValidAddressOrENS>;
+const mockIsValidAddressOrENS = isValidAddressOrENS as jest.MockedFunction<
+  typeof isValidAddressOrENS
+>;
 
 // Test wrapper with theme provider
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -31,7 +33,7 @@ describe('AddressInput', () => {
     it('should validate correctly formatted ENS names as valid', async () => {
       const validENSNames = [
         'vitalik.eth',
-        'uniswap.eth', 
+        'uniswap.eth',
         'ethereum.eth',
         'coinbase.eth',
         'aave.eth',
@@ -39,16 +41,16 @@ describe('AddressInput', () => {
         'opensea.eth',
         'ens.eth',
         'test.eth',
-        'subdomain.uniswap.eth'
+        'subdomain.uniswap.eth',
       ];
 
       for (const ensName of validENSNames) {
         mockIsValidAddressOrENS.mockReturnValue(true);
-        
+
         const { getByDisplayValue } = render(
           <TestWrapper>
             <AddressInput {...defaultProps} value={ensName} />
-          </TestWrapper>
+          </TestWrapper>,
         );
 
         expect(getByDisplayValue(ensName)).toBeTruthy();
@@ -61,12 +63,12 @@ describe('AddressInput', () => {
 
       render(
         <TestWrapper>
-          <AddressInput 
-            {...defaultProps} 
+          <AddressInput
+            {...defaultProps}
             value="vitalik.eth"
             onValidationChange={onValidationChange}
           />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       expect(onValidationChange).toHaveBeenCalledWith(true);
@@ -82,16 +84,16 @@ describe('AddressInput', () => {
         '0x0000000000000000000000000000000000000000', // Zero address
         '0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', // Max address
         '0x1234567890abcdef1234567890abcdef12345678', // Mixed case
-        '0xABCDEF1234567890ABCDEF1234567890ABCDEF12'  // All caps
+        '0xABCDEF1234567890ABCDEF1234567890ABCDEF12', // All caps
       ];
 
       for (const address of validAddresses) {
         mockIsValidAddressOrENS.mockReturnValue(true);
-        
+
         const { getByDisplayValue } = render(
           <TestWrapper>
             <AddressInput {...defaultProps} value={address} />
-          </TestWrapper>
+          </TestWrapper>,
         );
 
         expect(getByDisplayValue(address)).toBeTruthy();
@@ -104,12 +106,12 @@ describe('AddressInput', () => {
 
       render(
         <TestWrapper>
-          <AddressInput 
-            {...defaultProps} 
+          <AddressInput
+            {...defaultProps}
             value="0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6"
             onValidationChange={onValidationChange}
           />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       expect(onValidationChange).toHaveBeenCalledWith(true);
@@ -131,14 +133,18 @@ describe('AddressInput', () => {
 
       for (const invalidAddress of invalidAddresses) {
         mockIsValidAddressOrENS.mockReturnValue(false);
-        
+
         const { getByText } = render(
           <TestWrapper>
             <AddressInput {...defaultProps} value={invalidAddress} />
-          </TestWrapper>
+          </TestWrapper>,
         );
 
-        expect(getByText('Invalid wallet address or ENS name. Please check and try again.')).toBeTruthy();
+        expect(
+          getByText(
+            'Invalid wallet address or ENS name. Please check and try again.',
+          ),
+        ).toBeTruthy();
       }
     });
 
@@ -158,14 +164,18 @@ describe('AddressInput', () => {
 
       for (const invalidName of invalidENS) {
         mockIsValidAddressOrENS.mockReturnValue(false);
-        
+
         const { getByText } = render(
           <TestWrapper>
             <AddressInput {...defaultProps} value={invalidName} />
-          </TestWrapper>
+          </TestWrapper>,
         );
 
-        expect(getByText('Invalid wallet address or ENS name. Please check and try again.')).toBeTruthy();
+        expect(
+          getByText(
+            'Invalid wallet address or ENS name. Please check and try again.',
+          ),
+        ).toBeTruthy();
       }
     });
 
@@ -175,12 +185,12 @@ describe('AddressInput', () => {
 
       render(
         <TestWrapper>
-          <AddressInput 
-            {...defaultProps} 
+          <AddressInput
+            {...defaultProps}
             value="invalid-input"
             onValidationChange={onValidationChange}
           />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       expect(onValidationChange).toHaveBeenCalledWith(false);
@@ -190,11 +200,11 @@ describe('AddressInput', () => {
   describe('User Interactions', () => {
     it('should call onChangeText when user types', () => {
       const onChangeText = jest.fn();
-      
+
       const { getByPlaceholderText } = render(
         <TestWrapper>
           <AddressInput {...defaultProps} onChangeText={onChangeText} />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       const input = getByPlaceholderText('Enter a wallet address or ENS name');
@@ -205,33 +215,33 @@ describe('AddressInput', () => {
 
     it('should update validation state when input changes', () => {
       const onValidationChange = jest.fn();
-      
+
       // Start with invalid
       mockIsValidAddressOrENS.mockReturnValue(false);
-      
+
       const { rerender } = render(
         <TestWrapper>
-          <AddressInput 
-            {...defaultProps} 
+          <AddressInput
+            {...defaultProps}
             value="invalid"
             onValidationChange={onValidationChange}
           />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       expect(onValidationChange).toHaveBeenCalledWith(false);
 
       // Change to valid
       mockIsValidAddressOrENS.mockReturnValue(true);
-      
+
       rerender(
         <TestWrapper>
-          <AddressInput 
-            {...defaultProps} 
+          <AddressInput
+            {...defaultProps}
             value="vitalik.eth"
             onValidationChange={onValidationChange}
           />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       expect(onValidationChange).toHaveBeenCalledWith(true);
@@ -245,12 +255,12 @@ describe('AddressInput', () => {
 
       render(
         <TestWrapper>
-          <AddressInput 
-            {...defaultProps} 
+          <AddressInput
+            {...defaultProps}
             value=""
             onValidationChange={onValidationChange}
           />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       expect(onValidationChange).toHaveBeenCalledWith(false);
@@ -262,12 +272,12 @@ describe('AddressInput', () => {
 
       render(
         <TestWrapper>
-          <AddressInput 
-            {...defaultProps} 
+          <AddressInput
+            {...defaultProps}
             value="   "
             onValidationChange={onValidationChange}
           />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       expect(onValidationChange).toHaveBeenCalledWith(false);
@@ -280,12 +290,12 @@ describe('AddressInput', () => {
 
       render(
         <TestWrapper>
-          <AddressInput 
-            {...defaultProps} 
+          <AddressInput
+            {...defaultProps}
             value={longInput}
             onValidationChange={onValidationChange}
           />
-        </TestWrapper>
+        </TestWrapper>,
       );
 
       expect(onValidationChange).toHaveBeenCalledWith(false);

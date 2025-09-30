@@ -71,10 +71,7 @@ export default function Input({
         <TextInput
           style={[
             inputStyle,
-            {
-              borderWidth: 0,
-              borderColor: 'transparent',
-            },
+            styles.textInput,
           ]}
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
@@ -119,6 +116,10 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.md,
     fontSize: typography.sizes.base,
+  },
+  textInput: {
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   errorText: {
     fontSize: typography.sizes.sm,

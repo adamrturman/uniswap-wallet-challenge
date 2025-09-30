@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -42,14 +48,15 @@ export default function TransactionConfirmation({
 
   const handleScroll = (event: any) => {
     const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
-    const isAtBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
+    const isAtBottom =
+      contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
     setShowGradient(!isAtBottom);
   };
 
   return (
     <ScreenWrapper>
       <View style={styles.scrollContainer}>
-        <ScrollView 
+        <ScrollView
           style={styles.content}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
@@ -118,9 +125,14 @@ export default function TransactionConfirmation({
           </View>
 
           <View style={styles.successMessage}>
-            <FontAwesome6 name="check-circle" size={48} color={colors.success} />
+            <FontAwesome6
+              name="check-circle"
+              size={48}
+              color={colors.success}
+            />
             <Text style={[styles.successText, { color: colors.text }]}>
-              Your transaction has been successfully submitted to the blockchain.
+              Your transaction has been successfully submitted to the
+              blockchain.
             </Text>
           </View>
         </ScrollView>

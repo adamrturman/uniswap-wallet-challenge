@@ -56,9 +56,15 @@ describe('transactionUtils', () => {
       },
     };
 
-    (ethers.providers.JsonRpcProvider as unknown as jest.Mock).mockImplementation(() => mockProvider);
-    (ethers.Wallet as unknown as jest.Mock).mockImplementation(() => mockWallet);
-    (ethers.Contract as unknown as jest.Mock).mockImplementation(() => mockContract);
+    (
+      ethers.providers.JsonRpcProvider as unknown as jest.Mock
+    ).mockImplementation(() => mockProvider);
+    (ethers.Wallet as unknown as jest.Mock).mockImplementation(
+      () => mockWallet,
+    );
+    (ethers.Contract as unknown as jest.Mock).mockImplementation(
+      () => mockContract,
+    );
   });
 
   describe('sendNativeTransaction', () => {
@@ -73,7 +79,9 @@ describe('transactionUtils', () => {
       mockWallet.connect.mockReturnValue(mockWallet);
       mockProvider.getFeeData.mockResolvedValue(mockFeeData);
       mockProvider.estimateGas.mockResolvedValue('21000');
-      (ethers.utils.parseEther as jest.Mock).mockReturnValue('1000000000000000000');
+      (ethers.utils.parseEther as jest.Mock).mockReturnValue(
+        '1000000000000000000',
+      );
       mockWallet.sendTransaction.mockResolvedValue(mockTxResponse);
       mockTxResponse.wait.mockResolvedValue(mockReceipt);
 
@@ -81,7 +89,7 @@ describe('transactionUtils', () => {
         mockWallet,
         '0xto',
         '1.0',
-        'https://rpc.url'
+        'https://rpc.url',
       );
 
       expect(result).toEqual({
@@ -92,13 +100,15 @@ describe('transactionUtils', () => {
 
     it('should handle transaction failure', async () => {
       mockWallet.connect.mockReturnValue(mockWallet);
-      mockProvider.getFeeData.mockRejectedValue(new Error('Transaction failed'));
+      mockProvider.getFeeData.mockRejectedValue(
+        new Error('Transaction failed'),
+      );
 
       const result = await sendNativeTransaction(
         mockWallet,
         '0xto',
         '1.0',
-        'https://rpc.url'
+        'https://rpc.url',
       );
 
       expect(result).toEqual({
@@ -107,7 +117,6 @@ describe('transactionUtils', () => {
       });
     });
   });
-
 
   describe('sendERC20Transaction', () => {
     it('should send ERC20 transaction successfully', async () => {
@@ -127,7 +136,7 @@ describe('transactionUtils', () => {
           toAddress: '0xto',
           amount: '1.0',
         },
-        'https://rpc.url'
+        'https://rpc.url',
       );
 
       expect(result).toEqual({
@@ -147,7 +156,7 @@ describe('transactionUtils', () => {
           toAddress: '0xto',
           amount: '1.0',
         },
-        'https://rpc.url'
+        'https://rpc.url',
       );
 
       expect(result).toEqual({

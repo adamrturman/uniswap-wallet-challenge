@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
+import { Text, TouchableOpacity, ViewStyle, TextStyle, StyleSheet } from 'react-native';
 import { useTheme, spacing, typography, radius } from '../theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'disabled';
@@ -31,13 +31,8 @@ export default function Button({
     const baseStyle: ViewStyle = {
       width: fullWidth ? '100%' : 'auto',
       minWidth: fullWidth ? '100%' : 200,
-      height: 56,
-      borderRadius: radius.xl,
-      alignItems: 'center',
-      justifyContent: 'center',
+      ...styles.button,
       paddingHorizontal: spacing.xl,
-      boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.08)',
-      elevation: 2,
     };
 
     switch (variant) {
@@ -102,3 +97,14 @@ export default function Button({
     </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    height: 56,
+    borderRadius: radius.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.08)',
+    elevation: 2,
+  },
+});

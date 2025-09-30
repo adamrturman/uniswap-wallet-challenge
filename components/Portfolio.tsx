@@ -81,7 +81,8 @@ export default function Portfolio({
 
   const handleScroll = (event: any) => {
     const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
-    const isAtBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
+    const isAtBottom =
+      contentOffset.y + layoutMeasurement.height >= contentSize.height - 20;
     setShowGradient(!isAtBottom);
   };
 
@@ -242,8 +243,8 @@ export default function Portfolio({
       </View>
 
       <View style={styles.scrollContainer}>
-        <ScrollView 
-          style={styles.list} 
+        <ScrollView
+          style={styles.list}
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
           scrollEventThrottle={16}

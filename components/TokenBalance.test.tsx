@@ -13,7 +13,9 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 
 // Mock the theme context - only what's needed for stylesheet evaluation
 jest.mock('../theme', () => ({
-  useTheme: () => ({ colors: { text: '#000', textSecondary: '#666', border: '#ccc' } }),
+  useTheme: () => ({
+    colors: { text: '#000', textSecondary: '#666', border: '#ccc' },
+  }),
   spacing: { md: 16, sm: 8, xl: 24, xxl: 32 },
   typography: { sizes: { base: 16, sm: 14 }, weights: { normal: '400' } },
 }));
@@ -53,13 +55,8 @@ describe('TokenBalance', () => {
   describe('Loading State', () => {
     it('should render skeleton when balance state is loading', () => {
       const loadingBalance: ChainBalance = { value: 0, state: 'loading' };
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={loadingBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={loadingBalance} />);
 
       // Should not show balance text or error message during loading
       expect(screen.queryByText('0.00 ETH')).toBeNull();
@@ -72,13 +69,8 @@ describe('TokenBalance', () => {
   describe('Error State', () => {
     it('should render error message when balance state is error', () => {
       const errorBalance: ChainBalance = { value: 0, state: 'error' };
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={errorBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={errorBalance} />);
 
       expect(screen.getByText('Error loading')).toBeTruthy();
       expect(screen.queryByTestId('skeleton')).toBeNull();
@@ -89,13 +81,8 @@ describe('TokenBalance', () => {
   describe('Loaded State', () => {
     it('should render zero balance', () => {
       const zeroBalance: ChainBalance = { value: 0, state: 'loaded' };
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={zeroBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={zeroBalance} />);
 
       const balanceText = screen.getByText('0.00 ETH');
       expect(balanceText).toBeTruthy();
@@ -105,13 +92,8 @@ describe('TokenBalance', () => {
 
     it('should render formatted balance for non-zero amounts', () => {
       const nonZeroBalance: ChainBalance = { value: 1.5, state: 'loaded' };
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={nonZeroBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={nonZeroBalance} />);
 
       expect(screen.getByText('1.5 ETH')).toBeTruthy();
       expect(screen.queryByTestId('skeleton')).toBeNull();
@@ -122,13 +104,8 @@ describe('TokenBalance', () => {
       const nonZeroBalance: ChainBalance = { value: 1.5, state: 'loaded' };
       mockGetTokenPrice.mockReturnValue(2000);
       mockGetTokenUsdValueFormatted.mockReturnValue('$3,000.00');
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={nonZeroBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={nonZeroBalance} />);
 
       expect(screen.getByText('1.5 ETH')).toBeTruthy();
       expect(screen.getByText('$3,000.00')).toBeTruthy();
@@ -137,13 +114,8 @@ describe('TokenBalance', () => {
     it('should not render USD value when balance is 0', () => {
       const zeroBalance: ChainBalance = { value: 0, state: 'loaded' };
       mockGetTokenPrice.mockReturnValue(2000);
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={zeroBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={zeroBalance} />);
 
       expect(screen.getByText('0.00 ETH')).toBeTruthy();
       expect(screen.queryByText('$0.00')).toBeNull();
@@ -152,13 +124,8 @@ describe('TokenBalance', () => {
     it('should not render USD value when price is not available', () => {
       const nonZeroBalance: ChainBalance = { value: 1.5, state: 'loaded' };
       mockGetTokenPrice.mockReturnValue(null);
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={nonZeroBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={nonZeroBalance} />);
 
       expect(screen.getByText('1.5 ETH')).toBeTruthy();
       expect(screen.queryByText('$3,000.00')).toBeNull();
@@ -166,26 +133,16 @@ describe('TokenBalance', () => {
 
     it('should format large numbers with commas correctly', () => {
       const largeBalance: ChainBalance = { value: 1234567.89, state: 'loaded' };
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={largeBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={largeBalance} />);
 
       expect(screen.getByText('1,234,567.89 ETH')).toBeTruthy();
     });
 
     it('should handle decimal amounts with proper formatting', () => {
       const decimalBalance: ChainBalance = { value: 0.1234, state: 'loaded' };
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={decimalBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={decimalBalance} />);
 
       expect(screen.getByText('0.1234 ETH')).toBeTruthy();
     });
@@ -194,24 +151,24 @@ describe('TokenBalance', () => {
   describe('Token Information Display', () => {
     it('should display token name correctly', () => {
       render(<TokenBalance {...defaultProps} />);
-      
+
       expect(screen.getByText('Ethereum')).toBeTruthy();
     });
 
     it('should display token price when available', () => {
       mockGetTokenPrice.mockReturnValue(2000);
       mockGetTokenPriceFormatted.mockReturnValue('$2,000.00');
-      
+
       render(<TokenBalance {...defaultProps} />);
-      
+
       expect(screen.getByText('$2,000.00')).toBeTruthy();
     });
 
     it('should not display token price when not available', () => {
       mockGetTokenPrice.mockReturnValue(null);
-      
+
       render(<TokenBalance {...defaultProps} />);
-      
+
       expect(screen.queryByText('$2,000.00')).toBeNull();
     });
   });
@@ -219,26 +176,19 @@ describe('TokenBalance', () => {
   describe('Edge Cases', () => {
     it('should handle very small decimal amounts', () => {
       const smallBalance: ChainBalance = { value: 0.0001, state: 'loaded' };
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={smallBalance}
-        />
-      );
+
+      render(<TokenBalance {...defaultProps} balance={smallBalance} />);
 
       expect(screen.getByText('0.0001 ETH')).toBeTruthy();
     });
 
     it('should handle very large balances', () => {
-      const largeBalance: ChainBalance = { value: 999999999.9999, state: 'loaded' };
-      
-      render(
-        <TokenBalance
-          {...defaultProps}
-          balance={largeBalance}
-        />
-      );
+      const largeBalance: ChainBalance = {
+        value: 999999999.9999,
+        state: 'loaded',
+      };
+
+      render(<TokenBalance {...defaultProps} balance={largeBalance} />);
 
       expect(screen.getByText('999,999,999.9999 ETH')).toBeTruthy();
     });

@@ -14,9 +14,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
-  ethIcon: {
+  baseIcon: {
     position: 'absolute',
+    width: 36,
+    height: 36,
   },
   overlayContainer: {
     position: 'absolute',
@@ -24,6 +29,12 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     justifyContent: 'center',
+    width: 16,
+    height: 16,
+  },
+  overlayIcon: {
+    width: 16,
+    height: 16,
   },
 });
 
@@ -34,29 +45,18 @@ export default function ChainTokenIcon({
 }: ChainTokenIconProps) {
   const { colors } = useTheme();
 
-  const containerStyle: ViewStyle = {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.chainTokenBackground,
-  };
+  const containerStyle: ViewStyle = [
+    styles.container,
+    {
+      backgroundColor: colors.chainTokenBackground,
+    },
+  ];
 
   const overlayComponent = overlayIcon ? (
-    <View
-      style={[
-        styles.overlayContainer,
-        {
-          width: 16,
-          height: 16,
-        },
-      ]}
-    >
+    <View style={styles.overlayContainer}>
       <Image
         source={overlayIcon}
-        style={{
-          width: 16,
-          height: 16,
-        }}
+        style={styles.overlayIcon}
         resizeMode="contain"
       />
     </View>
@@ -66,20 +66,14 @@ export default function ChainTokenIcon({
     // If baseIcon is a component (like EthIcon)
     if (typeof baseIcon === 'function') {
       const Component = baseIcon;
-      return <Component style={[styles.ethIcon, { width: 36, height: 36 }]} />;
+      return <Component style={styles.baseIcon} />;
     }
 
     // If baseIcon is an image source
     return (
       <Image
         source={baseIcon}
-        style={[
-          styles.ethIcon,
-          {
-            width: 36,
-            height: 36,
-          },
-        ]}
+        style={styles.baseIcon}
         resizeMode="contain"
       />
     );
