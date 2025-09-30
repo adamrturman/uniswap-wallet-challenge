@@ -45,7 +45,7 @@ export default function ChainTokenIcon({
 }: ChainTokenIconProps) {
   const { colors } = useTheme();
 
-  const containerStyle: ViewStyle = [
+  const containerStyle = [
     styles.container,
     {
       backgroundColor: colors.chainTokenBackground,
