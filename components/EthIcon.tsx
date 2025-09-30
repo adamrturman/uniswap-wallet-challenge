@@ -40,22 +40,21 @@ export default function EthIcon({ size = 'medium', style }: EthIconProps) {
   const config = sizeConfig[size];
 
   const containerStyle: ViewStyle = {
+    ...styles.container,
     width: config.container,
     height: config.container,
     borderRadius: config.container / 2,
     backgroundColor: '#627EEA',
   };
 
+  const imageStyle = {
+    width: config.icon,
+    height: config.icon,
+  };
+
   return (
-    <View style={[styles.container, containerStyle, style]}>
-      <Image
-        source={ethIcon}
-        style={{
-          width: config.icon,
-          height: config.icon,
-        }}
-        resizeMode="contain"
-      />
+    <View style={[containerStyle, style]}>
+      <Image source={ethIcon} style={imageStyle} resizeMode="contain" />
     </View>
   );
 }

@@ -57,11 +57,11 @@ export default function Input({
     {
       backgroundColor: colors.background,
       color: colors.text,
-      ...(multiline && {
-        minHeight: minHeight || 120,
-        maxHeight: maxHeight || 200,
-        flex: 1,
-      }),
+    },
+    multiline && {
+      minHeight: minHeight || 120,
+      maxHeight: maxHeight || 200,
+      flex: 1,
     },
   ];
 

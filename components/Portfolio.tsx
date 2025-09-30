@@ -277,13 +277,7 @@ export default function Portfolio({
 
       {/* Send button - only show if wallet is available */}
       {wallet && (
-        <View
-          style={{
-            paddingHorizontal: spacing.xl,
-            paddingBottom: spacing.xl * 2,
-            paddingTop: spacing.xl,
-          }}
-        >
+        <View style={styles.sendButtonContainer}>
           <Button
             title="Send"
             onPress={handleSendTransaction}
@@ -354,5 +348,10 @@ const styles = StyleSheet.create({
   sortButtonText: {
     fontSize: typography.sizes.xs,
     fontWeight: typography.weights.normal,
+  },
+  sendButtonContainer: {
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl * 2,
+    paddingTop: spacing.xl,
   },
 });

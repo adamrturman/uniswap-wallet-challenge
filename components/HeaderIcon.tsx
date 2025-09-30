@@ -53,6 +53,7 @@ export default function HeaderIcon({
   const config = sizeConfig[size];
 
   const dynamicStyles: ViewStyle = {
+    ...styles.container,
     width: config.container,
     height: config.container,
     borderRadius: config.container / 2,

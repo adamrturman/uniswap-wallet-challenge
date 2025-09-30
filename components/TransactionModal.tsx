@@ -47,11 +47,7 @@ export default function TransactionModal({
         <View
           style={[
             styles.modal,
-            {
-              backgroundColor: colors.backgroundSecondary,
-              boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)',
-              elevation: 8,
-            },
+            { backgroundColor: colors.backgroundSecondary },
           ]}
         >
           {/* Close button in top-left corner */}
@@ -113,6 +109,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.xl,
     padding: spacing.lg,
     position: 'relative',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)',
+    elevation: 8,
   },
   scrollContainer: {
     flex: 1,

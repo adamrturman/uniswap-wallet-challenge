@@ -35,10 +35,8 @@ export default function Button({
 
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
-      width: fullWidth ? '100%' : 'auto',
-      minWidth: fullWidth ? '100%' : 200,
       ...styles.button,
-      paddingHorizontal: spacing.xl,
+      ...(fullWidth ? styles.fullWidthButton : styles.autoWidthButton),
     };
 
     switch (variant) {
@@ -110,7 +108,16 @@ const styles = StyleSheet.create({
     borderRadius: radius.xl,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: spacing.xl,
     boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.08)',
     elevation: 2,
+  },
+  fullWidthButton: {
+    width: '100%',
+    minWidth: '100%',
+  },
+  autoWidthButton: {
+    width: 'auto',
+    minWidth: 200,
   },
 });

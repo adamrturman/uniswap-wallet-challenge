@@ -30,7 +30,7 @@ export default function TransactionActions({
               variant="secondary"
               style={StyleSheet.flatten([
                 styles.button,
-                { marginRight: spacing.sm },
+                styles.buttonMarginRight,
               ])}
             />
             <Button
@@ -39,7 +39,7 @@ export default function TransactionActions({
               variant="primary"
               style={StyleSheet.flatten([
                 styles.button,
-                { marginLeft: spacing.sm },
+                styles.buttonMarginLeft,
               ])}
             />
           </View>
@@ -67,7 +67,7 @@ export default function TransactionActions({
               variant="secondary"
               style={StyleSheet.flatten([
                 styles.button,
-                { marginRight: spacing.sm },
+                styles.buttonMarginRight,
               ])}
             />
             <Button
@@ -76,7 +76,7 @@ export default function TransactionActions({
               variant="primary"
               style={StyleSheet.flatten([
                 styles.button,
-                { marginLeft: spacing.sm },
+                styles.buttonMarginLeft,
               ])}
             />
           </View>
@@ -90,7 +90,7 @@ export default function TransactionActions({
               variant="primary"
               style={StyleSheet.flatten([
                 styles.button,
-                { marginRight: spacing.sm },
+                styles.buttonMarginRight,
               ])}
               disabled={isExecuting}
             />
@@ -100,7 +100,7 @@ export default function TransactionActions({
               variant="secondary"
               style={StyleSheet.flatten([
                 styles.button,
-                { marginLeft: spacing.sm },
+                styles.buttonMarginLeft,
               ])}
             />
           </View>
@@ -129,5 +129,11 @@ const styles = StyleSheet.create({
   singleButton: {
     flex: 1,
     maxWidth: 200,
+  },
+  buttonMarginRight: {
+    marginRight: spacing.sm,
+  },
+  buttonMarginLeft: {
+    marginLeft: spacing.sm,
   },
 });
